@@ -4,4 +4,7 @@
 ## Author: Chanpa
 ## SavedVariables: ChanUIDB
 
+embeds.xml
 core.lua
+options.lua
+tweaks.lua
