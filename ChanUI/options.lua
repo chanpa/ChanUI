@@ -83,7 +83,7 @@ local options = {
 }
 
 
-function CUI:InitializeConfig()
+function CUI:InitializeAce()
     self.db = LibStub("AceDB-3.0"):New("ChanUIDB", defaultValues)
 
     -- config

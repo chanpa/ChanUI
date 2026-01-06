@@ -2,7 +2,7 @@ CUI = LibStub("AceAddon-3.0"):NewAddon("ChanUI", "AceConsole-3.0", "AceEvent-3.0
 
 
 function CUI:OnInitialize()
-    CUI:InitializeConfig()
+    CUI:InitializeAce()
     CUI:Print("Loaded Chan UI")
 end
 
