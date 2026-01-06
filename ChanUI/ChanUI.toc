@@ -1,0 +1,6 @@
+## Interface: 110207
+## Version: 1.0.0
+## Title: ChanUI
+## Author: Chanpa  
+
+core.lua
