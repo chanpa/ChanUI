@@ -43,3 +43,16 @@ function CUI:UpdateText(message, fs, padding)
     parent:SetSize(w + padding, h + padding)
     fs:SetSize(parent:GetWidth(), parent:GetHeight())
 end
+
+function CUI:DumpObject(o)
+    if type(o) == 'table' then
+        local s = '{ '
+        for k,v in pairs(o) do
+            if type(k) ~= 'number' then k = '"'..k..'"' end
+            s = s .. '['..k..'] = ' .. self:DumpObject(v) .. ','
+        end
+        return s .. '} '
+    else
+        return tostring(o)
+    end
+end

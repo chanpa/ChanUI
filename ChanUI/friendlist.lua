@@ -25,6 +25,7 @@ function CUI:CreateFriendRoot()
     f:SetScript("OnEnter", function()
         c = c + 1
         self:UpdateText("Entered " .. c, self.friendsFontString, 8)
+        self:Print(self:DumpObject(self.friendsTable["retail"]))
     end)
 
     self.friendRoot = f
@@ -61,30 +62,36 @@ function CUI:ParseBnetInfo(bnetInfo)
         battleTag = bnetInfo.battleTag,
         message = bnetInfo.customMessage,
         note = bnetInfo.note,
+        richPresence = bnetInfo.gameAccountInfo.richPresence
     }
-
     local client = bnetInfo.gameAccountInfo.clientProgram
     if client == "WoW" then
-        self:ParseWowFriend(friend, bnetInfo)
-        self:Print(friend.accountName .. " timerunner: " .. friend.timerunningSeasonID)
+        self:ParseWowFriend(friend, bnetInfo.gameAccountInfo)
     else
         friend.client = client
     end
+    
     return friend
 end
 
----@param bnetInfo BNetAccountInfo
-function CUI:ParseWowFriend(friend, bnetInfo)
-    self:Print(bnetInfo.accountName .. " wowproj: ".. bnetInfo.gameAccountInfo.wowProjectID)
-    local wowProj = bnetInfo.gameAccountInfo.wowProjectID
+---@param gameAccountInfo BNetGameAccountInfo
+function CUI:ParseWowFriend(friend, gameAccountInfo)
+    local wowProj = gameAccountInfo.wowProjectID
     if wowProj == 1 then
-        -- retail
         friend.client = "retail"
+        friend.characterFaction = gameAccountInfo.factionName
     elseif wowProj == 19 then
-        -- mop classic
         friend.client = "classic_mop"
+    else
+        self:Print("Unknown wowProjectId: " .. wowProj)
+        friend.client = "unknown_wow"
     end
-    friend.timerunningSeasonID = bnetInfo.gameAccountInfo.timerunningSeasonID or 0
+    friend.realmID = gameAccountInfo.realmID
+    friend.characterName = gameAccountInfo.characterName
+    friend.characterLevel = gameAccountInfo.characterLevel
+    friend.characterClass = gameAccountInfo.className
+    friend.characterZone = gameAccountInfo.areaName
+    friend.timerunningSeasonID = gameAccountInfo.timerunningSeasonID or 0
 end
 
 function CUI:CreateFriendsOnlineFontString()
