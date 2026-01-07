@@ -1,18 +1,6 @@
 local CUI = CUI
 local LSM = LibStub("LibSharedMedia-3.0")
 
-local defaultValues = {
-    profile = {
-        tweaks = {
-            hideExpansionSummaryButton = false
-        },
-        font = {
-            name = "Arial Narrow",
-            size = 16,
-            outline = "THICKOUTLINE"
-        }
-    }
-}
 local options = {
     name = "Chan UI",
     handler = CUI,
@@ -50,8 +38,12 @@ local options = {
                     dialogControl = 'LSM30_Font',
                     desc = "The font to use.",
                     values = LSM:HashTable("font"),
-                    get = "GetFontName",
-                    set = "SetFontName",
+                    get = function()
+                        return CUI.db.profile.font.name
+                    end,
+                    set = function(_, value)
+                        CUI.db.profile.font.name = value
+                    end
                 },
                 size = {
                     type = "range",
@@ -60,8 +52,12 @@ local options = {
                     min = 6,
                     max = 100,
                     step = 1,
-                    get = "GetFontSize",
-                    set = "SetFontSize"
+                    get = function()
+                        return CUI.db.profile.font.size
+                    end,
+                    set = function(_, value)
+                        CUI.db.profile.font.size = value
+                    end,
                 },
                 outline = {
                     type = "select",
@@ -73,22 +69,113 @@ local options = {
                         ["MONOCHROME, OUTLINE"] = "Monochrome Outline",
                         ["MONOCHROME, THICKOUTLINE"] = "Monochrome Thick Outline"
                     },
-                    get = "GetOutline",
-                    set = "SetOutline",
+                    get = function()
+                        return CUI.db.profile.font.outline
+                    end,
+                    set = function(_, value)
+                        CUI.db.profile.font.outline = value
+                    end,
                     style = "dropdown"
                 }
             },
         },
+        socials = {
+            type = "group",
+            name = "Socials",
+            args = {
+                enableFriendlist = {
+                    type = "toggle",
+                    name = "Enable  Friendlist",
+                    get = function()
+                        return CUI.db.profile.socials.enableFriendlist
+                    end,
+                    set = function(_, value)
+                        CUI.db.profile.socials.enableFriendlist = value
+                    end
+                },
+                enableGuildlist = {
+                    type = "toggle",
+                    name = "Enable  Guildlist",
+                    get = function()
+                        return CUI.db.profile.socials.enableGuildlist
+                    end,
+                    set = function(_, value)
+                        CUI.db.profile.socials.enableGuildlist = value
+                    end
+                },
+                friendlist = {
+                    type = "group",
+                    name = "Friendlist",
+                    disabled = function()
+                        return not CUI.db.profile.socials.enableFriendlist
+                    end,
+                    args = {
+                        someoption = {
+                            type = "toggle",
+                            name = "Some option",
+                            get = function()
+                                return CUI.db.profile.socials.friendlist.someoption
+                            end,
+                            set = function(_, value)
+                                CUI.db.profile.socials.friendlist.someoption = value
+                            end
+                        }
+                    }
+                },
+                guildlist = {
+                    type = "group",
+                    name = "Guildlist",
+                    disabled = function()
+                        return not CUI.db.profile.socials.enableGuildlist
+                    end,
+                    args = {
+                        someoption = {
+                            type = "toggle",
+                            name = "Some option",
+                            get = function()
+                                return CUI.db.profile.socials.guildlist.someoption
+                            end,
+                            set = function(_, value)
+                                CUI.db.profile.socials.guildlist.someoption = value
+                            end
+                        }
+                    }
+                }
+            }
+        }
     },
+}
+
+local defaultOptions = {
+    profile = {
+        tweaks = {
+            hideExpansionSummaryButton = false
+        },
+        font = {
+            name = "Arial Narrow",
+            size = 16,
+            outline = "THICKOUTLINE"
+        },
+        socials = {
+            enableFriendlist = true,
+            enableGuildlist = true,
+            friendlist = {
+                someoption = true,
+            },
+            guildlist = {
+                someoption = true,
+            }
+        }
+    }
 }
 
 
 function CUI:InitializeAce()
-    self.db = LibStub("AceDB-3.0"):New("ChanUIDB", defaultValues)
+    self.db = LibStub("AceDB-3.0"):New("ChanUIDB", defaultOptions)
 
     -- config
     LibStub("AceConfig-3.0"):RegisterOptionsTable("ChanUI", options)
-    self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("ChanUI", "ChanUI")
+    LibStub("AceConfigDialog-3.0"):AddToBlizOptions("ChanUI", "ChanUI")
     self:RegisterChatCommand("cui", "SlashCommand")
     self:RegisterChatCommand("chanui", "SlashCommand")
 
@@ -102,31 +189,4 @@ function CUI:SlashCommand(msg)
     if msg == nil or msg:trim() == "" then
         Settings.OpenToCategory("ChanUI")
     end
-end
-
-function CUI:SetFontName(_, fontName)
-    self.db.profile.font.name = fontName
-end
-
-function CUI:GetFontName()
-    return self.db.profile.font.name
-end
-
-function CUI:GetFontSize()
-    return self.db.profile.font.size
-end
-
-
-function CUI:SetFontSize(info, fontSize)
-    self.db.profile.font.size = fontSize
-end
-
-
-function CUI:GetOutline()
-    return self.db.profile.font.outline
-end
-
-
-function CUI:SetOutline(info, fontOutline)
-    self.db.profile.font.outline = fontOutline
 end
