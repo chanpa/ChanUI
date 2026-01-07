@@ -2,8 +2,10 @@ local CUI = CUI
 
 function CUI:CreateFriends()
     if not CUI.db.profile.socials.enableFriendlist then return end
+    
+    self.friendsTable = {}
 
-    -- enabled
     CUI:CreateFriendRoot()
-    CUI:CreateFriendsOnline()
+    CUI:CreateFriendsTable()
+    CUI:CreateFriendsOnlineFontString()
 end
