@@ -8,3 +8,5 @@ embeds.xml
 core.lua
 options.lua
 tweaks.lua
+socials.lua
+friendlist.lua

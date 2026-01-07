@@ -43,6 +43,7 @@ local options = {
                     end,
                     set = function(_, value)
                         CUI.db.profile.font.name = value
+                        CUI:UpdateFont(CUI.friendsOnline)
                     end
                 },
                 size = {
@@ -57,6 +58,7 @@ local options = {
                     end,
                     set = function(_, value)
                         CUI.db.profile.font.size = value
+                        CUI:UpdateFont(CUI.friendsOnline)
                     end,
                 },
                 outline = {
@@ -74,6 +76,7 @@ local options = {
                     end,
                     set = function(_, value)
                         CUI.db.profile.font.outline = value
+                        CUI:UpdateFont(CUI.friendsOnline)
                     end,
                     style = "dropdown"
                 }
