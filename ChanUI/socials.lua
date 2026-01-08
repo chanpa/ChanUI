@@ -74,3 +74,7 @@ function CUI:UpdateSocialFramePosition(fs)
     parent:SetPoint(anchor, UIParent, anchor, relX, relY)
     fs:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
 end
+
+function CUI:CreateSocialOnlineString(prefix, number)
+    return prefix .. ": " .. self:ColorText("ff00ff00", number)
+end

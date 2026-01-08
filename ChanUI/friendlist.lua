@@ -1,7 +1,17 @@
 local CUI = CUI
 local LSM = LibStub("LibSharedMedia-3.0")
+local QT = LibStub("LibQTip-1.0")
+local LRI = LibStub("LibRealmInfo")
 
 CUI.friendsTable = {}
+local clientTranslations = {
+    retail = "WoW retail",
+    classic_mop = "WoW Classic Cataclysm",
+    BSAp = "Mobile",
+    WTCG = "Hearthstone",
+    App = "Battle.net",
+    Pro = "Overwatch II"
+}
 
 ------ FRAMES -------
 function CUI:HideFriends()
@@ -54,7 +64,7 @@ function CUI:CreateFriendRoot()
     local relY = CUI.db.profile.socials.friendlist.positioning.relY
     f:SetPoint(anchor, UIParent, anchor, relX, relY)
     f:SetScript("OnEnter", function()
-        self:Print(self:DumpObject(self.friendsTable["retail"]))
+        self:ShowFriendList()
     end)
 
     self.friendRoot = f
@@ -70,7 +80,85 @@ function CUI:CreateFriendsOnlineFontString()
 end
 
 
------- TABLES & LOGIC -------
+------ FRIEND LIST -------
+function CUI:ShowFriendList()
+    self:Print("Showing friendlist")
+    if self.numberOfOnlineFriends <= 0 then
+        self:UpdateSocialText(self.friendsFontString, self:CreateSocialOnlineString("Friends", 0))
+        return
+    end
+
+    if QT:IsAcquired("ChanUIFriendListFrame") then
+        QT:Release(self.friendList)
+        self.friendList = nil
+    end
+
+    -- create list
+    self.friendList = QT:Acquire("ChanUIFriendListFrame", 2, "LEFT", "CENTER")
+    self.friendList:SetBackdropColor(0, 0, 0, 1)
+    self.friendList:SetBackdropBorderColor(0, 0, 0, 0)
+    self.friendList:SmartAnchorTo(self.friendRoot)
+    self.friendList:SetAutoHideDelay(0.05, self.friendRoot)
+
+    -- fonts
+    local fontPath = LSM:Fetch("font", self.db.profile.font.name)
+    local normalFont = CreateFont("ChanUISocialsNormalFont")
+    normalFont:SetFont(fontPath, 12, "")
+    normalFont:SetTextColor(1, 1, 1)
+
+    local headerFont = CreateFont("ChanUISocialsHeaderFont")
+    headerFont:SetFont(fontPath, 12, "OUTLINE")
+    headerFont:SetTextColor(1, 0.8, 0)
+    
+    local headlineFont = CreateFont("ChanUISocialsHeadlineFont")
+    headlineFont:SetFont(fontPath, 16, "THICKOUTLINE")
+    headlineFont:SetTextColor(1, 0.8, 0)
+
+
+
+    self.friendList:SetHeaderFont(headerFont)
+    self.friendList:SetFont(normalFont)
+    
+    for client, friends in pairs(self.friendsTable) do
+        -- headline
+        self.friendList:AddLine(" ")
+        self.friendList:AddLine(" ")
+        local line = self.friendList:AddHeader()
+        self.friendList:SetCell(line, 1, clientTranslations[client], headlineFont, "LEFT", 2, QT.LabelProvider, -1)
+        self.friendList:AddSeparator()
+
+        -- headers
+        line = self.friendList:AddHeader()
+        self.friendList:SetCell(line, 1, "Real ID")
+        self.friendList:SetCell(line, 2, "Activity")
+
+        -- friends
+        for _, friend in pairs(friends) do
+            line = self.friendList:AddLine()
+            self.friendList:SetLineScript(line, "OnMouseUp", function()
+                CUI:ClickOnFriend(friend)
+            end)
+            self.friendList:SetCell(line, 1, friend.accountName)
+            self.friendList:SetCell(line, 2, friend.richPresence)
+        end
+    end
+
+    -- finished
+    self.friendList:UpdateScrolling()
+    self.friendList:Show()
+end
+
+
+function CUI:ClickOnFriend(friend)
+    if IsControlKeyDown() then
+        self:Print(friend.characterName .. "-" .. friend.realmName)
+        -- C_PartyInfo.InviteUnit(friend.characterName .. "-" .. LRI:GetRealmInfoByID(friend.realmID).apiName)
+    else
+        ChatFrame_SendBNetTell(friend.accountName)
+    end
+end
+
+------ TABLES -------
 function CUI:CreateFriendsTable()
     for _, ct in pairs(self.friendsTable) do
 		wipe(ct)
@@ -90,7 +178,7 @@ function CUI:CreateFriendsTable()
         bnetIndex = bnetIndex + 1
     end
     self.numberOfOnlineFriends = count
-    self:UpdateSocialText(self.friendsFontString, "Friends: " .. self:ColorText("ff00ff00", self.numberOfOnlineFriends))
+    self:UpdateSocialText(self.friendsFontString, self:CreateSocialOnlineString("Friends", count))
 end
 
 ---@param bnetInfo BNetAccountInfo
@@ -127,7 +215,8 @@ function CUI:ParseWowFriend(friend, gameAccountInfo)
         self:Print("Unknown wowProjectId: " .. wowProj)
         friend.client = "unknown_wow"
     end
-    friend.realmID = gameAccountInfo.realmID
+    local _, _, _, _, _, _, realmName = GetPlayerInfoByGUID(gameAccountInfo.playerGuid)
+    friend.realmName = realmName
     friend.characterName = gameAccountInfo.characterName
     friend.characterLevel = gameAccountInfo.characterLevel
     friend.characterClass = gameAccountInfo.className
