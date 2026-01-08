@@ -4,20 +4,22 @@ local QT = LibStub("LibQTip-1.0")
 
 CUI.friendsTable = {}
 local clientTranslations = {
-    retail = "WoW retail",
-    classic_mop = "Mists of Pandaria Classic",
-    classic_wow_anniversary = "WoW Classic Anniversary",
+    wow_retail = "WoW retail",
+    wow_classic_mop = "Mists of Pandaria Classic",
+    wow_classic_anniversary = "WoW Classic Anniversary",
+    wow_unknown = "Unknown WoW version",
     BSAp = "Mobile",
     WTCG = "Hearthstone",
     App = "Battle.net",
     Pro = "Overwatch II",
-    unknown_wow = "Unknown WoW version"
+    Fen = "Diablo VI",
 }
 local clientOrder = {
-    "retail",
-    "classic_mop",
-    "classic_wow_anniversary",
-    "unknown_wow",
+    "wow_retail",
+    "wow_classic_mop",
+    "wow_classic_anniversary",
+    "wow_unknown",
+    "Fen",
     "WTCG",
     "Pro",
     "App",
@@ -104,7 +106,7 @@ function CUI:ShowFriendList()
     end
 
     -- create list
-    self.friendList = QT:Acquire("ChanUIFriendListFrame", 2, "LEFT", "CENTER")
+    self.friendList = QT:Acquire("ChanUIFriendListFrame", 7, "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER", "LEFT")
     self.friendList:SetBackdropColor(0, 0, 0, 1)
     self.friendList:SetBackdropBorderColor(0, 0, 0, 0)
     self.friendList:SmartAnchorTo(self.friendRoot)
@@ -134,38 +136,91 @@ function CUI:ShowFriendList()
             self.friendList:AddLine(" ")
             self.friendList:AddLine(" ")
             local line = self.friendList:AddHeader()
-            self.friendList:SetCell(line, 1, clientTranslations[client], headlineFont, "LEFT", 2, QT.LabelProvider, -1)
+            self.friendList:SetCell(line, 1, clientTranslations[client], headlineFont, "LEFT", 7, QT.LabelProvider, -1)
             self.friendList:AddSeparator()
 
             -- headers
             line = self.friendList:AddHeader()
-            self.friendList:SetCell(line, 1, "Real ID")
-            self.friendList:SetCell(line, 2, "Activity")
+            if client:find("^wow") then
+                self.friendList:SetCell(line, 1, "")
+                self.friendList:SetCell(line, 2, "Real ID")
+                self.friendList:SetCell(line, 3, "Lvl")
+                self.friendList:SetCell(line, 4, "Name")
+                self.friendList:SetCell(line, 5, "Zone")
+                self.friendList:SetCell(line, 6, "Realm")
+                self.friendList:SetCell(line, 7, "Note")
+            else
+                self.friendList:SetCell(line, 1, "")
+                self.friendList:SetCell(line, 2, "Real ID")
+                self.friendList:SetCell(line, 3, "Activity", "CENTER", 4)
+                self.friendList:SetCell(line, 7, "Note")
+            end
+
 
             -- friends
             for _, friend in pairs(self.friendsTable[client]) do
                 line = self.friendList:AddLine()
-                self.friendList:SetLineScript(line, "OnMouseUp", function()
-                    CUI:ClickOnFriend(friend)
+                self.friendList:SetLineScript(line, "OnMouseDown", function(_, button)
+                    CUI:ClickOnFriend(button, friend)
                 end)
-                self.friendList:SetCell(line, 1, friend.accountName)
-                self.friendList:SetCell(line, 2, friend.richPresence)
+                if client:find("^wow") then
+                    self.friendList:SetCell(line, 1, self:CreateSocialStatusString(friend))
+                    self.friendList:SetCell(line, 2, friend.accountName)
+                    self.friendList:SetCell(line, 3, friend.characterLevel)
+                    self.friendList:SetCell(line, 4, friend.characterName)
+                    self.friendList:SetCell(line, 5, friend.characterZone)
+                    self.friendList:SetCell(line, 6, friend.realmName)
+                    self.friendList:SetCell(line, 7, friend.note)
+                else
+                    self.friendList:SetCell(line, 1, self:CreateSocialStatusString(friend))
+                    self.friendList:SetCell(line, 2, friend.accountName)
+                    self.friendList:SetCell(line, 3, friend.richPresence, "CENTER", 4)
+                    self.friendList:SetCell(line, 7, friend.note)
+                end
+
             end
         end
     end
 
     -- finished
-    self.friendList:UpdateScrolling()
+    self.friendList:UpdateScrolling(GetScreenHeight() * 0.5)
+    self.friendList:SetBackdropColor(0, 0, 0, 0.75)
     self.friendList:Show()
+    local slider = self.friendList.slider
+    if slider then
+        slider:SetBackdrop(
+            {
+                bgFile = "Interface/Buttons/WHITE8X8",
+                edgeFile = "",
+                tile = true,
+                edgeSize = 0,
+                tileSize = 32,
+                insets = {
+                    left = 0,
+                    right = 0,
+                    top = 0,
+                    bottom = 0
+                }
+            }
+        )
+        slider:SetBackdropColor(0, 0, 0, 0.8)
+        slider:SetThumbTexture("Interface/Buttons/WHITE8X8")
+    end
 end
 
 
-function CUI:ClickOnFriend(friend)
+function CUI:ClickOnFriend(button, friend)
     if IsControlKeyDown() then
         if not friend.characterName or not friend.realmName then return end
-        C_PartyInfo.InviteUnit(friend.characterName .. "-" .. friend.realmName)
+        if button == "LeftButton" then
+            C_PartyInfo.InviteUnit(friend.characterName .. "-" .. friend.realmName)
+        end
     else
-        ChatFrameUtil.SendBNetTell(friend.accountName)
+        if button == "LeftButton" then
+            ChatFrameUtil.SendBNetTell(friend.accountName)
+        elseif button == "RightButton" then
+            self:Print(self:DumpObject(friend))
+        end
     end
 end
 
@@ -202,7 +257,9 @@ function CUI:ParseBnetInfo(bnetInfo)
         battleTag = bnetInfo.battleTag,
         message = bnetInfo.customMessage,
         note = bnetInfo.note,
-        richPresence = bnetInfo.gameAccountInfo.richPresence
+        richPresence = bnetInfo.gameAccountInfo.richPresence,
+        isGameAFK = bnetInfo.gameAccountInfo.isGameAFK,
+        isGameBusy = bnetInfo.gameAccountInfo.isGameBusy
     }
     local client = bnetInfo.gameAccountInfo.clientProgram
     if client == "WoW" then
@@ -218,15 +275,15 @@ end
 function CUI:ParseWowFriend(friend, gameAccountInfo)
     local wowProj = gameAccountInfo.wowProjectID
     if wowProj == 1 then
-        friend.client = "retail"
+        friend.client = "wow_retail"
         friend.characterFaction = gameAccountInfo.factionName
     elseif wowProj == 2 then
-        friend.client = "classic_wow_anniversary"
+        friend.client = "wow_classic_anniversary"
     elseif wowProj == 19 then
-        friend.client = "classic_mop"
+        friend.client = "wow_classic_mop"
     else
         self:Print("Unknown wowProjectId: " .. wowProj)
-        friend.client = "unknown_wow"
+        friend.client = "wow_unknown"
     end
     local _, _, _, _, _, _, realmName = GetPlayerInfoByGUID(gameAccountInfo.playerGuid)
     friend.guid = gameAccountInfo.playerGuid

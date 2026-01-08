@@ -78,3 +78,12 @@ end
 function CUI:CreateSocialOnlineString(prefix, number)
     return prefix .. ": " .. self:ColorText("ff00ff00", number)
 end
+
+function CUI:CreateSocialStatusString(friend)
+    if friend.isAFK or friend.isGameAFK then
+		return self:ColorText("ffff8040", "AFK")
+	elseif friend.isDND or friend.isGameBusy then
+		return self:ColorText("ffff8040", "DND")
+	end
+	return ""
+end
