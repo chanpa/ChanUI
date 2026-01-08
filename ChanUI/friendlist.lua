@@ -5,11 +5,23 @@ local QT = LibStub("LibQTip-1.0")
 CUI.friendsTable = {}
 local clientTranslations = {
     retail = "WoW retail",
-    classic_mop = "WoW Classic Cataclysm",
+    classic_mop = "Mists of Pandaria Classic",
+    classic_wow_anniversary = "WoW Classic Anniversary",
     BSAp = "Mobile",
     WTCG = "Hearthstone",
     App = "Battle.net",
-    Pro = "Overwatch II"
+    Pro = "Overwatch II",
+    unknown_wow = "Unknown WoW version"
+}
+local clientOrder = {
+    "retail",
+    "classic_mop",
+    "classic_wow_anniversary",
+    "unknown_wow",
+    "WTCG",
+    "Pro",
+    "App",
+    "BSAp"
 }
 
 ------ FRAMES -------
@@ -81,7 +93,6 @@ end
 
 ------ FRIEND LIST -------
 function CUI:ShowFriendList()
-    self:Print("Showing friendlist")
     if self.numberOfOnlineFriends <= 0 then
         self:UpdateSocialText(self.friendsFontString, self:CreateSocialOnlineString("Friends", 0))
         return
@@ -113,32 +124,33 @@ function CUI:ShowFriendList()
     headlineFont:SetFont(fontPath, 16, "THICKOUTLINE")
     headlineFont:SetTextColor(1, 0.8, 0)
 
-
-
     self.friendList:SetHeaderFont(headerFont)
     self.friendList:SetFont(normalFont)
     
-    for client, friends in pairs(self.friendsTable) do
-        -- headline
-        self.friendList:AddLine(" ")
-        self.friendList:AddLine(" ")
-        local line = self.friendList:AddHeader()
-        self.friendList:SetCell(line, 1, clientTranslations[client], headlineFont, "LEFT", 2, QT.LabelProvider, -1)
-        self.friendList:AddSeparator()
+    for _, client in pairs(clientOrder) do
+        local friends = self.friendsTable[client]
+        if friends then
+            -- headline
+            self.friendList:AddLine(" ")
+            self.friendList:AddLine(" ")
+            local line = self.friendList:AddHeader()
+            self.friendList:SetCell(line, 1, clientTranslations[client], headlineFont, "LEFT", 2, QT.LabelProvider, -1)
+            self.friendList:AddSeparator()
 
-        -- headers
-        line = self.friendList:AddHeader()
-        self.friendList:SetCell(line, 1, "Real ID")
-        self.friendList:SetCell(line, 2, "Activity")
+            -- headers
+            line = self.friendList:AddHeader()
+            self.friendList:SetCell(line, 1, "Real ID")
+            self.friendList:SetCell(line, 2, "Activity")
 
-        -- friends
-        for _, friend in pairs(friends) do
-            line = self.friendList:AddLine()
-            self.friendList:SetLineScript(line, "OnMouseUp", function()
-                CUI:ClickOnFriend(friend)
-            end)
-            self.friendList:SetCell(line, 1, friend.accountName)
-            self.friendList:SetCell(line, 2, friend.richPresence)
+            -- friends
+            for _, friend in pairs(self.friendsTable[client]) do
+                line = self.friendList:AddLine()
+                self.friendList:SetLineScript(line, "OnMouseUp", function()
+                    CUI:ClickOnFriend(friend)
+                end)
+                self.friendList:SetCell(line, 1, friend.accountName)
+                self.friendList:SetCell(line, 2, friend.richPresence)
+            end
         end
     end
 
@@ -150,10 +162,10 @@ end
 
 function CUI:ClickOnFriend(friend)
     if IsControlKeyDown() then
-        self:Print(friend.characterName .. "-" .. friend.realmName)
-        -- C_PartyInfo.InviteUnit(friend.characterName .. "-" .. LRI:GetRealmInfoByID(friend.realmID).apiName)
+        if not friend.characterName or not friend.realmName then return end
+        C_PartyInfo.InviteUnit(friend.characterName .. "-" .. friend.realmName)
     else
-        ChatFrame_SendBNetTell(friend.accountName)
+        ChatFrameUtil.SendBNetTell(friend.accountName)
     end
 end
 
@@ -208,6 +220,8 @@ function CUI:ParseWowFriend(friend, gameAccountInfo)
     if wowProj == 1 then
         friend.client = "retail"
         friend.characterFaction = gameAccountInfo.factionName
+    elseif wowProj == 2 then
+        friend.client = "classic_wow_anniversary"
     elseif wowProj == 19 then
         friend.client = "classic_mop"
     else
@@ -215,6 +229,7 @@ function CUI:ParseWowFriend(friend, gameAccountInfo)
         friend.client = "unknown_wow"
     end
     local _, _, _, _, _, _, realmName = GetPlayerInfoByGUID(gameAccountInfo.playerGuid)
+    friend.guid = gameAccountInfo.playerGuid
     friend.realmName = realmName
     friend.characterName = gameAccountInfo.characterName
     friend.characterLevel = gameAccountInfo.characterLevel
