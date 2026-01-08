@@ -1,7 +1,6 @@
 local CUI = CUI
 local LSM = LibStub("LibSharedMedia-3.0")
 local QT = LibStub("LibQTip-1.0")
-local LRI = LibStub("LibRealmInfo")
 
 CUI.friendsTable = {}
 local clientTranslations = {
