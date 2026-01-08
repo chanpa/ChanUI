@@ -43,7 +43,8 @@ local options = {
                     end,
                     set = function(_, value)
                         CUI.db.profile.font.name = value
-                        CUI:UpdateFont(CUI.friendsFontString)
+                        CUI:SetFont(CUI.friendsFontString)
+                        CUI:UpdateSocialText(CUI.friendsFontString)
                     end
                 },
                 size = {
@@ -58,7 +59,8 @@ local options = {
                     end,
                     set = function(_, value)
                         CUI.db.profile.font.size = value
-                        CUI:UpdateFont(CUI.friendsFontString)
+                        CUI:SetFont(CUI.friendsFontString)
+                        CUI:UpdateSocialText(CUI.friendsFontString)
                     end,
                 },
                 outline = {
@@ -76,7 +78,8 @@ local options = {
                     end,
                     set = function(_, value)
                         CUI.db.profile.font.outline = value
-                        CUI:UpdateFont(CUI.friendsFontString)
+                        CUI:SetFont(CUI.friendsFontString)
+                        CUI:UpdateSocialText(CUI.friendsFontString)
                     end,
                     style = "dropdown"
                 }
@@ -94,6 +97,11 @@ local options = {
                     end,
                     set = function(_, value)
                         CUI.db.profile.socials.enableFriendlist = value
+                        if value then
+                            CUI:ShowFriends()
+                        else
+                            CUI:HideFriends()
+                        end
                     end
                 },
                 enableGuildlist = {
@@ -105,6 +113,102 @@ local options = {
                     set = function(_, value)
                         CUI.db.profile.socials.enableGuildlist = value
                     end
+                },
+                border = {
+                    type = "group",
+                    name = "Borders",
+                    args = {
+                        name = {
+                            type = "select",
+                            name = "Frame borders",
+                            width = "full",
+                            dialogControl = "LSM30_Border",
+                            values = LSM:HashTable("border"),
+                            get = function()
+                                return CUI.db.profile.socials.border.name
+                            end,
+                            set = function(_, value)
+                                CUI.db.profile.socials.border.name = value
+                                CUI:UpdateSocialFrame(CUI.friendRoot)
+                                CUI:UpdateSocialText(CUI.friendsFontString)
+                            end
+                        },
+                        size = {
+                            type = "range",
+                            name = "Border size",
+                            width = "full",
+                            min = 0,
+                            max = 30,
+                            step = 1,
+                            get = function()
+                                return CUI.db.profile.socials.border.size
+                            end,
+                            set = function(_, value)
+                                CUI.db.profile.socials.border.size = value
+                                CUI:UpdateSocialFrame(CUI.friendRoot)
+                                CUI:UpdateSocialText(CUI.friendsFontString)
+                            end
+                        },
+                        inset = {
+                            type = "range",
+                            name = "Border inset",
+                            width = "full",
+                            min = 0,
+                            max = 30,
+                            step = 1,
+                            get = function()
+                                return CUI.db.profile.socials.border.inset
+                            end,
+                            set = function(_, value)
+                                CUI.db.profile.socials.border.inset = value
+                                CUI:UpdateSocialFrame(CUI.friendRoot)
+                                CUI:UpdateSocialText(CUI.friendsFontString)
+                            end
+                        },
+                        color = {
+                            type = "color",
+                            name = "Border color",
+                            width = "full",
+                            hasAlpha = true,
+                            get = function()
+                                return CUI.db.profile.socials.border.color.r, CUI.db.profile.socials.border.color.g, CUI.db.profile.socials.border.color.b, CUI.db.profile.socials.border.color.a
+                            end,
+                            set = function(_, r, g, b, a)
+                                CUI.db.profile.socials.border.color = {
+                                    r = r,
+                                    g = g,
+                                    b = b,
+                                    a = a
+                                }
+                                CUI:UpdateSocialFrame(CUI.friendRoot)
+                                CUI:UpdateSocialText(CUI.friendsFontString)
+                            end
+                        }
+                    }
+                },
+                backdrop = {
+                    type = "group",
+                    name = "Backdrop",
+                    args = {
+                        color = {
+                            type = "color",
+                            name = "Backdrop color",
+                            width = "full",
+                            hasAlpha = true,
+                            get = function()
+                                return CUI.db.profile.socials.backdrop.color.r, CUI.db.profile.socials.backdrop.color.g, CUI.db.profile.socials.backdrop.color.b, CUI.db.profile.socials.backdrop.color.a
+                            end,
+                            set = function(_, r, g, b, a)
+                                CUI.db.profile.socials.backdrop.color = {
+                                    r = r,
+                                    g = g,
+                                    b = b,
+                                    a = a
+                                }
+                                CUI:UpdateSocialFrame(CUI.friendRoot)
+                            end
+                        }
+                    }
                 },
                 friendlist = {
                     type = "group",
@@ -146,7 +250,7 @@ local options = {
                 }
             }
         }
-    },
+    }
 }
 
 local defaultOptions = {
@@ -162,6 +266,25 @@ local defaultOptions = {
         socials = {
             enableFriendlist = true,
             enableGuildlist = true,
+            border = {
+                name = "",
+                size = 0,
+                inset = 0,
+                color = {
+                    r = 0,
+                    g = 0,
+                    b = 0,
+                    a = 1
+                }
+            },
+            backdrop = {
+                color = {
+                    r = 0,
+                    g = 0,
+                    b = 0,
+                    a = 1
+                }
+            },
             friendlist = {
                 someoption = true,
             },

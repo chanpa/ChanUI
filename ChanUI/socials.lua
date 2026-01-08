@@ -1,11 +1,66 @@
 local CUI = CUI
+local LSM = LibStub("LibSharedMedia-3.0")
 
-function CUI:CreateFriends()
-    if not CUI.db.profile.socials.enableFriendlist then return end
-    
-    self.friendsTable = {}
+function CUI:ShowSocials()
+    if self.db.profile.socials.enableFriendlist then
+        self:ShowFriends()
+    end
 
-    CUI:CreateFriendRoot()
-    CUI:CreateFriendsTable()
-    CUI:CreateFriendsOnlineFontString()
+    -- if self.db.profile.socials.enableGuilddlist then
+    --     self:ShowGuild()
+    -- end
+end
+
+function CUI:CalculateSocialFramePadding()
+    local start_padding = 5
+    return start_padding + (self.db.profile.socials.border.inset * 2)
+end
+
+---@param fs FontString
+function CUI:UpdateSocialText(fs, message)
+    local parent = fs:GetParent()
+    local padding = self:CalculateSocialFramePadding()
+    message = message or fs:GetText()
+
+    fs:SetText(message)
+    local w = fs:GetUnboundedStringWidth()
+    local h = fs:GetStringHeight()
+
+    parent:SetSize(w + padding, h + padding)
+    fs:SetSize(parent:GetWidth(), parent:GetHeight())
+end
+
+
+function CUI:UpdateSocialFrame(f)
+    local borderName = self.db.profile.socials.border.name
+    local size = self.db.profile.socials.border.size
+    local inset = self.db.profile.socials.border.inset
+    f:SetBackdrop(
+        {
+            bgFile = "Interface/Buttons/WHITE8X8",
+            edgeFile = LSM:Fetch("border", borderName),
+            tile = true,
+            edgeSize = size,
+            tileSize = 32,
+            insets = {
+                left = inset,
+                right = inset,
+                top = inset,
+                bottom = inset
+            }
+        }
+    )
+    self:Print(self.db.profile.socials.backdrop.color.r)
+    f:SetBackdropColor(
+        self.db.profile.socials.backdrop.color.r,
+        self.db.profile.socials.backdrop.color.g,
+        self.db.profile.socials.backdrop.color.b,
+        self.db.profile.socials.backdrop.color.a
+    )
+    f:SetBackdropBorderColor(
+        self.db.profile.socials.border.color.r,
+        self.db.profile.socials.border.color.g,
+        self.db.profile.socials.border.color.b,
+        self.db.profile.socials.border.color.a
+    )
 end

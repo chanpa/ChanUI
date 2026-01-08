@@ -1,36 +1,72 @@
 local CUI = CUI
-local c = 1
+local LSM = LibStub("LibSharedMedia-3.0")
+
+CUI.friendsTable = {}
+
+------ FRAMES -------
+function CUI:HideFriends()
+    if self.friendRoot then self.friendRoot:Hide() end
+    if self.friendsFontString then self.friendsFontString:Hide() end
+end
+
+function CUI:ShowFriends()
+    if not self.friendRoot then self:CreateFriendRoot() end
+    if not self.friendsFontString then self:CreateFriendsOnlineFontString() end
+    self.friendRoot:Show()
+    self.friendsFontString:Show()
+    self:CreateFriendsTable()
+end
 
 function CUI:CreateFriendRoot()
     local f = CreateFrame("Frame", "ChanUIFriendFrame", UIParent, "BackdropTemplate")
     f:SetBackdrop(
         {
-            bgFile = "Interface/DialogFrame/UI-DialogBox-Background-Dark",
-            edgeFile = "",
+            bgFile = "Interface/Buttons/WHITE8X8",
+            edgeFile = LSM:Fetch("border", self.db.profile.socials.border.name),
             tile = true,
-            edgeSize = 0,
+            edgeSize = self.db.profile.socials.border.size,
             tileSize = 32,
             insets = {
-                left = 0,
-                right = 0,
-                top = 0,
-                bottom = 0
+                left = self.db.profile.socials.border.inset,
+                right = self.db.profile.socials.border.inset,
+                top = self.db.profile.socials.border.inset,
+                bottom = self.db.profile.socials.border.inset
             }
         }
     )
-    f:SetBackdropColor(1, 0, 0, 1)
+    f:SetBackdropColor(
+        self.db.profile.socials.backdrop.color.r,
+        self.db.profile.socials.backdrop.color.g,
+        self.db.profile.socials.backdrop.color.b,
+        self.db.profile.socials.backdrop.color.a
+    )
+    f:SetBackdropBorderColor(
+        self.db.profile.socials.border.color.r,
+        self.db.profile.socials.border.color.g,
+        self.db.profile.socials.border.color.b,
+        self.db.profile.socials.border.color.a
+    )
     f:SetClampedToScreen(false)
     f:EnableMouse(true)
-    f:SetPoint("CENTER", 0, 0)
+    f:SetPoint("TOP", 0, 0)
     f:SetScript("OnEnter", function()
-        c = c + 1
-        self:UpdateText("Entered " .. c, self.friendsFontString, 8)
         self:Print(self:DumpObject(self.friendsTable["retail"]))
     end)
 
     self.friendRoot = f
 end
 
+function CUI:CreateFriendsOnlineFontString()
+    if not self.friendRoot then return end
+
+    local fs = self.friendRoot:CreateFontString(nil, "OVERLAY")
+    fs:SetPoint("TOPLEFT", self.friendRoot, "TOPLEFT", 0, 0)
+    self:SetFont(fs)
+    self.friendsFontString = fs
+end
+
+
+------ TABLES & LOGIC -------
 function CUI:CreateFriendsTable()
     for _, ct in pairs(self.friendsTable) do
 		wipe(ct)
@@ -50,6 +86,7 @@ function CUI:CreateFriendsTable()
         bnetIndex = bnetIndex + 1
     end
     self.numberOfOnlineFriends = count
+    self:UpdateSocialText(self.friendsFontString, "Friends: " .. self:ColorText("ff00ff00", self.numberOfOnlineFriends))
 end
 
 ---@param bnetInfo BNetAccountInfo
@@ -92,14 +129,4 @@ function CUI:ParseWowFriend(friend, gameAccountInfo)
     friend.characterClass = gameAccountInfo.className
     friend.characterZone = gameAccountInfo.areaName
     friend.timerunningSeasonID = gameAccountInfo.timerunningSeasonID or 0
-end
-
-function CUI:CreateFriendsOnlineFontString()
-    if not self.friendRoot then return end
-
-    local fs = self.friendRoot:CreateFontString(nil, "OVERLAY")
-    fs:SetPoint("TOPLEFT", self.friendRoot, "TOPLEFT", 0, 0)
-    self:SetFont(fs)
-    self:UpdateText("start", fs, 8)
-    self.friendsFontString = fs
 end
