@@ -129,7 +129,7 @@ local options = {
                             end,
                             set = function(_, value)
                                 CUI.db.profile.socials.border.name = value
-                                CUI:UpdateSocialFrame(CUI.friendRoot)
+                                CUI:UpdateSocialFrameLook(CUI.friendRoot)
                                 CUI:UpdateSocialText(CUI.friendsFontString)
                             end
                         },
@@ -145,7 +145,7 @@ local options = {
                             end,
                             set = function(_, value)
                                 CUI.db.profile.socials.border.size = value
-                                CUI:UpdateSocialFrame(CUI.friendRoot)
+                                CUI:UpdateSocialFrameLook(CUI.friendRoot)
                                 CUI:UpdateSocialText(CUI.friendsFontString)
                             end
                         },
@@ -161,7 +161,7 @@ local options = {
                             end,
                             set = function(_, value)
                                 CUI.db.profile.socials.border.inset = value
-                                CUI:UpdateSocialFrame(CUI.friendRoot)
+                                CUI:UpdateSocialFrameLook(CUI.friendRoot)
                                 CUI:UpdateSocialText(CUI.friendsFontString)
                             end
                         },
@@ -180,7 +180,7 @@ local options = {
                                     b = b,
                                     a = a
                                 }
-                                CUI:UpdateSocialFrame(CUI.friendRoot)
+                                CUI:UpdateSocialFrameLook(CUI.friendRoot)
                                 CUI:UpdateSocialText(CUI.friendsFontString)
                             end
                         }
@@ -205,7 +205,7 @@ local options = {
                                     b = b,
                                     a = a
                                 }
-                                CUI:UpdateSocialFrame(CUI.friendRoot)
+                                CUI:UpdateSocialFrameLook(CUI.friendRoot)
                             end
                         }
                     }
@@ -225,6 +225,7 @@ local options = {
                                     type = "select",
                                     name = "Anchor point",
                                     desc = "Where to anchor the list",
+                                    width = "full",
                                     values = {
                                         ["TOP"] = "TOP",
                                         ["RIGHT"] = "RIGHT",
@@ -241,7 +242,41 @@ local options = {
                                     end,
                                     set = function(_, value)
                                         CUI.db.profile.socials.friendlist.positioning.anchor = value
-                                        CUI:UpdateSocialPosition(CUI.friendsFontString)
+                                        CUI:UpdateSocialFramePosition(CUI.friendsFontString)
+                                    end
+                                },
+                                relX = {
+                                    type = "range",
+                                    name = "Relative X position",
+                                    width = "full",
+                                    softMin = -1500,
+                                    min = -3000,
+                                    max = 3000,
+                                    softMax = 1500,
+                                    step = 1,
+                                    get = function()
+                                        return CUI.db.profile.socials.friendlist.positioning.relX
+                                    end,
+                                    set = function(_, value)
+                                        CUI.db.profile.socials.friendlist.positioning.relX = value
+                                        CUI:UpdateSocialFramePosition(CUI.friendsFontString)
+                                    end
+                                },
+                                relY = {
+                                    type = "range",
+                                    name = "Relative Y position",
+                                    width = "full",
+                                    softMin = -1500,
+                                    min = -3000,
+                                    max = 3000,
+                                    softMax = 1500,
+                                    step = 1,
+                                    get = function()
+                                        return CUI.db.profile.socials.friendlist.positioning.relY
+                                    end,
+                                    set = function(_, value)
+                                        CUI.db.profile.socials.friendlist.positioning.relY = value
+                                        CUI:UpdateSocialFramePosition(CUI.friendsFontString)
                                     end
                                 }
                             }
@@ -307,6 +342,8 @@ local defaultOptions = {
             friendlist = {
                 positioning = {
                     anchor = "TOP",
+                    relX = 0,
+                    relY = 0
                 },
             },
             guildlist = {

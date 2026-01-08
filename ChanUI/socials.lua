@@ -31,7 +31,7 @@ function CUI:UpdateSocialText(fs, message)
 end
 
 
-function CUI:UpdateSocialFrame(f)
+function CUI:UpdateSocialFrameLook(f)
     local borderName = self.db.profile.socials.border.name
     local size = self.db.profile.socials.border.size
     local inset = self.db.profile.socials.border.inset
@@ -65,10 +65,12 @@ function CUI:UpdateSocialFrame(f)
 end
 
 ---@param fs FontString
-function CUI:UpdateSocialPosition(fs)
+function CUI:UpdateSocialFramePosition(fs)
     local parent = fs:GetParent()
     local anchor = CUI.db.profile.socials.friendlist.positioning.anchor
+    local relX = CUI.db.profile.socials.friendlist.positioning.relX
+    local relY = CUI.db.profile.socials.friendlist.positioning.relY
     parent:ClearAllPoints()
-    parent:SetPoint(anchor, UIParent, anchor, 0, 0)
+    parent:SetPoint(anchor, UIParent, anchor, relX, relY)
     fs:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
 end

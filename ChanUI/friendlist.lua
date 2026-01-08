@@ -48,7 +48,11 @@ function CUI:CreateFriendRoot()
     )
     f:SetClampedToScreen(false)
     f:EnableMouse(true)
-    f:SetPoint(CUI.db.profile.socials.friendlist.positioning.anchor, UIParent, CUI.db.profile.socials.friendlist.positioning.anchor, 0, 0)
+
+    local anchor = CUI.db.profile.socials.friendlist.positioning.anchor
+    local relX = CUI.db.profile.socials.friendlist.positioning.relX
+    local relY = CUI.db.profile.socials.friendlist.positioning.relY
+    f:SetPoint(anchor, UIParent, anchor, relX, relY)
     f:SetScript("OnEnter", function()
         self:Print(self:DumpObject(self.friendsTable["retail"]))
     end)
