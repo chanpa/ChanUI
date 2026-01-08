@@ -128,14 +128,24 @@ function CUI:ShowFriendList()
 
     self.friendList:SetHeaderFont(headerFont)
     self.friendList:SetFont(normalFont)
+
+    -- help
+    self.friendList:AddLine(" ")
+    self.friendList:AddLine(" ")
+    local line = self.friendList:AddLine()
+    self.friendList:SetCell(line, 1, "Left-Click to whisper", headerFont, "CENTER", 7)
+    line = self.friendList:AddLine()
+    self.friendList:SetCell(line, 1, "Right-Click to dump info", headerFont, "CENTER", 7)
+    line = self.friendList:AddLine()
+    self.friendList:SetCell(line, 1, "Ctrl-Left-Click to invite", headerFont, "CENTER", 7)
     
     for _, client in pairs(clientOrder) do
         local friends = self.friendsTable[client]
         if friends then
+            self.friendList:AddLine(" ")
+            self.friendList:AddLine(" ")
             -- headline
-            self.friendList:AddLine(" ")
-            self.friendList:AddLine(" ")
-            local line = self.friendList:AddHeader()
+            line = self.friendList:AddHeader()
             self.friendList:SetCell(line, 1, clientTranslations[client], headlineFont, "LEFT", 7, QT.LabelProvider, -1)
             self.friendList:AddSeparator()
 
