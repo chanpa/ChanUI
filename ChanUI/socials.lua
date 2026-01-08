@@ -50,7 +50,6 @@ function CUI:UpdateSocialFrame(f)
             }
         }
     )
-    self:Print(self.db.profile.socials.backdrop.color.r)
     f:SetBackdropColor(
         self.db.profile.socials.backdrop.color.r,
         self.db.profile.socials.backdrop.color.g,
@@ -63,4 +62,13 @@ function CUI:UpdateSocialFrame(f)
         self.db.profile.socials.border.color.b,
         self.db.profile.socials.border.color.a
     )
+end
+
+---@param fs FontString
+function CUI:UpdateSocialPosition(fs)
+    local parent = fs:GetParent()
+    local anchor = CUI.db.profile.socials.friendlist.positioning.anchor
+    parent:ClearAllPoints()
+    parent:SetPoint(anchor, UIParent, anchor, 0, 0)
+    fs:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
 end

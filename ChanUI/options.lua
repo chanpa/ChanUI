@@ -217,15 +217,34 @@ local options = {
                         return not CUI.db.profile.socials.enableFriendlist
                     end,
                     args = {
-                        someoption = {
-                            type = "toggle",
-                            name = "Some option",
-                            get = function()
-                                return CUI.db.profile.socials.friendlist.someoption
-                            end,
-                            set = function(_, value)
-                                CUI.db.profile.socials.friendlist.someoption = value
-                            end
+                        positioning = {
+                            type = "group",
+                            name = "Positioning",
+                            args = {
+                                anchor = {
+                                    type = "select",
+                                    name = "Anchor point",
+                                    desc = "Where to anchor the list",
+                                    values = {
+                                        ["TOP"] = "TOP",
+                                        ["RIGHT"] = "RIGHT",
+                                        ["BOTTOM"] = "BOTTOM",
+                                        ["LEFT"] = "LEFT",
+                                        ["TOPRIGHT"] = "TOPRIGHT",
+                                        ["TOPLEFT"] = "TOPLEFT",
+                                        ["BOTTOMLEFT"] = "BOTTOMLEFT",
+                                        ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+                                        ["CENTER"] = "CENTER"
+                                    },
+                                    get = function()
+                                        return CUI.db.profile.socials.friendlist.positioning.anchor
+                                    end,
+                                    set = function(_, value)
+                                        CUI.db.profile.socials.friendlist.positioning.anchor = value
+                                        CUI:UpdateSocialPosition(CUI.friendsFontString)
+                                    end
+                                }
+                            }
                         }
                     }
                 },
@@ -286,7 +305,9 @@ local defaultOptions = {
                 }
             },
             friendlist = {
-                someoption = true,
+                positioning = {
+                    anchor = "TOP",
+                },
             },
             guildlist = {
                 someoption = true,
