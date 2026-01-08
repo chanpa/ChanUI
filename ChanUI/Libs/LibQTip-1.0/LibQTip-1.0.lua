@@ -1387,7 +1387,9 @@ function SetFrameScript(frame, script, func, arg)
 
     if script == "OnMouseDown" or script == "OnMouseUp" or script == "OnReceiveDrag" then
         if func then
-            frame:SetScript(script, scripts[script])
+            frame:SetScript(script, function(s, btn)
+                func(s, btn)
+            end)
         else
             frame:SetScript(script, nil)
         end
