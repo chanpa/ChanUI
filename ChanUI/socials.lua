@@ -35,6 +35,9 @@ function CUI:UpdateSocialFrameLook(f)
     local borderName = self.db.profile.socials.border.name
     local size = self.db.profile.socials.border.size
     local inset = self.db.profile.socials.border.inset
+    if not f.SetBackdrop then
+        Mixin(f, BackdropTemplateMixin)
+    end
     f:SetBackdrop(
         {
             bgFile = "Interface/Buttons/WHITE8X8",

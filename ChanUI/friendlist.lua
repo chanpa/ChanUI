@@ -79,7 +79,6 @@ function CUI:CreateFriendRoot()
     f:SetScript("OnEnter", function()
         self:ShowFriendList()
     end)
-
     self.friendRoot = f
 end
 
@@ -107,10 +106,10 @@ function CUI:ShowFriendList()
 
     -- create list
     self.friendList = QT:Acquire("ChanUIFriendListFrame", 7, "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER", "LEFT")
-    self.friendList:SetBackdropColor(0, 0, 0, 1)
-    self.friendList:SetBackdropBorderColor(0, 0, 0, 0)
     self.friendList:SmartAnchorTo(self.friendRoot)
     self.friendList:SetAutoHideDelay(0.05, self.friendRoot)
+    self.friendList:SetBackdropBorderColor(0, 0, 0, 0)
+    self.friendList:SetBackdropColor(0, 0, 0, 0)
 
     -- fonts
     local fontPath = LSM:Fetch("font", self.db.profile.font.name)
@@ -193,9 +192,6 @@ function CUI:ShowFriendList()
     end
 
     -- finished
-    self.friendList:UpdateScrolling(GetScreenHeight() * 0.5)
-    self.friendList:SetBackdropColor(0, 0, 0, 0.75)
-    self.friendList:Show()
     local slider = self.friendList.slider
     if slider then
         slider:SetBackdrop(
@@ -216,6 +212,9 @@ function CUI:ShowFriendList()
         slider:SetBackdropColor(0, 0, 0, 0.8)
         slider:SetThumbTexture("Interface/Buttons/WHITE8X8")
     end
+    self:UpdateSocialFrameLook(self.friendList)
+    self.friendList:UpdateScrolling(GetScreenHeight() * 0.5)
+    self.friendList:Show()
 end
 
 
