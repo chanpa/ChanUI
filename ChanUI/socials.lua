@@ -3,6 +3,22 @@ local LSM = LibStub("LibSharedMedia-3.0")
 
 function CUI:ShowSocials()
     if self.db.profile.socials.enableFriendlist then
+        StaticPopupDialogs["CHANUI_SET_FRIEND_NOTE"] = {
+            text = "Note:",
+            button1 = "Accept",
+            button2 = "Cancel",
+            hasEditBox = true,
+            OnShow = function(s) s.EditBox:SetText("") end,
+            OnCancel = function() end,
+            OnAccept = function(s, bnetAccountID)
+                BNSetFriendNote(bnetAccountID, s.EditBox:GetText())
+            end,
+            EditBoxOnEnterPressed = function(s) s:GetParent():GetButton1():Click() end,
+            EditBoxOnEscapePressed = function(s) s:GetParent():GetButton2():Click() end,
+            timeout = 0,
+            whileDead = true,
+            preferredIndex = 3
+        }
         self:ShowFriends()
     end
 

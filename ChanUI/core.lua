@@ -12,6 +12,11 @@ function CUI:OnEnable()
 
     -- socials
     self:ShowSocials()
+    self:RegisterEvent("FRIENDLIST_UPDATE", "UpdateFriends")
+    self:RegisterEvent("BN_FRIEND_ACCOUNT_ONLINE", "UpdateFriends")
+    self:RegisterEvent("BN_FRIEND_ACCOUNT_OFFLINE", "UpdateFriends")
+    self:RegisterEvent("BN_FRIEND_INFO_CHANGED", "UpdateFriends")
+    self:RegisterEvent("BN_INFO_CHANGED", "UpdateFriends")
 end
 
 ---@param fs FontString

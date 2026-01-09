@@ -32,13 +32,16 @@ function CUI:HideFriends()
     if self.friendsFontString then self.friendsFontString:Hide() end
 end
 
+
 function CUI:ShowFriends()
+    self:CreateFriendsTable()
     if not self.friendRoot then self:CreateFriendRoot() end
     if not self.friendsFontString then self:CreateFriendsOnlineFontString() end
     self.friendRoot:Show()
     self.friendsFontString:Show()
-    self:CreateFriendsTable()
+    self:UpdateSocialText(self.friendsFontString, self:CreateSocialOnlineString("Friends", self.numberOfOnlineFriends))
 end
+function CUI:UpdateFriends() self:ShowFriends() end
 
 function CUI:CreateFriendRoot()
     local f = CreateFrame("Frame", "ChanUIFriendFrame", UIParent, "BackdropTemplate")
@@ -111,6 +114,7 @@ function CUI:ShowFriendList()
     self.friendList:SetAutoHideDelay(0.05, self.friendRoot)
     self.friendList:SetBackdropBorderColor(0, 0, 0, 0)
     self.friendList:SetBackdropColor(0, 0, 0, 0)
+    self:UpdateSocialFrameLook(self.friendList)
 
     -- fonts
     local fontPath = LSM:Fetch("font", self.db.profile.font.name)
@@ -135,9 +139,11 @@ function CUI:ShowFriendList()
     local line = self.friendList:AddLine()
     self.friendList:SetCell(line, 1, "Left-Click to whisper", headerFont, "CENTER", cols)
     line = self.friendList:AddLine()
-    self.friendList:SetCell(line, 1, "Right-Click to dump info", headerFont, "CENTER", cols)
-    line = self.friendList:AddLine()
     self.friendList:SetCell(line, 1, "Ctrl-Left-Click to invite", headerFont, "CENTER", cols)
+    line = self.friendList:AddLine()
+    self.friendList:SetCell(line, 1, "Right-Click to set bnet note", headerFont, "CENTER", cols)
+    line = self.friendList:AddLine()
+    self.friendList:SetCell(line, 1, "Ctrl-Right-Click to dump info", headerFont, "CENTER", cols)
     
     for _, client in pairs(clientOrder) do
         local friends = self.friendsTable[client]
@@ -169,10 +175,10 @@ function CUI:ShowFriendList()
 
 
             -- friends
-            for _, friend in pairs(self.friendsTable[client]) do
+            for bnetIndex, friend in pairs(self.friendsTable[client]) do
                 line = self.friendList:AddLine()
                 self.friendList:SetLineScript(line, "OnMouseDown", function(_, button)
-                    CUI:ClickOnFriend(button, friend)
+                    CUI:ClickOnFriend(button, friend, friend.bnetAccountID)
                 end)
                 if client:find("^wow") then
                     self.friendList:SetCell(line, 1, self:CreateSocialStatusString(friend))
@@ -194,6 +200,7 @@ function CUI:ShowFriendList()
     end
 
     -- finished
+    self.friendList:UpdateScrolling(GetScreenHeight() * 0.5)
     local slider = self.friendList.slider
     if slider then
         slider:SetBackdrop(
@@ -214,23 +221,27 @@ function CUI:ShowFriendList()
         slider:SetBackdropColor(0, 0, 0, 0.8)
         slider:SetThumbTexture("Interface/Buttons/WHITE8X8")
     end
-    self:UpdateSocialFrameLook(self.friendList)
-    self.friendList:UpdateScrolling(GetScreenHeight() * 0.5)
     self.friendList:Show()
 end
 
 
-function CUI:ClickOnFriend(button, friend)
+function CUI:ClickOnFriend(button, friend, bnetAccountID)
     if IsControlKeyDown() then
-        if not friend.characterName or not friend.realmName then return end
         if button == "LeftButton" then
+            if not friend.characterName or not friend.realmName then return end
             C_PartyInfo.InviteUnit(friend.characterName .. "-" .. friend.realmName)
+        elseif button == "RightButton" then
+            self:Print(self:DumpObject(friend))
         end
     else
         if button == "LeftButton" then
             ChatFrameUtil.SendBNetTell(friend.accountName)
         elseif button == "RightButton" then
-            self:Print(self:DumpObject(friend))
+            local dialog = StaticPopup_Show("CHANUI_SET_FRIEND_NOTE")
+            if dialog then
+                self.friendList:Hide()
+                dialog.data = bnetAccountID
+            end
         end
     end
 end
@@ -255,12 +266,12 @@ function CUI:CreateFriendsTable()
         bnetIndex = bnetIndex + 1
     end
     self.numberOfOnlineFriends = count
-    self:UpdateSocialText(self.friendsFontString, self:CreateSocialOnlineString("Friends", count))
 end
 
 ---@param bnetInfo BNetAccountInfo
 function CUI:ParseBnetInfo(bnetInfo)
     local friend =  {
+        bnetAccountID = bnetInfo.bnetAccountID,
         accountName = bnetInfo.accountName,
         isAFK = bnetInfo.isAFK,
         isDND = bnetInfo.isDND,
