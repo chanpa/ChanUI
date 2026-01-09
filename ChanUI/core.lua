@@ -8,6 +8,7 @@ end
 function CUI:OnEnable()
     -- tweaks
     self:HookScript(ExpansionLandingPageMinimapButton, "OnShow", "HideExpansionSummary")
+    self:RegisterEvent("HOUSE_EDITOR_AVAILABILITY_CHANGED", "MoveHousingControlsFrame")
 
     -- socials
     self:ShowSocials()

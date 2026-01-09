@@ -105,7 +105,8 @@ function CUI:ShowFriendList()
     end
 
     -- create list
-    self.friendList = QT:Acquire("ChanUIFriendListFrame", 8, "LEFT", "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER", "LEFT")
+    local cols = 8
+    self.friendList = QT:Acquire("ChanUIFriendListFrame", cols, "LEFT", "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER", "LEFT")
     self.friendList:SmartAnchorTo(self.friendRoot)
     self.friendList:SetAutoHideDelay(0.05, self.friendRoot)
     self.friendList:SetBackdropBorderColor(0, 0, 0, 0)
@@ -132,11 +133,11 @@ function CUI:ShowFriendList()
     self.friendList:AddLine(" ")
     self.friendList:AddLine(" ")
     local line = self.friendList:AddLine()
-    self.friendList:SetCell(line, 1, "Left-Click to whisper", headerFont, "CENTER", 7)
+    self.friendList:SetCell(line, 1, "Left-Click to whisper", headerFont, "CENTER", cols)
     line = self.friendList:AddLine()
-    self.friendList:SetCell(line, 1, "Right-Click to dump info", headerFont, "CENTER", 7)
+    self.friendList:SetCell(line, 1, "Right-Click to dump info", headerFont, "CENTER", cols)
     line = self.friendList:AddLine()
-    self.friendList:SetCell(line, 1, "Ctrl-Left-Click to invite", headerFont, "CENTER", 7)
+    self.friendList:SetCell(line, 1, "Ctrl-Left-Click to invite", headerFont, "CENTER", cols)
     
     for _, client in pairs(clientOrder) do
         local friends = self.friendsTable[client]
@@ -145,7 +146,7 @@ function CUI:ShowFriendList()
             self.friendList:AddLine(" ")
             -- headline
             line = self.friendList:AddHeader()
-            self.friendList:SetCell(line, 1, clientTranslations[client], headlineFont, "LEFT", 7, QT.LabelProvider, -1)
+            self.friendList:SetCell(line, 1, clientTranslations[client], headlineFont, "LEFT", 8, QT.LabelProvider, -1)
             self.friendList:AddSeparator()
 
             -- headers
@@ -162,8 +163,8 @@ function CUI:ShowFriendList()
             else
                 self.friendList:SetCell(line, 1, "")
                 self.friendList:SetCell(line, 2, "Real ID")
-                self.friendList:SetCell(line, 3, "Activity", "CENTER", 4)
-                self.friendList:SetCell(line, 7, "Note")
+                self.friendList:SetCell(line, 3, "Activity", "CENTER", cols - 3)
+                self.friendList:SetCell(line, 8, "Note")
             end
 
 
@@ -185,10 +186,9 @@ function CUI:ShowFriendList()
                 else
                     self.friendList:SetCell(line, 1, self:CreateSocialStatusString(friend))
                     self.friendList:SetCell(line, 2, friend.accountName)
-                    self.friendList:SetCell(line, 3, friend.richPresence, "CENTER", 4)
-                    self.friendList:SetCell(line, 7, friend.note)
+                    self.friendList:SetCell(line, 3, friend.richPresence, "CENTER", cols - 3)
+                    self.friendList:SetCell(line, 8, friend.note)
                 end
-
             end
         end
     end

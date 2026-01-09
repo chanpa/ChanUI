@@ -25,6 +25,70 @@ local options = {
                             ExpansionLandingPageMinimapButton:Show()
                         end
                     end
+                },
+                housingControlsFrame = {
+                    type = "group",
+                    name = "Housing controls",
+                    args = {
+                        anchor = {
+                            type = "select",
+                            name = "Anchor point",
+                            desc = "Where to anchor the list",
+                            width = "full",
+                            values = {
+                                ["TOP"] = "TOP",
+                                ["RIGHT"] = "RIGHT",
+                                ["BOTTOM"] = "BOTTOM",
+                                ["LEFT"] = "LEFT",
+                                ["TOPRIGHT"] = "TOPRIGHT",
+                                ["TOPLEFT"] = "TOPLEFT",
+                                ["BOTTOMLEFT"] = "BOTTOMLEFT",
+                                ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+                                ["CENTER"] = "CENTER"
+                            },
+                            get = function()
+                                return CUI.db.profile.tweaks.housingControlsFrame.anchor
+                            end,
+                            set = function(_, value)
+                                CUI.db.profile.tweaks.housingControlsFrame.anchor = value
+                                CUI:MoveHousingControlsFrame()
+                            end
+                        },
+                        relX = {
+                            type = "range",
+                            name = "Relative X position",
+                            width = "full",
+                            softMin = -1500,
+                            min = -3000,
+                            max = 3000,
+                            softMax = 1500,
+                            step = 1,
+                            get = function()
+                                return CUI.db.profile.tweaks.housingControlsFrame.relX
+                            end,
+                            set = function(_, value)
+                                CUI.db.profile.tweaks.housingControlsFrame.relX = value
+                                CUI:MoveHousingControlsFrame()
+                            end
+                        },
+                        relY = {
+                            type = "range",
+                            name = "Relative Y position",
+                            width = "full",
+                            softMin = -1500,
+                            min = -3000,
+                            max = 3000,
+                            softMax = 1500,
+                            step = 1,
+                            get = function()
+                                return CUI.db.profile.tweaks.housingControlsFrame.relY
+                            end,
+                            set = function(_, value)
+                                CUI.db.profile.tweaks.housingControlsFrame.relY = value
+                                CUI:MoveHousingControlsFrame()
+                            end
+                        }
+                    }
                 }
             }
         },
@@ -310,7 +374,12 @@ local options = {
 local defaultOptions = {
     profile = {
         tweaks = {
-            hideExpansionSummaryButton = false
+            hideExpansionSummaryButton = false,
+            housingControlsFrame = {
+                anchor = "TOP",
+                relX = 0,
+                relY = -30
+            }
         },
         font = {
             name = "Arial Narrow",

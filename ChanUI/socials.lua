@@ -102,7 +102,7 @@ end
 
 function CUI:CreateSocialTimerunnerString(friend)
     if friend.timerunningSeasonID then
-        return "RMX"
+        return CreateAtlasMarkup("timerunning-glues-icon-small", 9, 12)
     end
     return ""
 end
