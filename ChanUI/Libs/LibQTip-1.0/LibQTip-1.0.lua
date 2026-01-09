@@ -466,9 +466,9 @@ function ReleaseTooltip(tooltip)
         tooltip = nil
     end
 
-    if tooltip then
-        tinsert(tooltipHeap, tooltip)
-    end
+    -- if tooltip then
+    --     tinsert(tooltipHeap, tooltip)
+    -- end
 
     highlightTexture:SetTexture(DEFAULT_HIGHLIGHT_TEXTURE_PATH)
     highlightTexture:SetTexCoord(0, 1, 0, 1)
