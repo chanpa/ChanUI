@@ -131,12 +131,11 @@ function CUI:CreateSocialLevelString(friend)
 end
 
 function CUI:CreateSocialRealmString(friend)
-    local color
+    local color = "ffffffff"
     if friend.characterFaction == "Horde" then
         color = "ffff0000"
-    else
+    elseif friend.characterFaction == "Alliance" then
         color = "ff0000ff"
     end
     return self:ColorText(color, friend.realmName)
-    
 end

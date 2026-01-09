@@ -125,7 +125,7 @@ function CUI:ShowFriendList()
     local headerFont = CreateFont("ChanUISocialsHeaderFont")
     headerFont:SetFont(fontPath, 12, "OUTLINE")
     headerFont:SetTextColor(1, 0.8, 0)
-    
+
     local headlineFont = CreateFont("ChanUISocialsHeadlineFont")
     headlineFont:SetFont(fontPath, 16, "THICKOUTLINE")
     headlineFont:SetTextColor(1, 0.8, 0)
@@ -133,23 +133,26 @@ function CUI:ShowFriendList()
     self.friendList:SetHeaderFont(headerFont)
     self.friendList:SetFont(normalFont)
 
-    -- help
+    -- space
     self.friendList:AddLine(" ")
     self.friendList:AddLine(" ")
-    local line = self.friendList:AddLine()
-    self.friendList:SetCell(line, 1, "Left-Click to whisper", headerFont, "CENTER", cols)
-    line = self.friendList:AddLine()
-    self.friendList:SetCell(line, 1, "Ctrl-Left-Click to invite", headerFont, "CENTER", cols)
-    line = self.friendList:AddLine()
-    self.friendList:SetCell(line, 1, "Right-Click to set bnet note", headerFont, "CENTER", cols)
-    line = self.friendList:AddLine()
-    self.friendList:SetCell(line, 1, "Ctrl-Right-Click to dump info", headerFont, "CENTER", cols)
-    
+
+    -- help lines [3..6](we might update later (after UpdateScrolling) so they aren't de-centered by the slider)
+    local line = self.friendList:AddLine(" ")
+    line = self.friendList:AddLine(" ")
+    line = self.friendList:AddLine(" ")
+    line = self.friendList:AddLine(" ")
+    self.friendList:SetCell(3, 1, "Left-Click to whisper", headerFont, "CENTER", cols)
+    self.friendList:SetCell(4, 1, "Ctrl-Left-Click to invite", headerFont, "CENTER", cols)
+    self.friendList:SetCell(5, 1, "Right-Click to set bnet note", headerFont, "CENTER", cols)
+    self.friendList:SetCell(6, 1, "Ctrl-Right-Click to dump info", headerFont, "CENTER", cols)
+
     for _, client in pairs(clientOrder) do
         local friends = self.friendsTable[client]
         if friends then
             self.friendList:AddLine(" ")
             self.friendList:AddLine(" ")
+
             -- headline
             line = self.friendList:AddHeader()
             self.friendList:SetCell(line, 1, clientTranslations[client], headlineFont, "LEFT", cols, QT.LabelProvider, -1)
@@ -180,6 +183,7 @@ function CUI:ShowFriendList()
                 self.friendList:SetLineScript(line, "OnMouseDown", function(_, button)
                     CUI:ClickOnFriend(button, friend, friend.bnetAccountID)
                 end)
+                friend.bnetIndex = bnetIndex
                 if client:find("^wow") then
                     self.friendList:SetCell(line, 1, self:CreateSocialStatusString(friend))
                     self.friendList:SetCell(line, 2, friend.accountName)
@@ -200,7 +204,10 @@ function CUI:ShowFriendList()
     end
 
     -- finished
-    self.friendList:UpdateScrolling(GetScreenHeight() * 0.5)
+    local percOfScreenAllowed = 0.5
+    self.friendList:UpdateScrolling(GetScreenHeight() * percOfScreenAllowed)
+
+    -- style the slider
     local slider = self.friendList.slider
     if slider then
         slider:SetBackdrop(
@@ -220,7 +227,16 @@ function CUI:ShowFriendList()
         )
         slider:SetBackdropColor(0, 0, 0, 0.8)
         slider:SetThumbTexture("Interface/Buttons/WHITE8X8")
+
+        -- slider will nudge our lines to the left, add padding to keep it centered
+        local padding = 12 + slider:GetWidth() / 2
+        self.friendList:SetCell(3, 1, "Left-Click to whisper", headerFont, "CENTER", cols, padding)
+        self.friendList:SetCell(4, 1, "Ctrl-Left-Click to invite", headerFont, "CENTER", cols, padding)
+        self.friendList:SetCell(5, 1, "Right-Click to set bnet note", headerFont, "CENTER", cols, padding)
+        self.friendList:SetCell(6, 1, "Ctrl-Right-Click to dump info", headerFont, "CENTER", cols, padding)
+        self.friendList:UpdateScrolling(GetScreenHeight() * percOfScreenAllowed)
     end
+
     self.friendList:Show()
 end
 
@@ -295,10 +311,10 @@ end
 
 ---@param gameAccountInfo BNetGameAccountInfo
 function CUI:ParseWowFriend(friend, gameAccountInfo)
+    friend.guid = gameAccountInfo.playerGuid
     local wowProj = gameAccountInfo.wowProjectID
     if wowProj == 1 then
         friend.client = "wow_retail"
-        friend.characterFaction = gameAccountInfo.factionName
     elseif wowProj == 2 then
         friend.client = "wow_classic_anniversary"
     elseif wowProj == 19 then
@@ -307,9 +323,16 @@ function CUI:ParseWowFriend(friend, gameAccountInfo)
         self:Print("Unknown wowProjectId: " .. wowProj)
         friend.client = "wow_unknown"
     end
-    local _, _, _, _, _, _, realmName = GetPlayerInfoByGUID(gameAccountInfo.playerGuid)
-    friend.guid = gameAccountInfo.playerGuid
+
+    local realmName
+    if friend.client == "wow_classic_anniversary" then
+        _, realmName = strmatch(gameAccountInfo.richPresence, "(.-)%s%-%s(.+)")
+    else
+        _, _, _, _, _, _, realmName = GetPlayerInfoByGUID(gameAccountInfo.playerGuid)
+    end
+
     friend.realmName = realmName
+    friend.characterFaction = gameAccountInfo.factionName
     friend.characterName = gameAccountInfo.characterName
     friend.characterLevel = gameAccountInfo.characterLevel
     friend.characterClass = gameAccountInfo.className
