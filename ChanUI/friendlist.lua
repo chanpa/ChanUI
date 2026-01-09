@@ -12,7 +12,7 @@ local clientTranslations = {
     WTCG = "Hearthstone",
     App = "Battle.net",
     Pro = "Overwatch II",
-    Fen = "Diablo VI",
+    Fen = "Diablo IV",
 }
 local clientOrder = {
     "wow_retail",
@@ -152,7 +152,7 @@ function CUI:ShowFriendList()
             self.friendList:AddLine(" ")
             -- headline
             line = self.friendList:AddHeader()
-            self.friendList:SetCell(line, 1, clientTranslations[client], headlineFont, "LEFT", 8, QT.LabelProvider, -1)
+            self.friendList:SetCell(line, 1, clientTranslations[client], headlineFont, "LEFT", cols, QT.LabelProvider, -1)
             self.friendList:AddSeparator()
 
             -- headers
@@ -169,7 +169,7 @@ function CUI:ShowFriendList()
             else
                 self.friendList:SetCell(line, 1, "")
                 self.friendList:SetCell(line, 2, "Real ID")
-                self.friendList:SetCell(line, 3, "Activity", "CENTER", cols - 3)
+                self.friendList:SetCell(line, 6, "Activity")
                 self.friendList:SetCell(line, 8, "Note")
             end
 
@@ -192,7 +192,7 @@ function CUI:ShowFriendList()
                 else
                     self.friendList:SetCell(line, 1, self:CreateSocialStatusString(friend))
                     self.friendList:SetCell(line, 2, friend.accountName)
-                    self.friendList:SetCell(line, 3, friend.richPresence, "CENTER", cols - 3)
+                    self.friendList:SetCell(line, 6, friend.richPresence)
                     self.friendList:SetCell(line, 8, friend.note)
                 end
             end
