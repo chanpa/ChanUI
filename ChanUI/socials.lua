@@ -90,3 +90,37 @@ function CUI:CreateSocialStatusString(friend)
 	end
 	return ""
 end
+
+function CUI:CreateSocialNameString(friend)
+    local color = "fdfdfdfd"
+    if friend.characterClass then
+        local newClass = string.upper(friend.characterClass:gsub("%s+", ""))
+        color = C_ClassColor.GetClassColor(newClass):GenerateHexColor()
+    end
+    return self:ColorText(color, friend.characterName)
+end
+
+function CUI:CreateSocialTimerunnerString(friend)
+    if friend.timerunningSeasonID then
+        return "RMX"
+    end
+    return ""
+end
+
+function CUI:CreateSocialLevelString(friend)
+    if friend.characterLevel == nil then return "-" end
+    local c = GetQuestDifficultyColor(friend.characterLevel)
+    local color = self:RGBPercToHex(c.r, c.g, c.b)
+    return self:ColorText("ff"..color, friend.characterLevel)
+end
+
+function CUI:CreateSocialRealmString(friend)
+    local color
+    if friend.characterFaction == "Horde" then
+        color = "ffff0000"
+    else
+        color = "ff0000ff"
+    end
+    return self:ColorText(color, friend.realmName)
+    
+end

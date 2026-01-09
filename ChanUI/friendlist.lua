@@ -4,7 +4,7 @@ local QT = LibStub("LibQTip-1.0")
 
 CUI.friendsTable = {}
 local clientTranslations = {
-    wow_retail = "WoW retail",
+    wow_retail = "The War Within",
     wow_classic_mop = "Mists of Pandaria Classic",
     wow_classic_anniversary = "WoW Classic Anniversary",
     wow_unknown = "Unknown WoW version",
@@ -105,7 +105,7 @@ function CUI:ShowFriendList()
     end
 
     -- create list
-    self.friendList = QT:Acquire("ChanUIFriendListFrame", 7, "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER", "LEFT")
+    self.friendList = QT:Acquire("ChanUIFriendListFrame", 8, "LEFT", "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER", "LEFT")
     self.friendList:SmartAnchorTo(self.friendRoot)
     self.friendList:SetAutoHideDelay(0.05, self.friendRoot)
     self.friendList:SetBackdropBorderColor(0, 0, 0, 0)
@@ -154,10 +154,11 @@ function CUI:ShowFriendList()
                 self.friendList:SetCell(line, 1, "")
                 self.friendList:SetCell(line, 2, "Real ID")
                 self.friendList:SetCell(line, 3, "Lvl")
-                self.friendList:SetCell(line, 4, "Name")
-                self.friendList:SetCell(line, 5, "Zone")
-                self.friendList:SetCell(line, 6, "Realm")
-                self.friendList:SetCell(line, 7, "Note")
+                self.friendList:SetCell(line, 4, "")
+                self.friendList:SetCell(line, 5, "Name")
+                self.friendList:SetCell(line, 6, "Zone")
+                self.friendList:SetCell(line, 7, "Realm")
+                self.friendList:SetCell(line, 8, "Note")
             else
                 self.friendList:SetCell(line, 1, "")
                 self.friendList:SetCell(line, 2, "Real ID")
@@ -175,11 +176,12 @@ function CUI:ShowFriendList()
                 if client:find("^wow") then
                     self.friendList:SetCell(line, 1, self:CreateSocialStatusString(friend))
                     self.friendList:SetCell(line, 2, friend.accountName)
-                    self.friendList:SetCell(line, 3, friend.characterLevel)
-                    self.friendList:SetCell(line, 4, friend.characterName)
-                    self.friendList:SetCell(line, 5, friend.characterZone)
-                    self.friendList:SetCell(line, 6, friend.realmName)
-                    self.friendList:SetCell(line, 7, friend.note)
+                    self.friendList:SetCell(line, 3, self:CreateSocialLevelString(friend))
+                    self.friendList:SetCell(line, 4, self:CreateSocialTimerunnerString(friend))
+                    self.friendList:SetCell(line, 5, self:CreateSocialNameString(friend))
+                    self.friendList:SetCell(line, 6, friend.characterZone)
+                    self.friendList:SetCell(line, 7, self:CreateSocialRealmString(friend))
+                    self.friendList:SetCell(line, 8, friend.note)
                 else
                     self.friendList:SetCell(line, 1, self:CreateSocialStatusString(friend))
                     self.friendList:SetCell(line, 2, friend.accountName)
@@ -301,5 +303,5 @@ function CUI:ParseWowFriend(friend, gameAccountInfo)
     friend.characterLevel = gameAccountInfo.characterLevel
     friend.characterClass = gameAccountInfo.className
     friend.characterZone = gameAccountInfo.areaName
-    friend.timerunningSeasonID = gameAccountInfo.timerunningSeasonID or 0
+    friend.timerunningSeasonID = gameAccountInfo.timerunningSeasonID or nil
 end
