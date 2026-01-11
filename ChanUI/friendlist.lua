@@ -8,13 +8,13 @@ local clientTranslations = {
     wow_classic_mop = "Mists of Pandaria Classic",
     wow_classic_anniversary = "WoW Classic Anniversary",
     wow_unknown = "Unknown WoW version",
-    BSAp = "Mobile",
-    WTCG = "Hearthstone",
-    App = "Battle.net",
-    Pro = "Overwatch II",
     Fen = "Diablo IV",
     OSI = "Diablo II: Resurrected",
+    WTCG = "Hearthstone",
     S2 = "StarCraft II",
+    Pro = "Overwatch II",
+    App = "Battle.net",
+    BSAp = "Mobile",
 }
 local clientOrder = {
     "wow_retail",
@@ -27,7 +27,7 @@ local clientOrder = {
     "S2",
     "Pro",
     "App",
-    "BSAp"
+    "BSAp",
 }
 
 local CreateFriendsTable, CreateFriendRoot, CreateFriendsOnlineFontString, ShowFriendlist, ParseBnetInfo, ParseWowFriend, CheckMissingClients
