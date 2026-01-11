@@ -28,7 +28,7 @@ function CUI:ShowSocials()
 end
 
 function CUI:CalculateSocialFramePadding()
-    local start_padding = 5
+    local start_padding = 8
     return start_padding + (self.db.profile.socials.border.inset * 2)
 end
 
