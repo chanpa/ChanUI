@@ -48,7 +48,11 @@ function CUI:ShowFriends()
     if not self.friendsFontString then CreateFriendsOnlineFontString() end
     self.friendRoot:Show()
     self.friendsFontString:Show()
-    self:UpdateSocialText(self.friendsFontString, self:CreateSocialOnlineString("Friends", self.numberOfOnlineFriends))
+    self:UpdateSocialText(
+        self.friendsFontString,
+        self:CreateSocialOnlineString("Friends", self.numberOfOnlineFriends),
+        self:CalculateSocialFramePadding(self.db.profile.socials.friendlist.border.inset)
+    )
 end
 function CUI:UpdateFriends() self:ShowFriends() end
 
@@ -61,30 +65,22 @@ function CreateFriendRoot()
     f:SetBackdrop(
         {
             bgFile = "Interface/Buttons/WHITE8X8",
-            edgeFile = LSM:Fetch("border", CUI.db.profile.socials.border.name),
+            edgeFile = LSM:Fetch("border", CUI.db.profile.socials.friendlist.border.name),
             tile = true,
-            edgeSize = CUI.db.profile.socials.border.size,
+            edgeSize = CUI.db.profile.socials.friendlist.border.size,
             tileSize = 32,
             insets = {
-                left = CUI.db.profile.socials.border.inset,
-                right = CUI.db.profile.socials.border.inset,
-                top = CUI.db.profile.socials.border.inset,
-                bottom = CUI.db.profile.socials.border.inset
+                left = CUI.db.profile.socials.friendlist.border.inset,
+                right = CUI.db.profile.socials.friendlist.border.inset,
+                top = CUI.db.profile.socials.friendlist.border.inset,
+                bottom = CUI.db.profile.socials.friendlist.border.inset
             }
         }
     )
-    f:SetBackdropColor(
-        CUI.db.profile.socials.backdrop.color.r,
-        CUI.db.profile.socials.backdrop.color.g,
-        CUI.db.profile.socials.backdrop.color.b,
-        CUI.db.profile.socials.backdrop.color.a
-    )
-    f:SetBackdropBorderColor(
-        CUI.db.profile.socials.border.color.r,
-        CUI.db.profile.socials.border.color.g,
-        CUI.db.profile.socials.border.color.b,
-        CUI.db.profile.socials.border.color.a
-    )
+    local r, g, b, a = unpack(CUI.db.profile.socials.friendlist.backdrop.color)
+    f:SetBackdropColor(r, g, b, a)
+    r, g, b, a = unpack(CUI.db.profile.socials.friendlist.border.color)
+    f:SetBackdropBorderColor(r, g, b, a)
     f:SetClampedToScreen(false)
     f:EnableMouse(true)
 
@@ -103,14 +99,23 @@ function CreateFriendsOnlineFontString()
 
     local fs = CUI.friendRoot:CreateFontString(nil, "OVERLAY")
     fs:SetPoint("TOPLEFT", CUI.friendRoot, "TOPLEFT", 0, 0)
-    CUI:SetFont(fs)
+    CUI:SetFont(
+        fs,
+        CUI.db.profile.socials.friendlist.font.name,
+        CUI.db.profile.socials.friendlist.font.size,
+        CUI.db.profile.socials.friendlist.font.outline
+    )
     fs:SetText("Friends")
     CUI.friendsFontString = fs
 end
 
 function ShowFriendlist()
     if CUI.numberOfOnlineFriends <= 0 then
-        CUI:UpdateSocialText(CUI.friendsFontString, CUI:CreateSocialOnlineString("Friends", 0))
+        CUI:UpdateSocialText(
+            CUI.friendsFontString,
+            CUI:CreateSocialOnlineString("Friends", 0),
+            CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
+        )
         return
     end
 
@@ -126,10 +131,17 @@ function ShowFriendlist()
     CUI.friendList:SetAutoHideDelay(0.05, CUI.friendRoot)
     CUI.friendList:SetBackdropBorderColor(0, 0, 0, 0)
     CUI.friendList:SetBackdropColor(0, 0, 0, 0)
-    CUI:UpdateSocialFrameLook(CUI.friendList)
+    CUI:UpdateSocialFrameLook(
+        CUI.friendList,
+        CUI.db.profile.socials.friendlist.border.name,
+        CUI.db.profile.socials.friendlist.border.size,
+        CUI.db.profile.socials.friendlist.border.inset,
+        CUI.db.profile.socials.friendlist.border.color,
+        CUI.db.profile.socials.friendlist.backdrop.color
+    )
 
     -- fonts
-    local fontPath = LSM:Fetch("font", CUI.db.profile.font.name)
+    local fontPath = LSM:Fetch("font", CUI.db.profile.socials.friendlist.font.name)
     local normalFont = CreateFont("ChanUISocialsNormalFont")
     normalFont:SetFont(fontPath, 12, "")
     normalFont:SetTextColor(1, 1, 1)

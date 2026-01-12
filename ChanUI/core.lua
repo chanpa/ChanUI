@@ -20,11 +20,11 @@ function CUI:OnEnable()
 end
 
 ---@param fs FontString
-function CUI:SetFont(fs)
+function CUI:SetFont(fs, fontName, fontSize, fontOutline)
     fs:SetFont(
-        LSM:Fetch("font", self.db.profile.font.name) or "Arial Narrow",
-        self.db.profile.font.size,
-        self.db.profile.font.outline
+        LSM:Fetch("font", fontName) or "Arial Narrow",
+        fontSize,
+        fontOutline
     )
 end
 

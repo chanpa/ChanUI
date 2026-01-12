@@ -27,15 +27,13 @@ function CUI:ShowSocials()
     -- end
 end
 
-function CUI:CalculateSocialFramePadding()
-    local start_padding = 8
-    return start_padding + (self.db.profile.socials.border.inset * 2)
+function CUI:CalculateSocialFramePadding(borderInset)
+    return 10 + (borderInset * 2)
 end
 
 ---@param fs FontString
-function CUI:UpdateSocialText(fs, message)
+function CUI:UpdateSocialText(fs, message, padding)
     local parent = fs:GetParent()
-    local padding = self:CalculateSocialFramePadding()
     message = message or fs:GetText()
 
     fs:SetText(message)
@@ -47,10 +45,10 @@ function CUI:UpdateSocialText(fs, message)
 end
 
 
-function CUI:UpdateSocialFrameLook(f)
-    local borderName = self.db.profile.socials.border.name
-    local size = self.db.profile.socials.border.size
-    local inset = self.db.profile.socials.border.inset
+function CUI:UpdateSocialFrameLook(f, borderName, size, inset, borderColor, backdropColor)
+    local backdropR, backdropG, backdropB, backdropA = unpack(backdropColor)
+    local borderR, borderG, borderB, borderA = unpack(borderColor)
+
     if not f.SetBackdrop then
         Mixin(f, BackdropTemplateMixin)
     end
@@ -69,26 +67,13 @@ function CUI:UpdateSocialFrameLook(f)
             }
         }
     )
-    f:SetBackdropColor(
-        self.db.profile.socials.backdrop.color.r,
-        self.db.profile.socials.backdrop.color.g,
-        self.db.profile.socials.backdrop.color.b,
-        self.db.profile.socials.backdrop.color.a
-    )
-    f:SetBackdropBorderColor(
-        self.db.profile.socials.border.color.r,
-        self.db.profile.socials.border.color.g,
-        self.db.profile.socials.border.color.b,
-        self.db.profile.socials.border.color.a
-    )
+    f:SetBackdropColor(backdropR, backdropG, backdropB, backdropA)
+    f:SetBackdropBorderColor(borderR, borderG, borderB, borderA)
 end
 
 ---@param fs FontString
-function CUI:UpdateSocialFramePosition(fs)
+function CUI:UpdateSocialFramePosition(fs, anchor, relX, relY)
     local parent = fs:GetParent()
-    local anchor = CUI.db.profile.socials.friendlist.positioning.anchor
-    local relX = CUI.db.profile.socials.friendlist.positioning.relX
-    local relY = CUI.db.profile.socials.friendlist.positioning.relY
     parent:ClearAllPoints()
     parent:SetPoint(anchor, UIParent, anchor, relX, relY)
     fs:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
