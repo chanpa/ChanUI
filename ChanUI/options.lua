@@ -1,6 +1,127 @@
 local CUI = CUI
 local LSM = LibStub("LibSharedMedia-3.0")
 
+
+local function GetRangeSlider(name, getFunc, setFunc)
+    return {
+        type = "range",
+        name = name,
+        width = "full",
+        softMin = -1500,
+        min = -3000,
+        max = 3000,
+        softMax = 1500,
+        step = 1,
+        get = getFunc,
+        set = setFunc,
+    }
+end
+
+local function GetFontSelector(nameGetFunc, nameSetFunc, sizeGetFunc, sizeSetFunc, outlineGetFunc, outlineSetFunc)
+    return {
+        type = "group",
+        name = "Font Settings",
+        args = {
+            name = {
+                type = "select",
+                name = "Font",
+                dialogControl = 'LSM30_Font',
+                desc = "The font to use.",
+                values = LSM:HashTable("font"),
+                get = nameGetFunc,
+                set = nameSetFunc
+            },
+            size = {
+                type = "range",
+                name = "Font Size",
+                desc = "Set the font size",
+                min = 6,
+                max = 100,
+                step = 1,
+                get = sizeGetFunc,
+                set = sizeSetFunc,
+            },
+            outline = {
+                type = "select",
+                name = "Outline",
+                style = "dropdown",
+                desc = "Outline mode of the text",
+                values = {
+                    ["OUTLINE"] = "Outline",
+                    ["THICKOUTLINE"] = "Thick Outline",
+                    ["MONOCHROME, OUTLINE"] = "Monochrome Outline",
+                    ["MONOCHROME, THICKOUTLINE"] = "Monochrome Thick Outline"
+                },
+                get = outlineGetFunc,
+                set = outlineSetFunc,
+            }
+        },
+    }
+end
+
+local function GetBorderSelector(nameGetFunc, nameSetFunc, sizeGetFunc, sizeSetFunc, insetGetFunc, insetSetFunc, colorGetFunc, colorSetFunc)
+    return {
+        type = "group",
+        name = "Borders",
+        args = {
+            name = {
+                type = "select",
+                name = "Frame borders",
+                width = "full",
+                dialogControl = "LSM30_Border",
+                values = LSM:HashTable("border"),
+                get = nameGetFunc,
+                set = nameSetFunc
+            },
+            size = {
+                type = "range",
+                name = "Border size",
+                width = "full",
+                min = 0,
+                max = 30,
+                step = 1,
+                get = sizeGetFunc,
+                set = sizeSetFunc,
+            },
+            inset = {
+                type = "range",
+                name = "Border inset",
+                width = "full",
+                min = 0,
+                max = 30,
+                step = 1,
+                get = insetGetFunc,
+                set = insetSetFunc
+            },
+            color = {
+                type = "color",
+                name = "Border color",
+                width = "full",
+                hasAlpha = true,
+                get = colorGetFunc,
+                set = colorSetFunc
+            }
+        }
+    }
+end
+
+local function GetTextureSelector(colorGetFunc, colorSetFunc)
+    return {
+        type = "group",
+        name = "Backdrop Settings",
+        args = {
+            color = {
+                type = "color",
+                name = "Backdrop color",
+                width = "full",
+                hasAlpha = true,
+                get = colorGetFunc,
+                set = colorSetFunc
+            }
+        }
+    }
+end
+
 local function GetTweakOptions()
     return {
         hideExpansionSummaryButton = {
@@ -47,40 +168,26 @@ local function GetTweakOptions()
                         CUI:MoveHousingControlsFrame()
                     end
                 },
-                relX = {
-                    type = "range",
-                    name = "Relative X position",
-                    width = "full",
-                    softMin = -1500,
-                    min = -3000,
-                    max = 3000,
-                    softMax = 1500,
-                    step = 1,
-                    get = function()
+                relX = GetRangeSlider(
+                    "Relative X position",
+                    function()
                         return CUI.db.profile.tweaks.housingControlsFrame.relX
                     end,
-                    set = function(_, value)
+                    function(_, value)
                         CUI.db.profile.tweaks.housingControlsFrame.relX = value
                         CUI:MoveHousingControlsFrame()
                     end
-                },
-                relY = {
-                    type = "range",
-                    name = "Relative Y position",
-                    width = "full",
-                    softMin = -1500,
-                    min = -3000,
-                    max = 3000,
-                    softMax = 1500,
-                    step = 1,
-                    get = function()
+                ),
+                relY = GetRangeSlider(
+                    "Relative Y position",
+                    function()
                         return CUI.db.profile.tweaks.housingControlsFrame.relY
                     end,
-                    set = function(_, value)
+                    function(_, value)
                         CUI.db.profile.tweaks.housingControlsFrame.relY = value
                         CUI:MoveHousingControlsFrame()
                     end
-                }
+                )
             }
         }
     }
@@ -121,227 +228,153 @@ local function GetSocialOptions()
                 return not CUI.db.profile.socials.enableFriendlist
             end,
             args = {
-                font = {
-                    type = "group",
-                    name = "Font Settings",
-                    args = {
-                        name = {
-                            type = "select",
-                            name = "Font",
-                            dialogControl = 'LSM30_Font',
-                            desc = "The font to use.",
-                            values = LSM:HashTable("font"),
-                            get = function()
-                                return CUI.db.profile.socials.friendlist.font.name
-                            end,
-                            set = function(_, value)
-                                CUI.db.profile.socials.friendlist.font.name = value
-                                CUI:SetFont(
-                                    CUI.friendsFontString,
-                                    CUI.db.profile.socials.friendlist.font.name,
-                                    CUI.db.profile.socials.friendlist.font.size,
-                                    CUI.db.profile.socials.friendlist.font.outline
-                                )
-                                CUI:UpdateSocialText(
-                                    CUI.friendsFontString,
-                                    nil,
-                                    CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
-                                )
-                            end
-                        },
-                        size = {
-                            type = "range",
-                            name = "Font Size",
-                            desc = "Set the font size",
-                            min = 6,
-                            max = 100,
-                            step = 1,
-                            get = function()
-                                return CUI.db.profile.socials.friendlist.font.size
-                            end,
-                            set = function(_, value)
-                                CUI.db.profile.socials.friendlist.font.size = value
-                                CUI:SetFont(
-                                    CUI.friendsFontString,
-                                    CUI.db.profile.socials.friendlist.font.name,
-                                    CUI.db.profile.socials.friendlist.font.size,
-                                    CUI.db.profile.socials.friendlist.font.outline
-                                )
-                                CUI:UpdateSocialText(
-                                    CUI.friendsFontString,
-                                    nil,
-                                    CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
-                                )
-                            end,
-                        },
-                        outline = {
-                            type = "select",
-                            name = "Outline",
-                            desc = "Outline mode of the text",
-                            values = {
-                                ["OUTLINE"] = "Outline",
-                                ["THICKOUTLINE"] = "Thick Outline",
-                                ["MONOCHROME, OUTLINE"] = "Monochrome Outline",
-                                ["MONOCHROME, THICKOUTLINE"] = "Monochrome Thick Outline"
-                            },
-                            get = function()
-                                return CUI.db.profile.socials.friendlist.font.outline
-                            end,
-                            set = function(_, value)
-                                CUI.db.profile.socials.friendlist.font.outline = value
-                                CUI:SetFont(
-                                    CUI.friendsFontString,
-                                    CUI.db.profile.socials.friendlist.font.name,
-                                    CUI.db.profile.socials.friendlist.font.size,
-                                    CUI.db.profile.socials.friendlist.font.outline
-                                )
-                                CUI:UpdateSocialText(
-                                    CUI.friendsFontString,
-                                    nil,
-                                    CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
-                                )
-                            end,
-                            style = "dropdown"
-                        }
-                    },
-                },
-                border = {
-                    type = "group",
-                    name = "Borders",
-                    args = {
-                        name = {
-                            type = "select",
-                            name = "Frame borders",
-                            width = "full",
-                            dialogControl = "LSM30_Border",
-                            values = LSM:HashTable("border"),
-                            get = function()
-                                return CUI.db.profile.socials.friendlist.border.name
-                            end,
-                            set = function(_, value)
-                                CUI.db.profile.socials.friendlist.border.name = value
-                                CUI:UpdateSocialFrameLook(
-                                    CUI.friendRoot,
-                                    CUI.db.profile.socials.friendlist.border.name,
-                                    CUI.db.profile.socials.friendlist.border.size,
-                                    CUI.db.profile.socials.friendlist.border.inset,
-                                    CUI.db.profile.socials.friendlist.border.color,
-                                    CUI.db.profile.socials.friendlist.backdrop.color
-                                )
-                                CUI:UpdateSocialText(
-                                    CUI.friendsFontString,
-                                    nil,
-                                    CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
-                                )
-                            end
-                        },
-                        size = {
-                            type = "range",
-                            name = "Border size",
-                            width = "full",
-                            min = 0,
-                            max = 30,
-                            step = 1,
-                            get = function()
-                                return CUI.db.profile.socials.friendlist.border.size
-                            end,
-                            set = function(_, value)
-                                CUI.db.profile.socials.friendlist.border.size = value
-                                CUI:UpdateSocialFrameLook(
-                                    CUI.friendRoot,
-                                    CUI.db.profile.socials.friendlist.border.name,
-                                    CUI.db.profile.socials.friendlist.border.size,
-                                    CUI.db.profile.socials.friendlist.border.inset,
-                                    CUI.db.profile.socials.friendlist.border.color,
-                                    CUI.db.profile.socials.friendlist.backdrop.color
-                                )
-                                CUI:UpdateSocialText(
-                                    CUI.friendsFontString,
-                                    nil,
-                                    CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
-                                )
-                            end
-                        },
-                        inset = {
-                            type = "range",
-                            name = "Border inset",
-                            width = "full",
-                            min = 0,
-                            max = 30,
-                            step = 1,
-                            get = function()
-                                return CUI.db.profile.socials.friendlist.border.inset
-                            end,
-                            set = function(_, value)
-                                CUI.db.profile.socials.friendlist.border.inset = value
-                                CUI:UpdateSocialFrameLook(
-                                    CUI.friendRoot,
-                                    CUI.db.profile.socials.friendlist.border.name,
-                                    CUI.db.profile.socials.friendlist.border.size,
-                                    CUI.db.profile.socials.friendlist.border.inset,
-                                    CUI.db.profile.socials.friendlist.border.color,
-                                    CUI.db.profile.socials.friendlist.backdrop.color
-                                )
-                                CUI:UpdateSocialText(
-                                    CUI.friendsFontString,
-                                    nil,
-                                    CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
-                                )
-                            end
-                        },
-                        color = {
-                            type = "color",
-                            name = "Border color",
-                            width = "full",
-                            hasAlpha = true,
-                            get = function()
-                                return unpack(CUI.db.profile.socials.friendlist.border.color)
-                            end,
-                            set = function(_, r, g, b, a)
-                                CUI.db.profile.socials.friendlist.border.color = {r, g, b, a}
-                                CUI:UpdateSocialFrameLook(
-                                    CUI.friendRoot,
-                                    CUI.db.profile.socials.friendlist.border.name,
-                                    CUI.db.profile.socials.friendlist.border.size,
-                                    CUI.db.profile.socials.friendlist.border.inset,
-                                    CUI.db.profile.socials.friendlist.border.color,
-                                    CUI.db.profile.socials.friendlist.backdrop.color
-                                )
-                                CUI:UpdateSocialText(
-                                    CUI.friendsFontString,
-                                    nil,
-                                    CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
-                                )
-                            end
-                        }
-                    }
-                },
-                backdrop = {
-                    type = "group",
-                    name = "Backdrop",
-                    args = {
-                        color = {
-                            type = "color",
-                            name = "Backdrop color",
-                            width = "full",
-                            hasAlpha = true,
-                            get = function()
-                                return unpack(CUI.db.profile.socials.friendlist.backdrop.color)
-                            end,
-                            set = function(_, r, g, b, a)
-                                CUI.db.profile.socials.friendlist.backdrop.color = {r, g, b, a}
-                                CUI:UpdateSocialFrameLook(
-                                    CUI.friendRoot,
-                                    CUI.db.profile.socials.friendlist.border.name,
-                                    CUI.db.profile.socials.friendlist.border.size,
-                                    CUI.db.profile.socials.friendlist.border.inset,
-                                    CUI.db.profile.socials.friendlist.border.color,
-                                    CUI.db.profile.socials.friendlist.backdrop.color
-                                )
-                            end
-                        }
-                    }
-                },
+                font = GetFontSelector(
+                    function()
+                        return CUI.db.profile.socials.friendlist.font.name
+                    end,
+                    function(_, value)
+                        CUI.db.profile.socials.friendlist.font.name = value
+                        CUI:SetFont(
+                            CUI.friendsFontString,
+                            CUI.db.profile.socials.friendlist.font.name,
+                            CUI.db.profile.socials.friendlist.font.size,
+                            CUI.db.profile.socials.friendlist.font.outline
+                        )
+                        CUI:UpdateSocialText(
+                            CUI.friendsFontString,
+                            CUI.friendsFontString:GetText(),
+                            CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
+                        )
+                    end,
+                    function()
+                        return CUI.db.profile.socials.friendlist.font.size
+                    end,
+                    function(_, value)
+                        CUI.db.profile.socials.friendlist.font.size = value
+                        CUI:SetFont(
+                            CUI.friendsFontString,
+                            CUI.db.profile.socials.friendlist.font.name,
+                            CUI.db.profile.socials.friendlist.font.size,
+                            CUI.db.profile.socials.friendlist.font.outline
+                        )
+                        CUI:UpdateSocialText(
+                            CUI.friendsFontString,
+                            CUI.friendsFontString:GetText(),
+                            CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
+                        )
+                    end,
+                    function()
+                        return CUI.db.profile.socials.friendlist.font.outline
+                    end,
+                    function(_, value)
+                        CUI.db.profile.socials.friendlist.font.outline = value
+                        CUI:SetFont(
+                            CUI.friendsFontString,
+                            CUI.db.profile.socials.friendlist.font.name,
+                            CUI.db.profile.socials.friendlist.font.size,
+                            CUI.db.profile.socials.friendlist.font.outline
+                        )
+                        CUI:UpdateSocialText(
+                            CUI.friendsFontString,
+                            CUI.friendsFontString:GetText(),
+                            CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
+                        )
+                    end
+                ),
+                border = GetBorderSelector(
+                    function()
+                        return CUI.db.profile.socials.friendlist.border.name
+                    end,
+                    function(_, value)
+                        CUI.db.profile.socials.friendlist.border.name = value
+                        CUI:UpdateSocialFrameLook(
+                            CUI.friendRoot,
+                            CUI.db.profile.socials.friendlist.border.name,
+                            CUI.db.profile.socials.friendlist.border.size,
+                            CUI.db.profile.socials.friendlist.border.inset,
+                            CUI.db.profile.socials.friendlist.border.color,
+                            CUI.db.profile.socials.friendlist.backdrop.color
+                        )
+                        CUI:UpdateSocialText(
+                            CUI.friendsFontString,
+                            CUI.friendsFontString:GetText(),
+                            CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
+                        )
+                    end,
+                    function()
+                        return CUI.db.profile.socials.friendlist.border.size
+                    end,
+                    function(_, value)
+                        CUI.db.profile.socials.friendlist.border.size = value
+                        CUI:UpdateSocialFrameLook(
+                            CUI.friendRoot,
+                            CUI.db.profile.socials.friendlist.border.name,
+                            CUI.db.profile.socials.friendlist.border.size,
+                            CUI.db.profile.socials.friendlist.border.inset,
+                            CUI.db.profile.socials.friendlist.border.color,
+                            CUI.db.profile.socials.friendlist.backdrop.color
+                        )
+                        CUI:UpdateSocialText(
+                            CUI.friendsFontString,
+                            CUI.friendsFontString:GetText(),
+                            CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
+                        )
+                    end,
+                    function()
+                        return CUI.db.profile.socials.friendlist.border.inset
+                    end,
+                    function(_, value)
+                        CUI.db.profile.socials.friendlist.border.inset = value
+                        CUI:UpdateSocialFrameLook(
+                            CUI.friendRoot,
+                            CUI.db.profile.socials.friendlist.border.name,
+                            CUI.db.profile.socials.friendlist.border.size,
+                            CUI.db.profile.socials.friendlist.border.inset,
+                            CUI.db.profile.socials.friendlist.border.color,
+                            CUI.db.profile.socials.friendlist.backdrop.color
+                        )
+                        CUI:UpdateSocialText(
+                            CUI.friendsFontString,
+                            CUI.friendsFontString:GetText(),
+                            CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
+                        )
+                    end,
+                    function()
+                        return unpack(CUI.db.profile.socials.friendlist.border.color)
+                    end,
+                    function(_, r, g, b, a)
+                        CUI.db.profile.socials.friendlist.border.color = {r, g, b, a}
+                        CUI:UpdateSocialFrameLook(
+                            CUI.friendRoot,
+                            CUI.db.profile.socials.friendlist.border.name,
+                            CUI.db.profile.socials.friendlist.border.size,
+                            CUI.db.profile.socials.friendlist.border.inset,
+                            CUI.db.profile.socials.friendlist.border.color,
+                            CUI.db.profile.socials.friendlist.backdrop.color
+                        )
+                        CUI:UpdateSocialText(
+                            CUI.friendsFontString,
+                            CUI.friendsFontString:GetText(),
+                            CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
+                        )
+                    end
+                ),
+                backdrop = GetTextureSelector(
+                    function()
+                        return unpack(CUI.db.profile.socials.friendlist.backdrop.color)
+                    end,
+                    function(_, r, g, b, a)
+                        CUI.db.profile.socials.friendlist.backdrop.color = {r, g, b, a}
+                        CUI:UpdateSocialFrameLook(
+                            CUI.friendRoot,
+                            CUI.db.profile.socials.friendlist.border.name,
+                            CUI.db.profile.socials.friendlist.border.size,
+                            CUI.db.profile.socials.friendlist.border.inset,
+                            CUI.db.profile.socials.friendlist.border.color,
+                            CUI.db.profile.socials.friendlist.backdrop.color
+                        )
+                    end
+                ),
                 positioning = {
                     type = "group",
                     name = "Positioning",

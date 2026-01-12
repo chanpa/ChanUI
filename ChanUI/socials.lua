@@ -39,9 +39,10 @@ end
 ---@param fs FontString
 function CUI:UpdateSocialText(fs, message, padding)
     local parent = fs:GetParent()
-    message = message or fs:GetText()
-
-    fs:SetText(message)
+    
+    if message then
+        fs:SetText(message)
+    end
     local w = fs:GetUnboundedStringWidth()
     local h = fs:GetStringHeight()
 
