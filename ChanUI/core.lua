@@ -12,11 +12,6 @@ function CUI:OnEnable()
 
     -- socials
     self:ShowSocials()
-    self:RegisterEvent("FRIENDLIST_UPDATE", "UpdateFriends")
-    self:RegisterEvent("BN_FRIEND_ACCOUNT_ONLINE", "UpdateFriends")
-    self:RegisterEvent("BN_FRIEND_ACCOUNT_OFFLINE", "UpdateFriends")
-    self:RegisterEvent("BN_FRIEND_INFO_CHANGED", "UpdateFriends")
-    self:RegisterEvent("BN_INFO_CHANGED", "UpdateFriends")
 end
 
 ---@param fs FontString
@@ -51,4 +46,20 @@ function CUI:RGBPercToHex(r, g, b)
     g = g <= 1 and g >= 0 and g or 0
     b = b <= 1 and b >= 0 and b or 0
     return string.format("%02x%02x%02x", r*255, g*255, b*255)
+end
+
+
+---@param path string dot delimited string pointing to the value like, exlude db.profile. Like: "socials.friendlist.font.name" will look up CUI.db.profile.socials.friendlist.font.name
+function CUI:GetConfigValue(path)
+    local keys = {}
+    for key in string.gmatch(path, "[^%.]+") do
+        table.insert(keys, key)
+    end
+
+    local value = CUI.db.profile
+    for _, key in ipairs(keys) do
+        value = value[key]
+        if value == nil then return nil end
+    end
+    return value
 end

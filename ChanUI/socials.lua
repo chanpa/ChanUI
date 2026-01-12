@@ -3,6 +3,11 @@ local LSM = LibStub("LibSharedMedia-3.0")
 
 function CUI:ShowSocials()
     if self.db.profile.socials.enableFriendlist then
+        self:RegisterEvent("FRIENDLIST_UPDATE", "UpdateFriends")
+        self:RegisterEvent("BN_FRIEND_ACCOUNT_ONLINE", "UpdateFriends")
+        self:RegisterEvent("BN_FRIEND_ACCOUNT_OFFLINE", "UpdateFriends")
+        self:RegisterEvent("BN_FRIEND_INFO_CHANGED", "UpdateFriends")
+        self:RegisterEvent("BN_INFO_CHANGED", "UpdateFriends")
         StaticPopupDialogs["CHANUI_SET_FRIEND_NOTE"] = {
             text = "Note:",
             button1 = "Accept",
