@@ -11,3 +11,4 @@ tweaks.lua
 socials.lua
 friendlist.lua
 guildlist.lua
+realms.lua

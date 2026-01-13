@@ -274,6 +274,7 @@ function GetStatus(statusNum, isMobile)
 end
 
 function GetFaction(guid)
+    if not guid then return end
     return C_CreatureInfo.GetFactionInfo(C_PlayerInfo.GetRace({guid = guid})).name
 end
 

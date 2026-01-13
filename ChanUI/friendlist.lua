@@ -357,7 +357,7 @@ function ParseWowFriend(friend, gameAccountInfo)
         _, _, _, _, _, _, realmName = GetPlayerInfoByGUID(gameAccountInfo.playerGuid)
     end
     if realmName == "" then
-        realmName = gameAccountInfo.realmID
+        realmName = CUI.realm_id_to_name[gameAccountInfo.realmID]
     end
     friend.realmName = realmName or gameAccountInfo.realmID
     friend.characterFaction = gameAccountInfo.factionName

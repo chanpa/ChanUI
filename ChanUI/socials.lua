@@ -40,6 +40,7 @@ function CUI:ShowSocials()
             whileDead = true,
             preferredIndex = 3
         }
+        self.realm_id_to_name = self:GetRealms()
         self:ShowFriends()
     end
 

@@ -1,0 +1,9 @@
+[project]
+name = "chanui"
+version = "0.1.0"
+description = "Some UI Tweaks for World of Warcraft. Python used to download some realm info."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "httpx>=0.28.1",
+]
