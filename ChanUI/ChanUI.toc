@@ -10,3 +10,4 @@ options.lua
 tweaks.lua
 socials.lua
 friendlist.lua
+guildlist.lua

@@ -24,12 +24,30 @@ function CUI:ShowSocials()
             whileDead = true,
             preferredIndex = 3
         }
+        StaticPopupDialogs["CHANUI_SET_GUILD_NOTE"] = {
+            text = "Note:",
+            button1 = "Accept",
+            button2 = "Cancel",
+            hasEditBox = true,
+            OnShow = function(s) s.EditBox:SetText("") end,
+            OnCancel = function() end,
+            OnAccept = function(s, guildIndex)
+                GuildRosterSetPublicNote(guildIndex, s.EditBox:GetText())
+            end,
+            EditBoxOnEnterPressed = function(s) s:GetParent():GetButton1():Click() end,
+            EditBoxOnEscapePressed = function(s) s:GetParent():GetButton2():Click() end,
+            timeout = 0,
+            whileDead = true,
+            preferredIndex = 3
+        }
         self:ShowFriends()
     end
 
-    -- if self.db.profile.socials.enableGuilddlist then
-    --     self:ShowGuild()
-    -- end
+    if self.db.profile.socials.enableGuildlist then
+        self:RegisterEvent("GUILD_ROSTER_UPDATE", "ShowGuild")
+        self:RegisterEvent("PLAYER_GUILD_UPDATE", "ShowGuild")
+        self:ShowGuild()
+    end
 end
 
 function CUI:CalculateSocialFramePadding(borderInset)

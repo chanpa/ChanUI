@@ -85,9 +85,10 @@ function CreateFriendRoot()
     f:EnableMouse(true)
 
     local anchor = CUI.db.profile.socials.friendlist.positioning.anchor
+    local frameAnchor = CUI.db.profile.socials.friendlist.positioning.frameAnchor
     local relX = CUI.db.profile.socials.friendlist.positioning.relX
     local relY = CUI.db.profile.socials.friendlist.positioning.relY
-    f:SetPoint(anchor, UIParent, anchor, relX, relY)
+    f:SetPoint(frameAnchor, UIParent, anchor, relX, relY)
     f:SetScript("OnEnter", function()
         ShowFriendlist()
     end)

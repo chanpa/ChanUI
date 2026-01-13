@@ -495,7 +495,7 @@ local function GetSocialOptions()
                                 ["CENTER"] = "CENTER"
                             },
                             get = function()
-                                return CUI.db.profile.socials.friendlist.positioning.anchor
+                                return CUI.db.profile.socials.friendlist.positioning.frameAnchor
                             end,
                             set = function(_, value)
                                 CUI.db.profile.socials.friendlist.positioning.frameAnchor = value
@@ -561,19 +561,269 @@ local function GetSocialOptions()
         guildlist = {
             type = "group",
             name = "Guildlist",
+            childGroups = "tab",
             disabled = function()
                 return not CUI.db.profile.socials.enableGuildlist
             end,
             args = {
-                someoption = {
-                    type = "toggle",
-                    name = "Some option",
-                    get = function()
-                        return CUI.db.profile.socials.guildlist.someoption
+                font = GetFontSelector(
+                    function()
+                        return CUI.db.profile.socials.guildlist.font.name
                     end,
-                    set = function(_, value)
-                        CUI.db.profile.socials.guildlist.someoption = value
+                    function(_, value)
+                        CUI.db.profile.socials.guildlist.font.name = value
+                        CUI:SetFont(
+                            CUI.guildieFontString,
+                            CUI.db.profile.socials.guildlist.font.name,
+                            CUI.db.profile.socials.guildlist.font.size,
+                            CUI.db.profile.socials.guildlist.font.outline
+                        )
+                        CUI:UpdateSocialText(
+                            CUI.guildieFontString,
+                            CUI.guildieFontString:GetText(),
+                            CUI:CalculateSocialFramePadding(CUI.db.profile.socials.guildlist.border.inset)
+                        )
+                    end,
+                    function()
+                        return CUI.db.profile.socials.guildlist.font.size
+                    end,
+                    function(_, value)
+                        CUI.db.profile.socials.guildlist.font.size = value
+                        CUI:SetFont(
+                            CUI.guildieFontString,
+                            CUI.db.profile.socials.guildlist.font.name,
+                            CUI.db.profile.socials.guildlist.font.size,
+                            CUI.db.profile.socials.guildlist.font.outline
+                        )
+                        CUI:UpdateSocialText(
+                            CUI.guildieFontString,
+                            CUI.guildieFontString:GetText(),
+                            CUI:CalculateSocialFramePadding(CUI.db.profile.socials.guildlist.border.inset)
+                        )
+                    end,
+                    function()
+                        return CUI.db.profile.socials.guildlist.font.outline
+                    end,
+                    function(_, value)
+                        CUI.db.profile.socials.guildlist.font.outline = value
+                        CUI:SetFont(
+                            CUI.guildieFontString,
+                            CUI.db.profile.socials.guildlist.font.name,
+                            CUI.db.profile.socials.guildlist.font.size,
+                            CUI.db.profile.socials.guildlist.font.outline
+                        )
+                        CUI:UpdateSocialText(
+                            CUI.guildieFontString,
+                            CUI.guildieFontString:GetText(),
+                            CUI:CalculateSocialFramePadding(CUI.db.profile.socials.guildlist.border.inset)
+                        )
                     end
+                ),
+                border = GetBorderSelector(
+                    function()
+                        return CUI.db.profile.socials.guildlist.border.name
+                    end,
+                    function(_, value)
+                        CUI.db.profile.socials.guildlist.border.name = value
+                        CUI:UpdateSocialFrameLook(
+                            CUI.guildRoot,
+                            CUI.db.profile.socials.guildlist.border.name,
+                            CUI.db.profile.socials.guildlist.border.size,
+                            CUI.db.profile.socials.guildlist.border.inset,
+                            CUI.db.profile.socials.guildlist.border.color,
+                            CUI.db.profile.socials.guildlist.backdrop.color
+                        )
+                        CUI:UpdateSocialText(
+                            CUI.guildieFontString,
+                            CUI.guildieFontString:GetText(),
+                            CUI:CalculateSocialFramePadding(CUI.db.profile.socials.guildlist.border.inset)
+                        )
+                    end,
+                    function()
+                        return CUI.db.profile.socials.guildlist.border.size
+                    end,
+                    function(_, value)
+                        CUI.db.profile.socials.guildlist.border.size = value
+                        CUI:UpdateSocialFrameLook(
+                            CUI.guildieRoot,
+                            CUI.db.profile.socials.guildlist.border.name,
+                            CUI.db.profile.socials.guildlist.border.size,
+                            CUI.db.profile.socials.guildlist.border.inset,
+                            CUI.db.profile.socials.guildlist.border.color,
+                            CUI.db.profile.socials.guildlist.backdrop.color
+                        )
+                        CUI:UpdateSocialText(
+                            CUI.guildieFontString,
+                            CUI.guildieFontString:GetText(),
+                            CUI:CalculateSocialFramePadding(CUI.db.profile.socials.guildlist.border.inset)
+                        )
+                    end,
+                    function()
+                        return CUI.db.profile.socials.guildlist.border.inset
+                    end,
+                    function(_, value)
+                        CUI.db.profile.socials.guildlist.border.inset = value
+                        CUI:UpdateSocialFrameLook(
+                            CUI.guildieRoot,
+                            CUI.db.profile.socials.guildlist.border.name,
+                            CUI.db.profile.socials.guildlist.border.size,
+                            CUI.db.profile.socials.guildlist.border.inset,
+                            CUI.db.profile.socials.guildlist.border.color,
+                            CUI.db.profile.socials.guildlist.backdrop.color
+                        )
+                        CUI:UpdateSocialText(
+                            CUI.guildieFontString,
+                            CUI.guildieFontString:GetText(),
+                            CUI:CalculateSocialFramePadding(CUI.db.profile.socials.guildlist.border.inset)
+                        )
+                    end,
+                    function()
+                        return unpack(CUI.db.profile.socials.guildlist.border.color)
+                    end,
+                    function(_, r, g, b, a)
+                        CUI.db.profile.socials.guildlist.border.color = {r, g, b, a}
+                        CUI:UpdateSocialFrameLook(
+                            CUI.guildieRoot,
+                            CUI.db.profile.socials.guildlist.border.name,
+                            CUI.db.profile.socials.guildlist.border.size,
+                            CUI.db.profile.socials.guildlist.border.inset,
+                            CUI.db.profile.socials.guildlist.border.color,
+                            CUI.db.profile.socials.guildlist.backdrop.color
+                        )
+                        CUI:UpdateSocialText(
+                            CUI.guildieFontString,
+                            CUI.guildieFontString:GetText(),
+                            CUI:CalculateSocialFramePadding(CUI.db.profile.socials.guildlist.border.inset)
+                        )
+                    end
+                ),
+                backdrop = GetTextureSelector(
+                    function()
+                        return unpack(CUI.db.profile.socials.guildlist.backdrop.color)
+                    end,
+                    function(_, r, g, b, a)
+                        CUI.db.profile.socials.guildlist.backdrop.color = {r, g, b, a}
+                        CUI:UpdateSocialFrameLook(
+                            CUI.guildieRoot,
+                            CUI.db.profile.socials.guildlist.border.name,
+                            CUI.db.profile.socials.guildlist.border.size,
+                            CUI.db.profile.socials.guildlist.border.inset,
+                            CUI.db.profile.socials.guildlist.border.color,
+                            CUI.db.profile.socials.guildlist.backdrop.color
+                        )
+                    end
+                ),
+                positioning = {
+                    type = "group",
+                    name = "Positioning",
+                    args = {
+                        anchor = {
+                            type = "select",
+                            name = "Anchor point",
+                            desc = "Where to anchor the list",
+                            width = "full",
+                            values = {
+                                ["TOP"] = "TOP",
+                                ["RIGHT"] = "RIGHT",
+                                ["BOTTOM"] = "BOTTOM",
+                                ["LEFT"] = "LEFT",
+                                ["TOPRIGHT"] = "TOPRIGHT",
+                                ["TOPLEFT"] = "TOPLEFT",
+                                ["BOTTOMLEFT"] = "BOTTOMLEFT",
+                                ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+                                ["CENTER"] = "CENTER"
+                            },
+                            get = function()
+                                return CUI.db.profile.socials.guildlist.positioning.anchor
+                            end,
+                            set = function(_, value)
+                                CUI.db.profile.socials.guildlist.positioning.anchor = value
+                                CUI:UpdateSocialFramePosition(
+                                    CUI.guildieFontString,
+                                    CUI.db.profile.socials.guildlist.positioning.anchor,
+                                    CUI.db.profile.socials.guildlist.positioning.frameAnchor,
+                                    CUI.db.profile.socials.guildlist.positioning.relX,
+                                    CUI.db.profile.socials.guildlist.positioning.relY
+                                )
+                            end
+                        },
+                        frameAnchor = {
+                            type = "select",
+                            name = "Frame anchor",
+                            desc = "Which part of the Friendlist to anchor to the anchor above",
+                            width = "full",
+                            values = {
+                                ["TOP"] = "TOP",
+                                ["RIGHT"] = "RIGHT",
+                                ["BOTTOM"] = "BOTTOM",
+                                ["LEFT"] = "LEFT",
+                                ["TOPRIGHT"] = "TOPRIGHT",
+                                ["TOPLEFT"] = "TOPLEFT",
+                                ["BOTTOMLEFT"] = "BOTTOMLEFT",
+                                ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+                                ["CENTER"] = "CENTER"
+                            },
+                            get = function()
+                                return CUI.db.profile.socials.guildlist.positioning.frameAnchor
+                            end,
+                            set = function(_, value)
+                                CUI.db.profile.socials.guildlist.positioning.frameAnchor = value
+                                CUI:UpdateSocialFramePosition(
+                                    CUI.guildieFontString,
+                                    CUI.db.profile.socials.guildlist.positioning.anchor,
+                                    CUI.db.profile.socials.guildlist.positioning.frameAnchor,
+                                    CUI.db.profile.socials.guildlist.positioning.relX,
+                                    CUI.db.profile.socials.guildlist.positioning.relY
+                                )
+                            end
+                        },
+                        relX = {
+                            type = "range",
+                            name = "Relative X position",
+                            width = "full",
+                            softMin = -1500,
+                            min = -3000,
+                            max = 3000,
+                            softMax = 1500,
+                            step = 1,
+                            get = function()
+                                return CUI.db.profile.socials.guildlist.positioning.relX
+                            end,
+                            set = function(_, value)
+                                CUI.db.profile.socials.guildlist.positioning.relX = value
+                                CUI:UpdateSocialFramePosition(
+                                    CUI.guildieFontString,
+                                    CUI.db.profile.socials.guildlist.positioning.anchor,
+                                    CUI.db.profile.socials.guildlist.positioning.frameAnchor,
+                                    CUI.db.profile.socials.guildlist.positioning.relX,
+                                    CUI.db.profile.socials.guildlist.positioning.relY
+                                )
+                            end
+                        },
+                        relY = {
+                            type = "range",
+                            name = "Relative Y position",
+                            width = "full",
+                            softMin = -1500,
+                            min = -3000,
+                            max = 3000,
+                            softMax = 1500,
+                            step = 1,
+                            get = function()
+                                return CUI.db.profile.socials.guildlist.positioning.relY
+                            end,
+                            set = function(_, value)
+                                CUI.db.profile.socials.guildlist.positioning.relY = value
+                                CUI:UpdateSocialFramePosition(
+                                    CUI.guildieFontString,
+                                    CUI.db.profile.socials.guildlist.positioning.anchor,
+                                    CUI.db.profile.socials.guildlist.positioning.frameAnchor,
+                                    CUI.db.profile.socials.guildlist.positioning.relX,
+                                    CUI.db.profile.socials.guildlist.positioning.relY
+                                )
+                            end
+                        }
+                    }
                 }
             }
         }
@@ -632,7 +882,26 @@ local defaultOptions = {
                 },
             },
             guildlist = {
-                someoption = true,
+                positioning = {
+                    anchor = "TOP",
+                    frameAnchor = "TOP",
+                    relX = 0,
+                    relY = 0
+                },
+                font = {
+                    name = "Arial Narrow",
+                    size = 16,
+                    outline = "THICKOUTLINE"
+                },
+                border = {
+                    name = "",
+                    size = 0,
+                    inset = 0,
+                    color = {0, 0, 0, 1}
+                },
+                backdrop = {
+                    color = {0, 0, 0, 1}
+                },
             }
         }
     }
