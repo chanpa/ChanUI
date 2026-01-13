@@ -44,8 +44,9 @@ function CUI:ShowSocials()
     end
 
     if self.db.profile.socials.enableGuildlist then
-        self:RegisterEvent("GUILD_ROSTER_UPDATE", "ShowGuild")
-        self:RegisterEvent("PLAYER_GUILD_UPDATE", "ShowGuild")
+        self:RegisterEvent("GUILD_ROSTER_UPDATE", "UpdateGuild")
+        self:RegisterEvent("PLAYER_GUILD_UPDATE", "UpdateGuild")
+        C_GuildInfo.GuildRoster()
         self:ShowGuild()
     end
 end

@@ -19,7 +19,6 @@ end
 function CUI:ShowGuild()
     if not IsInGuild() then return end
 
-    C_GuildInfo.GuildRoster()
     CreateGuildieTable()
     if not self.guildieRoot then CreateGuildieRoot() end
     if not self.guildieFontString then CreateGuildieOnlineFontString() end
