@@ -208,7 +208,6 @@ function ShowFriendlist()
                 CUI.friendList:SetLineScript(line, "OnMouseDown", function(_, button)
                     ClickOnFriend(button, friend, friend.bnetAccountID)
                 end)
-                friend.bnetIndex = bnetIndex
                 if client:find("^wow") then
                     CUI.friendList:SetCell(line, 1, CUI:CreateSocialStatusString(friend))
                     CUI.friendList:SetCell(line, 2, friend.accountName)
@@ -272,7 +271,7 @@ function ClickOnFriend(button, friend, bnetAccountID)
             if not friend.characterName or not friend.realmName then return end
             C_PartyInfo.InviteUnit(friend.characterName .. "-" .. friend.realmName)
         elseif button == "RightButton" then
-            --CUI:Print(CUI:DumpObject(friend))
+            DevTools_Dump(friend)
             CheckMissingClients()
         end
     else
@@ -298,7 +297,7 @@ function CreateFriendsTable()
     for bnetIndex = 1, BNGetNumFriends() do
         local bnetInfo = C_BattleNet.GetFriendAccountInfo(bnetIndex)
         if bnetInfo and bnetInfo.gameAccountInfo and bnetInfo.gameAccountInfo.isOnline then
-            local friendInfo = ParseBnetInfo(bnetInfo)
+            local friendInfo = ParseBnetInfo(bnetInfo, bnetIndex)
             if CUI.friendsTable[friendInfo.client] == nil then
                 CUI.friendsTable[friendInfo.client] = {}
             end
@@ -311,8 +310,9 @@ function CreateFriendsTable()
 end
 
 ---@param bnetInfo BNetAccountInfo
-function ParseBnetInfo(bnetInfo)
+function ParseBnetInfo(bnetInfo, bnetIndex)
     local friend =  {
+        bnetIndex = bnetIndex,
         bnetAccountID = bnetInfo.bnetAccountID,
         accountName = bnetInfo.accountName,
         isAFK = bnetInfo.isAFK,
@@ -356,8 +356,10 @@ function ParseWowFriend(friend, gameAccountInfo)
     else
         _, _, _, _, _, _, realmName = GetPlayerInfoByGUID(gameAccountInfo.playerGuid)
     end
-
-    friend.realmName = realmName
+    if realmName == "" then
+        realmName = gameAccountInfo.realmID
+    end
+    friend.realmName = realmName or gameAccountInfo.realmID
     friend.characterFaction = gameAccountInfo.factionName
     friend.characterName = gameAccountInfo.characterName
     friend.characterLevel = gameAccountInfo.characterLevel
