@@ -78,10 +78,10 @@ function CUI:UpdateSocialFrameLook(f, borderName, size, inset, borderColor, back
 end
 
 ---@param fs FontString
-function CUI:UpdateSocialFramePosition(fs, anchor, relX, relY)
+function CUI:UpdateSocialFramePosition(fs, anchor, frameAnchor, relX, relY)
     local parent = fs:GetParent()
     parent:ClearAllPoints()
-    parent:SetPoint(anchor, UIParent, anchor, relX, relY)
+    parent:SetPoint(frameAnchor, UIParent, anchor, relX, relY)
     fs:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
 end
 

@@ -47,10 +47,11 @@ local function GetFontSelector(nameGetFunc, nameSetFunc, sizeGetFunc, sizeSetFun
                 style = "dropdown",
                 desc = "Outline mode of the text",
                 values = {
+                    [""] = "None",
                     ["OUTLINE"] = "Outline",
                     ["THICKOUTLINE"] = "Thick Outline",
-                    ["MONOCHROME, OUTLINE"] = "Monochrome Outline",
-                    ["MONOCHROME, THICKOUTLINE"] = "Monochrome Thick Outline"
+                    ["MONOCHROME,OUTLINE"] = "Monochrome Outline",
+                    ["MONOCHROME,THICKOUTLINE"] = "Monochrome Thick Outline"
                 },
                 get = outlineGetFunc,
                 set = outlineSetFunc,
@@ -471,6 +472,37 @@ local function GetSocialOptions()
                                 CUI:UpdateSocialFramePosition(
                                     CUI.friendsFontString,
                                     CUI.db.profile.socials.friendlist.positioning.anchor,
+                                    CUI.db.profile.socials.friendlist.positioning.frameAnchor,
+                                    CUI.db.profile.socials.friendlist.positioning.relX,
+                                    CUI.db.profile.socials.friendlist.positioning.relY
+                                )
+                            end
+                        },
+                        frameAnchor = {
+                            type = "select",
+                            name = "Frame anchor",
+                            desc = "Which part of the Friendlist to anchor to the anchor above",
+                            width = "full",
+                            values = {
+                                ["TOP"] = "TOP",
+                                ["RIGHT"] = "RIGHT",
+                                ["BOTTOM"] = "BOTTOM",
+                                ["LEFT"] = "LEFT",
+                                ["TOPRIGHT"] = "TOPRIGHT",
+                                ["TOPLEFT"] = "TOPLEFT",
+                                ["BOTTOMLEFT"] = "BOTTOMLEFT",
+                                ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+                                ["CENTER"] = "CENTER"
+                            },
+                            get = function()
+                                return CUI.db.profile.socials.friendlist.positioning.anchor
+                            end,
+                            set = function(_, value)
+                                CUI.db.profile.socials.friendlist.positioning.frameAnchor = value
+                                CUI:UpdateSocialFramePosition(
+                                    CUI.friendsFontString,
+                                    CUI.db.profile.socials.friendlist.positioning.anchor,
+                                    CUI.db.profile.socials.friendlist.positioning.frameAnchor,
                                     CUI.db.profile.socials.friendlist.positioning.relX,
                                     CUI.db.profile.socials.friendlist.positioning.relY
                                 )
@@ -493,6 +525,7 @@ local function GetSocialOptions()
                                 CUI:UpdateSocialFramePosition(
                                     CUI.friendsFontString,
                                     CUI.db.profile.socials.friendlist.positioning.anchor,
+                                    CUI.db.profile.socials.friendlist.positioning.frameAnchor,
                                     CUI.db.profile.socials.friendlist.positioning.relX,
                                     CUI.db.profile.socials.friendlist.positioning.relY
                                 )
@@ -515,6 +548,7 @@ local function GetSocialOptions()
                                 CUI:UpdateSocialFramePosition(
                                     CUI.friendsFontString,
                                     CUI.db.profile.socials.friendlist.positioning.anchor,
+                                    CUI.db.profile.socials.friendlist.positioning.frameAnchor,
                                     CUI.db.profile.socials.friendlist.positioning.relX,
                                     CUI.db.profile.socials.friendlist.positioning.relY
                                 )
@@ -562,7 +596,7 @@ local defaultOptions = {
                 font = {
                     name = "Arial Narrow",
                     size = 14,
-                    outline = "THICK"
+                    outline = "OUTLINE"
                 },
                 border = {
                     name = "",
@@ -578,6 +612,7 @@ local defaultOptions = {
             friendlist = {
                 positioning = {
                     anchor = "TOP",
+                    frameAnchor = "TOP",
                     relX = 0,
                     relY = 0
                 },
