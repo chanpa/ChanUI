@@ -5,5 +5,6 @@ description = "Some UI Tweaks for World of Warcraft. Python used to download som
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "aiometer>=1.0.0",
     "httpx>=0.28.1",
 ]

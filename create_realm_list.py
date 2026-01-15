@@ -1,10 +1,12 @@
 import asyncio
 import logging
+import re
 from datetime import timedelta, datetime
+from functools import partial
 from itertools import chain
 
+import aiometer
 import httpx
-import re
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -15,7 +17,7 @@ logger.addHandler(ch)
 BASE_URL_EU = "https://eu.api.blizzard.com"
 BASE_URL_US = "https://us.api.blizzard.com"
 REALM_ENDPOINT = "/data/wow/realm/index"
-NAMESPACES = ("dynamic-classic-eu", "dynamic-classic1x-eu")
+NAMESPACES = ("dynamic-classic-eu", "dynamic-classic1x-eu", "dynamic-eu")
 
 
 def _create_realm_file(realm_info):
@@ -50,6 +52,7 @@ def _parse_realms(realms):
 async def _fetch_realm(client, url):
     logger.info(f"Fetching {url}")
     realm_info = await client.get(url)
+    realm_info.raise_for_status()
     return realm_info.json()
 
 
@@ -110,8 +113,9 @@ async def _get_realm_info():
             )
         )
 
-        realms = await asyncio.gather(
-            *[_fetch_realm(client, url) for url in realm_urls]
+        realms = await aiometer.run_all(
+            [partial(_fetch_realm, client, url) for url in realm_urls],
+            max_per_second=90,
         )
         realm_info += _parse_realms(realms)
 
