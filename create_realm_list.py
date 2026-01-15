@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import re
+from collections import defaultdict
 from datetime import timedelta, datetime
 from functools import partial
 from itertools import chain
@@ -14,24 +15,31 @@ ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
 logger.addHandler(ch)
 
-BASE_URL_EU = "https://eu.api.blizzard.com"
-BASE_URL_US = "https://us.api.blizzard.com"
+BASE_URL = "https://{}.api.blizzard.com"
 REALM_ENDPOINT = "/data/wow/realm/index"
-NAMESPACES = ("dynamic-classic-eu", "dynamic-classic1x-eu", "dynamic-eu")
+REGIONS = ("eu", "us")
+NAMESPACES = ("dynamic-classic-{}", "dynamic-classic1x-{}")
 
 
 def _create_realm_file(realm_info):
-    value_string = "\n".join(
-        f'        [{realm.get("id")}] = "{realm.get("name")}",' for realm in realm_info
-    )
+    region_strings = []
+    for region, realms in realm_info.items():
+        region_string = f"        {region} = {{\n"
+        realm_string = "\n".join(
+            f'            [{realm.get("id")}] = "{realm.get("name")}",' for realm in realms
+        )
+        end_string = "\n        },"
+        region_strings.append(region_string + realm_string + end_string)
+
     with open("ChanUI/realms.lua", "w+") as f:
         f.writelines(
             "local CUI = CUI\n"
             "\n"
-            "function CUI:GetRealms()\n"
-            "    return {\n"
-            f"{value_string}\n"
+            "function CUI:GetRealms(region)\n"
+            "    local realms = {\n"
+            f"{"\n".join(region_strings)}\n"
             "    }\n"
+            "    return realms[region]\n"
             "end"
         )
 
@@ -101,23 +109,24 @@ async def _get_realm_info():
     async with httpx.AsyncClient(
         headers={"Authorization": f"Bearer {access_token}"}
     ) as client:
-        realm_info = []
-        realm_urls = chain.from_iterable(
-            await asyncio.gather(
-                *[
-                    _fetch_realm_urls(
-                        client, f"{BASE_URL_EU + REALM_ENDPOINT}?namespace={namespace}"
-                    )
-                    for namespace in NAMESPACES
-                ]
+        realm_info = defaultdict(list)
+        for region in REGIONS:
+            realm_urls = chain.from_iterable(
+                await asyncio.gather(
+                    *[
+                        _fetch_realm_urls(
+                            client, f"{BASE_URL.format(region) + REALM_ENDPOINT}?namespace={namespace.format(region)}"
+                        )
+                        for namespace in NAMESPACES
+                    ]
+                )
             )
-        )
 
-        realms = await aiometer.run_all(
-            [partial(_fetch_realm, client, url) for url in realm_urls],
-            max_per_second=90,
-        )
-        realm_info += _parse_realms(realms)
+            realms = await aiometer.run_all(
+                [partial(_fetch_realm, client, url) for url in realm_urls],
+                max_per_second=100,
+            )
+            realm_info[region] = _parse_realms(realms)
 
     return realm_info
 

@@ -412,8 +412,5 @@ function GetRealmName(friend, gameAccountInfo)
 		return gameAccountInfo.realmName
 	end
 
-	if not CUI.realm_id_to_name then
-		CUI.realm_id_to_name = CUI:GetRealms()
-	end
-	return CUI.realm_id_to_name[gameAccountInfo.realmID] or "Unknown"
+	return CUI:GetRealms("eu")[gameAccountInfo.realmID] or "Unknown"
 end
