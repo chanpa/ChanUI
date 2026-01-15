@@ -1,3 +1,4 @@
+---@diagnostic disable: cast-local-type, invisible, inject-field, undefined-global
 --- AceConfigDialog-3.0 generates AceGUI-3.0 based windows based on option tables.
 -- @class file
 -- @name AceConfigDialog-3.0

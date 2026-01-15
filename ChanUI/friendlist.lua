@@ -7,6 +7,7 @@ local clientTranslations = {
     wow_retail = "The War Within",
     wow_classic_mop = "Mists of Pandaria Classic",
     wow_classic_anniversary = "WoW Classic Anniversary",
+    wow_classic_anniversary_tbc = "WoW Classic Anniversary TBC",
     wow_unknown = "Unknown WoW version",
     Fen = "Diablo IV",
     OSI = "Diablo II: Resurrected",
@@ -20,6 +21,7 @@ local clientOrder = {
     "wow_retail",
     "wow_classic_mop",
     "wow_classic_anniversary",
+    "wow_classic_anniversary_tbc",
     "wow_unknown",
     "Fen",
     "OSI",
@@ -343,6 +345,8 @@ function ParseWowFriend(friend, gameAccountInfo)
         friend.client = "wow_retail"
     elseif wowProj == 2 then
         friend.client = "wow_classic_anniversary"
+    elseif wowProj == 5 then
+        friend.client = "wow_classic_anniversary_tbc"
     elseif wowProj == 19 then
         friend.client = "wow_classic_mop"
     else

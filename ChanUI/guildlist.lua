@@ -275,7 +275,11 @@ end
 
 function GetFaction(guid)
     if not guid then return end
-    return C_CreatureInfo.GetFactionInfo(C_PlayerInfo.GetRace({guid = guid})).name
+    local raceID = C_PlayerInfo.GetRace({guid = guid})
+    if not raceID then CUI:Print("Invalid race: "..tostring(raceID)) return "" end
+    local faction = C_CreatureInfo.GetFactionInfo(raceID)
+    if not faction then CUI:Print("Invalid race or faction:"..tostring(faction)) return "" end
+    return faction.name
 end
 
 function CreateStatusString(status)

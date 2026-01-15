@@ -58,8 +58,8 @@ def _create_realm_file(realm_info):
         f.writelines(
             "local CUI = CUI\n"
             "\n"
-            "function CUI:LoadRealms()\n"
-            "    CUI.realm_id_to_name = {\n"
+            "function CUI:GetRealms()\n"
+            "    return {\n"
             f"{value_string}\n"
             "    }\n"
             "end"
