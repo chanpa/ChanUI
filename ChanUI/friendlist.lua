@@ -32,7 +32,7 @@ local clientOrder = {
 	"BSAp",
 }
 
-local CreateFriendsTable, CreateFriendRoot, CreateFriendsOnlineFontString, ShowFriendlist, ParseBnetInfo, ParseWowFriend, CheckMissingClients
+local CreateFriendsTable, CreateFriendRoot, CreateFriendsOnlineFontString, ShowFriendlist, ParseBnetInfo, ParseWowFriend, CheckMissingClients, GetRealmName
 
 -------------------------
 --- Exposed functions ---
@@ -371,19 +371,7 @@ function ParseWowFriend(friend, gameAccountInfo)
 		friend.client = "wow_unknown"
 	end
 
-	local realmName
-	if friend.client == "wow_classic_anniversary" then
-		_, realmName = strmatch(gameAccountInfo.richPresence, "(.-)%s%-%s(.+)")
-	else
-		_, _, _, _, _, _, realmName = GetPlayerInfoByGUID(gameAccountInfo.playerGuid)
-	end
-	if realmName == "" then
-		if not CUI.realm_id_to_name then
-			CUI.realm_id_to_name = CUI:GetRealms()
-		end
-		realmName = CUI.realm_id_to_name[gameAccountInfo.realmID]
-	end
-	friend.realmName = realmName
+	friend.realmName = GetRealmName(friend, gameAccountInfo)
 	friend.realmID = gameAccountInfo.realmID
 	friend.characterFaction = gameAccountInfo.factionName
 	friend.characterName = gameAccountInfo.characterName
@@ -417,4 +405,15 @@ function CheckMissingClients()
 			print(k .. ": " .. tostring(friend.accountName))
 		end
 	end
+end
+
+function GetRealmName(friend, gameAccountInfo)
+	if friend.client == "wow_retail" then
+		return gameAccountInfo.realmName
+	end
+
+	if not CUI.realm_id_to_name then
+		CUI.realm_id_to_name = CUI:GetRealms()
+	end
+	return CUI.realm_id_to_name[gameAccountInfo.realmID] or "Unknown"
 end
