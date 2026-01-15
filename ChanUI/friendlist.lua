@@ -361,6 +361,9 @@ function ParseWowFriend(friend, gameAccountInfo)
         _, _, _, _, _, _, realmName = GetPlayerInfoByGUID(gameAccountInfo.playerGuid)
     end
     if realmName == "" then
+        if not CUI.realm_id_to_name then
+            CUI.realm_id_to_name = CUI:GetRealms()
+        end
         realmName = CUI.realm_id_to_name[gameAccountInfo.realmID]
     end
     friend.realmName = realmName or gameAccountInfo.realmID
