@@ -145,15 +145,6 @@ local function GetTweakOptions()
             type = "group",
             name = "Chat",
             args = {
-                backdrop = GetTextureSelector(
-                    function()
-                        return unpack(CUI.db.profile.tweaks.chat.backdrop.color)
-                    end,
-                    function(_, r, g, b, a)
-                        CUI.db.profile.tweaks.chat.backdrop.color = {r, g, b, a}
-                        CUI:UpdateChat()
-                    end
-                ),
                 font = GetFontSelector(
                     function()
                         return CUI.db.profile.tweaks.chat.font.name
@@ -174,36 +165,6 @@ local function GetTweakOptions()
                     end,
                     function(_, value)
                         CUI.db.profile.tweaks.chat.font.outline = value
-                        CUI:UpdateChat()
-                    end
-                ),
-                border = GetBorderSelector(
-                    function()
-                        return CUI.db.profile.tweaks.chat.border.name
-                    end,
-                    function(_, value)
-                        CUI.db.profile.tweaks.chat.border.name = value
-                        CUI:UpdateChat()
-                    end,
-                    function()
-                        return CUI.db.profile.tweaks.chat.border.size
-                    end,
-                    function(_, value)
-                        CUI.db.profile.tweaks.chat.border.size = value
-                        CUI:UpdateChat()
-                    end,
-                    function()
-                        return CUI.db.profile.tweaks.chat.border.inset
-                    end,
-                    function(_, value)
-                        CUI.db.profile.tweaks.chat.border.inset = value
-                        CUI:UpdateChat()
-                    end,
-                    function()
-                        return unpack(CUI.db.profile.tweaks.chat.border.color)
-                    end,
-                    function(_, r, g, b, a)
-                        CUI.db.profile.tweaks.chat.border.color = {r, g, b, a}
                         CUI:UpdateChat()
                     end
                 ),
@@ -840,20 +801,11 @@ local defaultOptions = {
                 relY = -30
             },
             chat = {
-                backdrop = {
-                    color = {0, 0, 0, 0.1}
-                },
                 font = {
                     name = "Arial Narrow",
                     size = 14,
                     outline = "OUTLINE"
-                },
-                border = {
-                    name = "",
-                    size = 0,
-                    inset = 0,
-                    color = {0, 0, 0, 0}
-                },
+                }
             }
         },
         socials = {

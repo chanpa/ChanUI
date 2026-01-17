@@ -253,7 +253,7 @@ function CreateGuildieTable()
                 online = connected,
                 class = className,
                 rankIndex = rankIndex,
-                faction = GetFaction(guid),
+                faction = GetFaction(guid, name),
             }
             CUI.numberOfOnlineGuildies = CUI.numberOfOnlineGuildies + 1
         end
@@ -273,10 +273,10 @@ function GetStatus(statusNum, isMobile)
     end
 end
 
-function GetFaction(guid)
+function GetFaction(guid, name)
     if not guid then return end
     local raceID = C_PlayerInfo.GetRace({guid = guid})
-    if not raceID then CUI:Print("Invalid race: "..tostring(raceID)) return "" end
+    if not raceID then CUI:Print("Invalid race for "..name..": "..tostring(raceID)) return "" end
     local faction = C_CreatureInfo.GetFactionInfo(raceID)
     if not faction then CUI:Print("Invalid race or faction:"..tostring(faction)) return "" end
     return faction.name
