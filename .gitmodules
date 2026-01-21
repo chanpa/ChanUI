@@ -1,0 +1,3 @@
+[submodule "ChanUI/Libs/LibQTip-2.0"]
+	path = ChanUI/Libs/LibQTip-2.0
+	url = https://github.com/Torhal/LibQTip-2.0.git
