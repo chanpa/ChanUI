@@ -1,6 +1,6 @@
 local CUI = CUI
 local LSM = LibStub("LibSharedMedia-3.0")
-local QT = LibStub("LibQTip-1.0")
+local QT = LibStub:GetLibrary("LibQTip-2.0")
 
 CUI.friendsTable = {}
 local clientTranslations = {
@@ -32,7 +32,8 @@ local clientOrder = {
 	"BSAp",
 }
 
-local CreateFriendsTable, CreateFriendRoot, CreateFriendsOnlineFontString, ShowFriendlist, ParseBnetInfo, ParseWowFriend, CheckMissingClients, GetRealmName
+local CreateFriendsTable, CreateFriendRoot, CreateFriendsOnlineFontString, ShowFriendlist, ParseBnetInfo, ParseWowFriend, CheckMissingClients, GetRealmName, styleSlider
+local friendListName = "ChanUIFriendListFrame"
 
 -------------------------
 --- Exposed functions ---
@@ -131,21 +132,19 @@ function ShowFriendlist()
 		return
 	end
 
-	if QT:IsAcquired("ChanUIFriendListFrame") then
-		QT:Release(CUI.friendList)
+	if QT:IsAcquiredTooltip(friendListName) then
+		CUI.friendList:Release()
 		CUI.friendList = nil
 	end
 
 	-- create list
 	local cols = 8
-	CUI.friendList =
-		QT:Acquire("ChanUIFriendListFrame", cols, "LEFT", "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER", "LEFT")
-	CUI.friendList:SmartAnchorTo(CUI.friendRoot)
-	CUI.friendList:SetAutoHideDelay(0.05, CUI.friendRoot)
-	CUI.friendList:SetBackdropBorderColor(0, 0, 0, 0)
-	CUI.friendList:SetBackdropColor(0, 0, 0, 0)
+	local tooltip =
+		QT:AcquireTooltip(friendListName, cols, "LEFT", "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER", "LEFT")
+	tooltip:SmartAnchorTo(CUI.friendRoot):SetAutoHideDelay(0.05, CUI.friendRoot):Clear()
+	tooltip.NineSlice:Hide()
 	CUI:UpdateSocialFrameLook(
-		CUI.friendList,
+		tooltip,
 		CUI.db.profile.socials.friendlist.border.name,
 		CUI.db.profile.socials.friendlist.border.size,
 		CUI.db.profile.socials.friendlist.border.inset,
@@ -167,81 +166,70 @@ function ShowFriendlist()
 	headlineFont:SetFont(fontPath, 16, "THICKOUTLINE")
 	headlineFont:SetTextColor(1, 0.8, 0)
 
-	CUI.friendList:SetHeaderFont(headerFont)
-	CUI.friendList:SetFont(normalFont)
+	tooltip:SetDefaultHeadingFont(headerFont)
+	tooltip:SetDefaultFont(normalFont)
 
 	-- space
-	CUI.friendList:AddLine(" ")
-	CUI.friendList:AddLine(" ")
+	tooltip:AddRow(" ")
+	tooltip:AddRow(" ")
 
 	-- help lines [3..6](we might update later (after UpdateScrolling) so they aren't de-centered by the slider)
-	local line = CUI.friendList:AddLine(" ")
-	line = CUI.friendList:AddLine(" ")
-	line = CUI.friendList:AddLine(" ")
-	line = CUI.friendList:AddLine(" ")
-	CUI.friendList:SetCell(3, 1, "Left-Click to whisper", headerFont, "CENTER", cols)
-	CUI.friendList:SetCell(4, 1, "Ctrl-Left-Click to invite", headerFont, "CENTER", cols)
-	CUI.friendList:SetCell(5, 1, "Right-Click to set bnet note", headerFont, "CENTER", cols)
-	CUI.friendList:SetCell(6, 1, "Ctrl-Right-Click to dump info", headerFont, "CENTER", cols)
+	local line = tooltip:AddRow(" ")
+	line = tooltip:AddRow(" ")
+	line = tooltip:AddRow(" ")
+	line = tooltip:AddRow(" ")
+	CUI:CreateHelpRow(tooltip:GetRow(3), "Left-Click to whisper", cols, headerFont)
+	CUI:CreateHelpRow(tooltip:GetRow(4), "Ctrl-Left-Click to invite", cols, headerFont)
+	CUI:CreateHelpRow(tooltip:GetRow(5), "Right-Click to set note", cols, headerFont)
+	CUI:CreateHelpRow(tooltip:GetRow(6), "Ctrl-Right-Click to dump info", cols, headerFont)
 
 	for _, client in pairs(clientOrder) do
 		local friends = CUI.friendsTable[client]
 		if friends then
-			CUI.friendList:AddLine(" ")
-			CUI.friendList:AddLine(" ")
+			tooltip:AddRow(" ")
+			tooltip:AddRow(" ")
 
 			-- headline
-			line = CUI.friendList:AddHeader()
-			CUI.friendList:SetCell(
-				line,
-				1,
-				clientTranslations[client],
-				headlineFont,
-				"LEFT",
-				cols,
-				QT.LabelProvider,
-				-1
-			)
-			CUI.friendList:AddSeparator()
+			line = tooltip:AddRow()
+			line:GetCell(1)
+				:SetColSpan(cols)
+				:SetFontObject(headlineFont)
+				:SetJustifyH("LEFT")
+				:SetText(clientTranslations[client])
+			tooltip:AddSeparator()
 
 			-- headers
-			line = CUI.friendList:AddHeader()
+			local headers
 			if client:find("^wow") then
-				CUI.friendList:SetCell(line, 1, "") --status
-				CUI.friendList:SetCell(line, 2, "Real ID")
-				CUI.friendList:SetCell(line, 3, "Lvl")
-				CUI.friendList:SetCell(line, 4, "") --is timerunner
-				CUI.friendList:SetCell(line, 5, "Name")
-				CUI.friendList:SetCell(line, 6, "Zone")
-				CUI.friendList:SetCell(line, 7, "Realm")
-				CUI.friendList:SetCell(line, 8, "Note")
+				headers = { "", "Real ID", "Lvl", "", "Name", "Zone", "Realm", "Note" }
 			else
-				CUI.friendList:SetCell(line, 1, "") --status
-				CUI.friendList:SetCell(line, 2, "Real ID")
-				CUI.friendList:SetCell(line, 6, "Activity")
-				CUI.friendList:SetCell(line, 8, "Note")
+				headers = { "", "Real ID", "", "", "", "Activity", "", "Note" }
+			end
+			line = tooltip:AddHeadingRow(unpack(headers))
+			for _, cell in pairs(line.Cells) do
+				cell:SetFontObject()
 			end
 
 			-- friends
 			for bnetIndex, friend in pairs(CUI.friendsTable[client]) do
-				line = CUI.friendList:AddLine()
-				CUI.friendList:SetLineScript(line, "OnMouseDown", function(_, button)
-					ClickOnFriend(button, friend, friend.bnetAccountID)
+				line = tooltip:AddRow()
+				line:SetScript("OnMouseDown", function(_, _, button)
+					ClickOnFriend(button, friend)
 				end)
 				if client:find("^wow") then
-					CUI.friendList:SetCell(line, 1, CUI:CreateSocialStatusString(friend))
-					CUI.friendList:SetCell(line, 2, friend.accountName)
-					CUI.friendList:SetCell(line, 3, CUI:CreateSocialLevelString(friend))
-					CUI.friendList:SetCell(line, 4, CUI:CreateSocialTimerunnerString(friend))
-					CUI.friendList:SetCell(line, 5, CUI:CreateSocialNameString(friend))
-					CUI.friendList:SetCell(line, 6, friend.characterZone)
-					CUI.friendList:SetCell(line, 7, CUI:CreateSocialRealmString(friend))
-					CUI.friendList:SetCell(line, 8, friend.note)
+					line:GetCell(1):SetFontObject():SetText(CUI:CreateSocialStatusString(friend))
+					line:GetCell(2):SetFontObject():SetText(friend.accountName)
+					line:GetCell(3):SetFontObject():SetText(CUI:CreateSocialLevelString(friend))
+					line:GetCell(4):SetFontObject():SetText(CUI:CreateSocialTimerunnerString(friend))
+					line:GetCell(5):SetFontObject():SetText(CUI:CreateSocialNameString(friend))
+					line:GetCell(6):SetFontObject():SetText(friend.characterZone)
+					line:GetCell(7):SetFontObject():SetText(CUI:CreateSocialRealmString(friend))
+					line:GetCell(8):SetFontObject():SetText(friend.note)
 				else
-					CUI.friendList:SetCell(line, 1, CUI:CreateSocialStatusString(friend))
-					CUI.friendList:SetCell(line, 2, friend.accountName)
-					CUI.friendList:SetCell(line, 6, friend.richPresence)
-					CUI.friendList:SetCell(line, 8, friend.note)
+					line:GetCell(1):SetFontObject():SetText(CUI:CreateSocialStatusString(friend))
+					line:GetCell(2):SetFontObject():SetText(friend.accountName)
+					line:GetCell(6):SetFontObject():SetText(friend.richPresence)
+					line:GetCell(8):SetFontObject():SetText(friend.note)
 				end
 			end
 		end
@@ -249,68 +237,17 @@ function ShowFriendlist()
 
 	-- finished
 	local percOfScreenAllowed = 0.5
-	CUI.friendList:UpdateScrolling(GetScreenHeight() * percOfScreenAllowed)
+	tooltip:SetMaxHeight(GetScreenHeight() * percOfScreenAllowed)
+	tooltip:UpdateLayout()
+	CUI:StyleSlider(tooltip, cols, headerFont)
 
-	-- style the slider
-	local slider = CUI.friendList.slider
-	if slider then
-		slider:SetBackdrop({
-			bgFile = "Interface/Buttons/WHITE8X8",
-			edgeFile = "",
-			tile = true,
-			edgeSize = 0,
-			tileSize = 32,
-			insets = {
-				left = 0,
-				right = 0,
-				top = 0,
-				bottom = 0,
-			},
-		})
-		slider:SetBackdropColor(0, 0, 0, 0.8)
-		slider:SetThumbTexture("Interface/Buttons/WHITE8X8")
-
-		-- slider will nudge our lines to the left, add padding to keep it centered
-		local padding = 12 + slider:GetWidth() / 2
-		CUI.friendList:SetCell(3, 1, "Left-Click to whisper", headerFont, "CENTER", cols, padding)
-		CUI.friendList:SetCell(4, 1, "Ctrl-Left-Click to invite", headerFont, "CENTER", cols, padding)
-		CUI.friendList:SetCell(5, 1, "Right-Click to set bnet note", headerFont, "CENTER", cols, padding)
-		CUI.friendList:SetCell(6, 1, "Ctrl-Right-Click to dump info", headerFont, "CENTER", cols, padding)
-		CUI.friendList:UpdateScrolling(GetScreenHeight() * percOfScreenAllowed)
-	end
-
-	CUI.friendList:Show()
-end
-
-function ClickOnFriend(button, friend, bnetAccountID)
-	if IsControlKeyDown() then
-		if button == "LeftButton" then
-			if not friend.characterName or not friend.realmName then
-				return
-			end
-			C_PartyInfo.InviteUnit(friend.characterName .. "-" .. friend.realmName)
-		elseif button == "RightButton" then
-			DevTools_Dump(friend)
-			CheckMissingClients()
-		end
-	else
-		if button == "LeftButton" then
-			ChatFrameUtil.SendBNetTell(friend.accountName)
-		elseif button == "RightButton" then
-			local dialog = StaticPopup_Show("CHANUI_SET_FRIEND_NOTE")
-			if dialog then
-				CUI.friendList:Hide()
-				dialog.data = bnetAccountID
-			end
-		end
-	end
+	tooltip:Show()
+	CUI.friendList = tooltip
 end
 
 ------ TABLES -------
 function CreateFriendsTable()
-	for _, ct in pairs(CUI.friendsTable) do
-		wipe(ct)
-	end
+	CUI.friendsTable = {}
 
 	local count = 0
 	for bnetIndex = 1, BNGetNumFriends() do
@@ -381,6 +318,30 @@ function ParseWowFriend(friend, gameAccountInfo)
 	friend.timerunningSeasonID = gameAccountInfo.timerunningSeasonID or nil
 end
 
+function ClickOnFriend(button, friend)
+	if IsControlKeyDown() then
+		if button == "LeftButton" then
+			if not friend.characterName or not friend.realmName then
+				return
+			end
+			C_PartyInfo.InviteUnit(friend.characterName .. "-" .. friend.realmName)
+		elseif button == "RightButton" then
+			DevTools_Dump(friend)
+			CheckMissingClients()
+		end
+	else
+		if button == "LeftButton" then
+			ChatFrameUtil.SendBNetTell(friend.accountName)
+		elseif button == "RightButton" then
+			local dialog = StaticPopup_Show("CHANUI_SET_FRIEND_NOTE")
+			if dialog then
+				CUI.friendList:Hide()
+				dialog.data = friend.bnetAccountID
+			end
+		end
+	end
+end
+
 function CheckMissingClients()
 	local missing = {}
 	for friendClient, friends in pairs(CUI.friendsTable) do
@@ -414,3 +375,4 @@ function GetRealmName(friend, gameAccountInfo)
 
 	return CUI:GetRealms("eu")[gameAccountInfo.realmID] or "Unknown"
 end
+
