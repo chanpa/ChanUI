@@ -148,14 +148,14 @@ function ShowGuildlist()
 	tooltip:AddRow(" ")
 
 	-- help lines [3..6](we might update later (after UpdateScrolling) so they aren't de-centered by the slider)
-	local line = tooltip:AddRow(" ")
-	line = tooltip:AddRow(" ")
-	line = tooltip:AddRow(" ")
-	line = tooltip:AddRow(" ")
-	CUI:CreateHelpRow(tooltip:GetRow(3), "Left-Click to whisper", cols, headerFont)
-	CUI:CreateHelpRow(tooltip:GetRow(4), "Ctrl-Left-Click to invite", cols, headerFont)
-	CUI:CreateHelpRow(tooltip:GetRow(5), "Right-Click to set note", cols, headerFont)
-	CUI:CreateHelpRow(tooltip:GetRow(6), "Ctrl-Right-Click to dump info", cols, headerFont)
+	local line = tooltip:AddRow()
+	CUI:CreateHelpRow(line, "Left-Click to whisper", cols, headerFont)
+	line = tooltip:AddRow()
+	CUI:CreateHelpRow(line, "Ctrl-Left-Click to invite", cols, headerFont)
+	line = tooltip:AddRow()
+	CUI:CreateHelpRow(line, "Right-Click to set note", cols, headerFont)
+	line = tooltip:AddRow()
+	CUI:CreateHelpRow(line, "Ctrl-Right-Click to dump info", cols, headerFont)
 
 	tooltip:AddRow(" ")
 	tooltip:AddRow(" ")
@@ -165,6 +165,7 @@ function ShowGuildlist()
 		cell:SetFontObject()
 	end
 	tooltip:AddSeparator()
+
 	-- guildies
 	for guildIndex, guildie in pairs(CUI.guildieTable) do
 		line = tooltip:AddRow(" ")

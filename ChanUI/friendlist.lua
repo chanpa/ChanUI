@@ -132,17 +132,12 @@ function ShowFriendlist()
 		return
 	end
 
-	if QT:IsAcquiredTooltip(friendListName) then
-		CUI.friendList:Release()
-		CUI.friendList = nil
-	end
-
 	-- create list
 	local cols = 8
 	local tooltip =
 		QT:AcquireTooltip(friendListName, cols, "LEFT", "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER", "LEFT")
 	tooltip:SmartAnchorTo(CUI.friendRoot):SetAutoHideDelay(0.05, CUI.friendRoot):Clear()
-	tooltip.NineSlice:Hide()
+
 	CUI:UpdateSocialFrameLook(
 		tooltip,
 		CUI.db.profile.socials.friendlist.border.name,
@@ -174,14 +169,14 @@ function ShowFriendlist()
 	tooltip:AddRow(" ")
 
 	-- help lines [3..6](we might update later (after UpdateScrolling) so they aren't de-centered by the slider)
-	local line = tooltip:AddRow(" ")
-	line = tooltip:AddRow(" ")
-	line = tooltip:AddRow(" ")
-	line = tooltip:AddRow(" ")
-	CUI:CreateHelpRow(tooltip:GetRow(3), "Left-Click to whisper", cols, headerFont)
-	CUI:CreateHelpRow(tooltip:GetRow(4), "Ctrl-Left-Click to invite", cols, headerFont)
-	CUI:CreateHelpRow(tooltip:GetRow(5), "Right-Click to set note", cols, headerFont)
-	CUI:CreateHelpRow(tooltip:GetRow(6), "Ctrl-Right-Click to dump info", cols, headerFont)
+	local line = tooltip:AddRow()
+	CUI:CreateHelpRow(line, "Left-Click to whisper", cols, headerFont)
+	line = tooltip:AddRow()
+	CUI:CreateHelpRow(line, "Ctrl-Left-Click to invite", cols, headerFont)
+	line = tooltip:AddRow()
+	CUI:CreateHelpRow(line, "Right-Click to set note", cols, headerFont)
+	line = tooltip:AddRow()
+	CUI:CreateHelpRow(line, "Ctrl-Right-Click to dump info", cols, headerFont)
 
 	for _, client in pairs(clientOrder) do
 		local friends = CUI.friendsTable[client]
@@ -375,4 +370,3 @@ function GetRealmName(friend, gameAccountInfo)
 
 	return CUI:GetRealms("eu")[gameAccountInfo.realmID] or "Unknown"
 end
-

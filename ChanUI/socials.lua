@@ -103,6 +103,9 @@ function CUI:UpdateSocialFrameLook(f, borderName, size, inset, borderColor, back
 	})
 	f:SetBackdropColor(backdropR, backdropG, backdropB, backdropA)
 	f:SetBackdropBorderColor(borderR, borderG, borderB, borderA)
+	if f.NineSlice then
+		f.NineSlice:Hide()
+	end
 end
 
 ---@param fs FontString
@@ -209,4 +212,3 @@ function CUI:CreateHelpRow(line, message, maxCols, headerFont, padding)
 	end
 	cell:SetColSpan(maxCols):SetFontObject(headerFont):SetJustifyH("CENTER"):SetText(message)
 end
-
