@@ -32,7 +32,7 @@ local clientOrder = {
 	"BSAp",
 }
 
-local CreateFriendsTable, CreateFriendRoot, CreateFriendsOnlineFontString, ShowFriendlist, ParseBnetInfo, ParseWowFriend, CheckMissingClients, GetRealmName, styleSlider
+local CreateFriendsTable, CreateFriendRoot, CreateFriendsOnlineFontString, ShowFriendlist, ParseBnetInfo, ParseWowFriend, CheckMissingClients, GetRealmName
 local friendListName = "ChanUIFriendListFrame"
 
 -------------------------
