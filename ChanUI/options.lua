@@ -838,7 +838,7 @@ function CUI:InitializeAce()
 
 	-- config
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("ChanUI", options)
-	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("ChanUI", "ChanUI")
+	_, self.categoryID = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("ChanUI", "ChanUI")
 	self:RegisterChatCommand("cui", "SlashCommand")
 	self:RegisterChatCommand("chanui", "SlashCommand")
 
@@ -850,7 +850,7 @@ end
 
 function CUI:SlashCommand(msg)
 	if msg == nil or msg:trim() == "" then
-		Settings.OpenToCategory(1)
+		Settings.OpenToCategory(self.categoryID)
 	end
 end
 
