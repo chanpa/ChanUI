@@ -207,25 +207,31 @@ function ShowFriendlist()
 
 			-- friends
 			for bnetIndex, friend in pairs(CUI.friendsTable[client]) do
-				line = tooltip:AddRow()
+				if client:find("^wow") then
+					line = tooltip:AddRow(
+						CUI:CreateSocialStatusString(friend),
+						friend.accountName,
+						CUI:CreateSocialLevelString(friend),
+						CUI:CreateSocialTimerunnerString(friend),
+						CUI:CreateSocialNameString(friend),
+						friend.characterZone,
+						CUI:CreateSocialRealmString(friend),
+						friend.note
+					)
+				else
+					line = tooltip:AddRow(
+						CUI:CreateSocialStatusString(friend),
+						friend.accountName,
+						friend.richPresence,
+						friend.note
+					)
+				end
+				for _, cell in pairs(line.Cells) do
+					cell:SetFontObject()
+				end
 				line:SetScript("OnMouseDown", function(_, _, button)
 					ClickOnFriend(button, friend)
 				end)
-				if client:find("^wow") then
-					line:GetCell(1):SetFontObject():SetText(CUI:CreateSocialStatusString(friend))
-					line:GetCell(2):SetFontObject():SetText(friend.accountName)
-					line:GetCell(3):SetFontObject():SetText(CUI:CreateSocialLevelString(friend))
-					line:GetCell(4):SetFontObject():SetText(CUI:CreateSocialTimerunnerString(friend))
-					line:GetCell(5):SetFontObject():SetText(CUI:CreateSocialNameString(friend))
-					line:GetCell(6):SetFontObject():SetText(friend.characterZone)
-					line:GetCell(7):SetFontObject():SetText(CUI:CreateSocialRealmString(friend))
-					line:GetCell(8):SetFontObject():SetText(friend.note)
-				else
-					line:GetCell(1):SetFontObject():SetText(CUI:CreateSocialStatusString(friend))
-					line:GetCell(2):SetFontObject():SetText(friend.accountName)
-					line:GetCell(6):SetFontObject():SetText(friend.richPresence)
-					line:GetCell(8):SetFontObject():SetText(friend.note)
-				end
 			end
 		end
 	end
