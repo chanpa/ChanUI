@@ -169,14 +169,14 @@ function ShowFriendlist()
 	tooltip:AddRow(" ")
 
 	-- help lines [3..6](we might update later (after UpdateScrolling) so they aren't de-centered by the slider)
-	local line = tooltip:AddRow()
-	CUI:CreateHelpRow(line, "Left-Click to whisper", cols, headerFont)
-	line = tooltip:AddRow()
-	CUI:CreateHelpRow(line, "Ctrl-Left-Click to invite", cols, headerFont)
-	line = tooltip:AddRow()
-	CUI:CreateHelpRow(line, "Right-Click to set note", cols, headerFont)
-	line = tooltip:AddRow()
-	CUI:CreateHelpRow(line, "Ctrl-Right-Click to dump info", cols, headerFont)
+	local row = tooltip:AddRow()
+	CUI:CreateHelpRow(row, "Left-Click to whisper", cols, headerFont)
+	row = tooltip:AddRow()
+	CUI:CreateHelpRow(row, "Ctrl-Left-Click to invite", cols, headerFont)
+	row = tooltip:AddRow()
+	CUI:CreateHelpRow(row, "Right-Click to set note", cols, headerFont)
+	row = tooltip:AddRow()
+	CUI:CreateHelpRow(row, "Ctrl-Right-Click to dump info", cols, headerFont)
 
 	for _, client in pairs(clientOrder) do
 		local friends = CUI.friendsTable[client]
@@ -184,31 +184,31 @@ function ShowFriendlist()
 			tooltip:AddRow(" ")
 			tooltip:AddRow(" ")
 
-			-- headline
-			line = tooltip:AddRow()
-			line:GetCell(1)
+			-- Game title
+			row = tooltip:AddRow()
+			row:GetCell(1)
 				:SetColSpan(cols)
 				:SetFontObject(headlineFont)
 				:SetJustifyH("LEFT")
 				:SetText(clientTranslations[client])
 			tooltip:AddSeparator()
 
-			-- headers
+			-- Column headers
 			local headers
 			if client:find("^wow") then
 				headers = { "", "Real ID", "Lvl", "", "Name", "Zone", "Realm", "Note" }
 			else
 				headers = { "", "Real ID", "", "", "", "Activity", "", "Note" }
 			end
-			line = tooltip:AddHeadingRow(unpack(headers))
-			for _, cell in pairs(line.Cells) do
+			row = tooltip:AddHeadingRow(unpack(headers))
+			for _, cell in pairs(row.Cells) do
 				cell:SetFontObject()
 			end
 
-			-- friends
+			-- Friend info
 			for bnetIndex, friend in pairs(CUI.friendsTable[client]) do
 				if client:find("^wow") then
-					line = tooltip:AddRow(
+					row = tooltip:AddRow(
 						CUI:CreateSocialStatusString(friend),
 						friend.accountName,
 						CUI:CreateSocialLevelString(friend),
@@ -219,17 +219,21 @@ function ShowFriendlist()
 						friend.note
 					)
 				else
-					line = tooltip:AddRow(
+					row = tooltip:AddRow(
 						CUI:CreateSocialStatusString(friend),
 						friend.accountName,
+						"",
+						"",
+						"",
 						friend.richPresence,
+						"",
 						friend.note
 					)
 				end
-				for _, cell in pairs(line.Cells) do
+				for _, cell in pairs(row.Cells) do
 					cell:SetFontObject()
 				end
-				line:SetScript("OnMouseDown", function(_, _, button)
+				row:SetScript("OnMouseDown", function(_, _, button)
 					ClickOnFriend(button, friend)
 				end)
 			end

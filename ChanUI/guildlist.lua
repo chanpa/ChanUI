@@ -148,37 +148,38 @@ function ShowGuildlist()
 	tooltip:AddRow(" ")
 
 	-- help lines [3..6](we might update later (after UpdateScrolling) so they aren't de-centered by the slider)
-	local line = tooltip:AddRow()
-	CUI:CreateHelpRow(line, "Left-Click to whisper", cols, headerFont)
-	line = tooltip:AddRow()
-	CUI:CreateHelpRow(line, "Ctrl-Left-Click to invite", cols, headerFont)
-	line = tooltip:AddRow()
-	CUI:CreateHelpRow(line, "Right-Click to set note", cols, headerFont)
-	line = tooltip:AddRow()
-	CUI:CreateHelpRow(line, "Ctrl-Right-Click to dump info", cols, headerFont)
+	local row = tooltip:AddRow()
+	CUI:CreateHelpRow(row, "Left-Click to whisper", cols, headerFont)
+	row = tooltip:AddRow()
+	CUI:CreateHelpRow(row, "Ctrl-Left-Click to invite", cols, headerFont)
+	row = tooltip:AddRow()
+	CUI:CreateHelpRow(row, "Right-Click to set note", cols, headerFont)
+	row = tooltip:AddRow()
+	CUI:CreateHelpRow(row, "Ctrl-Right-Click to dump info", cols, headerFont)
 
 	tooltip:AddRow(" ")
 	tooltip:AddRow(" ")
 
-	line = tooltip:AddHeadingRow("", "Lvl", "Name", "Zone", "Realm", "Note", "Rank")
-	for _, cell in pairs(line.Cells) do
+	row = tooltip:AddHeadingRow("", "Lvl", "Name", "Zone", "Realm", "Note", "Rank")
+	for _, cell in pairs(row.Cells) do
 		cell:SetFontObject()
 	end
 	tooltip:AddSeparator()
 
 	-- guildies
 	for guildIndex, guildie in pairs(CUI.guildieTable) do
-		line = tooltip:AddRow(" ")
-		line:SetScript("OnMouseDown", function(_, _, button)
+		row = tooltip:AddRow(
+			CreateStatusString(guildie.status),
+			CreateLevelString(guildie.level),
+			CreateCharString(guildie),
+			guildie.zone,
+			CreateRealmString(guildie),
+			guildie.note,
+			guildie.rank
+		)
+		row:SetScript("OnMouseDown", function(_, _, button)
 			ClickOnGuildie(button, guildie.name, guildie.realm, guildIndex)
 		end)
-		line:GetCell(1):SetFontObject():SetText(CreateStatusString(guildie.status))
-		line:GetCell(2):SetFontObject():SetText(CreateLevelString(guildie.level))
-		line:GetCell(3):SetFontObject():SetText(CreateCharString(guildie))
-		line:GetCell(4):SetFontObject():SetText(guildie.zone)
-		line:GetCell(5):SetFontObject():SetText(CreateRealmString(guildie))
-		line:GetCell(6):SetFontObject():SetText(guildie.note)
-		line:GetCell(7):SetFontObject():SetText(guildie.rank)
 	end
 
 	-- finished

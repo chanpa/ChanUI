@@ -200,13 +200,13 @@ function CUI:StyleSlider(tooltip, maxCols, headerFont)
 	tooltip:UpdateLayout()
 end
 
----@param line LibQTip-2.0.Row
+---@param row LibQTip-2.0.Row
 ---@param message string
 ---@param maxCols integer
 ---@param headerFont FontObject
 ---@param padding integer
-function CUI:CreateHelpRow(line, message, maxCols, headerFont, padding)
-	local cell = line:GetCell(1)
+function CUI:CreateHelpRow(row, message, maxCols, headerFont, padding)
+	local cell = row:GetCell(1)
 	if padding then
 		cell:SetLeftPadding(padding)
 	end
