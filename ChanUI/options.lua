@@ -850,7 +850,7 @@ end
 
 function CUI:SlashCommand(msg)
 	if msg == nil or msg:trim() == "" then
-		Settings.OpenToCategory("ChanUI")
+		Settings.OpenToCategory(1)
 	end
 end
 
