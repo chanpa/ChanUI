@@ -180,6 +180,9 @@ function ShowGuildlist()
 		row:SetScript("OnMouseDown", function(_, _, button)
 			ClickOnGuildie(button, guildie.name, guildie.realm, guildIndex)
 		end)
+		for _, cell in pairs(row.Cells) do
+			cell:SetFontObject()
+		end
 	end
 
 	-- finished
