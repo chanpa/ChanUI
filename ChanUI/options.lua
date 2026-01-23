@@ -846,6 +846,8 @@ function CUI:InitializeAce()
 	local profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("ChanUI_Profiles", profiles)
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("ChanUI_Profiles", "Profiles", "ChanUI")
+
+	self:RegisterEvent("PLAYER_LOGIN")
 end
 
 function CUI:SlashCommand(msg)
@@ -853,4 +855,3 @@ function CUI:SlashCommand(msg)
 		Settings.OpenToCategory(self.categoryID)
 	end
 end
-

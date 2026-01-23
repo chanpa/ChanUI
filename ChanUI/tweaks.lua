@@ -75,3 +75,17 @@ function CUI:UpdateChat()
 	QuickJoinToastButton:Hide()
 end
 
+function CUI:PLAYER_LOGIN()
+	local activities = C_PerksActivities.GetTrackedPerksActivities()
+	if activities and activities.trackedIDs then
+		for _, id in next, activities.trackedIDs do
+			C_PerksActivities.RemoveTrackedPerksActivity(id)
+		end
+	end
+end
+
+function CUI:EnableTweaks()
+	self:HookScript(ExpansionLandingPageMinimapButton, "OnShow", "HideExpansionSummary")
+	self:RegisterEvent("HOUSE_EDITOR_AVAILABILITY_CHANGED", "MoveHousingControlsFrame")
+	--self:UpdateChat()
+end

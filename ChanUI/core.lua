@@ -6,10 +6,7 @@ function CUI:OnInitialize()
 end
 
 function CUI:OnEnable()
-	-- tweaks
-	self:HookScript(ExpansionLandingPageMinimapButton, "OnShow", "HideExpansionSummary")
-	self:RegisterEvent("HOUSE_EDITOR_AVAILABILITY_CHANGED", "MoveHousingControlsFrame")
-	--self:UpdateChat()
+	self:EnableTweaks()
 
 	-- socials
 	self:ShowSocials()
@@ -50,4 +47,3 @@ function CUI:GetConfigValue(path)
 	end
 	return value
 end
-
