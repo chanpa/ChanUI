@@ -309,7 +309,6 @@ function ParseWowFriend(friend, gameAccountInfo)
 	elseif wowProj == 19 then
 		friend.client = "wow_classic_mop"
 	else
-		CUI:Print("Unknown wowProjectId: " .. wowProj)
 		friend.client = "wow_unknown"
 	end
 
