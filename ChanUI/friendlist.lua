@@ -309,7 +309,6 @@ function ParseWowFriend(friend, gameAccountInfo)
 	elseif wowProj == 19 then
 		friend.client = "wow_classic_mop"
 	else
-		CUI:Print("Unknown wowProjectId: " .. wowProj)
 		friend.client = "wow_unknown"
 	end
 
@@ -378,5 +377,6 @@ function GetRealmName(friend, gameAccountInfo)
 		return gameAccountInfo.realmName
 	end
 
-	return CUI:GetRealms("eu")[gameAccountInfo.realmID] or "Unknown"
+	-- todo: make locale a config maybe? or get locale from game state somehow
+	return CUI:GetRealmName(gameAccountInfo, "en_GB")
 end
