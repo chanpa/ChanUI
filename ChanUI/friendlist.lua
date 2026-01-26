@@ -378,5 +378,6 @@ function GetRealmName(friend, gameAccountInfo)
 		return gameAccountInfo.realmName
 	end
 
-	return CUI:GetRealms("eu")[gameAccountInfo.realmID] or "Unknown"
+	-- todo: make locale a config maybe? or get locale from game state somehow
+	return CUI:GetRealmName(gameAccountInfo, "en_GB")
 end
