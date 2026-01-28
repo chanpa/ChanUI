@@ -161,9 +161,6 @@ function ShowGuildlist()
 	tooltip:AddRow(" ")
 
 	row = tooltip:AddHeadingRow("", "Lvl", "Name", "Zone", "Realm", "Note", "Rank")
-	for _, cell in pairs(row.Cells) do
-		cell:SetFontObject()
-	end
 	tooltip:AddSeparator()
 
 	-- guildies
@@ -180,9 +177,6 @@ function ShowGuildlist()
 		row:SetScript("OnMouseDown", function(_, _, button)
 			ClickOnGuildie(button, guildie.name, guildie.realm, guildIndex)
 		end)
-		for _, cell in pairs(row.Cells) do
-			cell:SetFontObject()
-		end
 	end
 
 	-- finished
