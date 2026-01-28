@@ -201,9 +201,6 @@ function ShowFriendlist()
 				headers = { "", "Real ID", "", "", "", "Activity", "", "Note" }
 			end
 			row = tooltip:AddHeadingRow(unpack(headers))
-			for _, cell in pairs(row.Cells) do
-				cell:SetFontObject()
-			end
 
 			-- Friend info
 			for bnetIndex, friend in pairs(CUI.friendsTable[client]) do
@@ -229,9 +226,6 @@ function ShowFriendlist()
 						"",
 						friend.note
 					)
-				end
-				for _, cell in pairs(row.Cells) do
-					cell:SetFontObject()
 				end
 				row:SetScript("OnMouseDown", function(_, _, button)
 					ClickOnFriend(button, friend)
