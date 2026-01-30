@@ -29,3 +29,4 @@ function CUI:RGBPercToHex(r, g, b)
 	b = b <= 1 and b >= 0 and b or 0
 	return string.format("%02x%02x%02x", r * 255, g * 255, b * 255)
 end
+

@@ -7,28 +7,28 @@ local LSM = LibStub("LibSharedMedia-3.0")
 ---@param button2String string
 ---@param onAcceptFunc function
 function CUI:CreatePopupDialog(dialogName, text, button1String, button2String, onAcceptFunc)
-    StaticPopupDialogs[dialogName] = {
-        text = text,
-        button1 = button1String,
-        button2 = button2String,
-        hasEditBox = true,
-        OnShow = function(s)
-            s.EditBox:SetText("")
-        end,
-        OnCancel = function() end,
-        OnAccept = function(s, data)
-            onAcceptFunc(data, s.EditBox:GetText())
-        end,
-        EditBoxOnEnterPressed = function(s)
-            s:GetParent():GetButton1():Click()
-        end,
-        EditBoxOnEscapePressed = function(s)
-            s:GetParent():GetButton2():Click()
-        end,
-        timeout = 0,
-        whileDead = true,
-        preferredIndex = 3,
-    }
+	StaticPopupDialogs[dialogName] = {
+		text = text,
+		button1 = button1String,
+		button2 = button2String,
+		hasEditBox = true,
+		OnShow = function(s)
+			s.EditBox:SetText("")
+		end,
+		OnCancel = function() end,
+		OnAccept = function(s, data)
+			onAcceptFunc(data, s.EditBox:GetText())
+		end,
+		EditBoxOnEnterPressed = function(s)
+			s:GetParent():GetButton1():Click()
+		end,
+		EditBoxOnEscapePressed = function(s)
+			s:GetParent():GetButton2():Click()
+		end,
+		timeout = 0,
+		whileDead = true,
+		preferredIndex = 3,
+	}
 end
 
 function CUI:CalculateSocialListPadding(borderInset)
@@ -125,11 +125,13 @@ end
 ---@param padding integer
 function CUI:CreateHelpRow(tooltip, message, maxCols, headerFont, padding)
 	padding = padding or 0
-	tooltip:AddRow()
-        :GetCell(1)
+	tooltip
+		:AddRow()
+		:GetCell(1)
 		:SetLeftPadding(padding)
 		:SetColSpan(maxCols)
 		:SetFontObject(headerFont)
 		:SetJustifyH("CENTER")
 		:SetText(message)
 end
+

@@ -32,7 +32,7 @@ local function ClickOnGuildie(button, guildie, guildIndex)
 			C_PartyInfo.InviteUnit(guildie.name .. "-" .. guildie.realm)
 		elseif button == "RightButton" then
 			local pck = function(...)
-				return {n = select("#", ...), ...}
+				return { n = select("#", ...), ... }
 			end
 			CUI:Print("--- Guildie entry ---")
 			DevTools_Dump(guildie)
@@ -61,7 +61,8 @@ local function ShowGuildlist()
 	end
 
 	local cols = 7
-	guildiesList = QT:AcquireTooltip(GUILDLIST_TT_NAME, cols, "CENTER", "LEFT", "LEFT", "CENTER", "LEFT", "LEFT", "LEFT")
+	guildiesList =
+		QT:AcquireTooltip(GUILDLIST_TT_NAME, cols, "CENTER", "LEFT", "LEFT", "CENTER", "LEFT", "LEFT", "LEFT")
 	guildiesList:SmartAnchorTo(guildiesRoot):SetAutoHideDelay(0.05, guildiesRoot):Clear()
 
 	CUI:UpdateFrameLook(
@@ -91,17 +92,19 @@ local function ShowGuildlist()
 
 	-- guildies
 	for guildIndex, guildie in pairs(guildiesTable) do
-		guildiesList:AddRow(
-			CUI:CreateSocialStatusString(guildie.isAFK, guildie.isDND, guildie.isMobile),
-			CUI:CreateSocialLevelString(guildie.level),
-			CUI:CreateSocialNameString(guildie.class, guildie.name),
-			guildie.zone,
-			CUI:CreateSocialRealmString(guildie.faction, guildie.realm),
-			guildie.note,
-			guildie.rank
-		):SetScript("OnMouseDown", function(_, _, button)
-			ClickOnGuildie(button, guildie, guildIndex)
-		end)
+		guildiesList
+			:AddRow(
+				CUI:CreateSocialStatusString(guildie.isAFK, guildie.isDND, guildie.isMobile),
+				CUI:CreateSocialLevelString(guildie.level),
+				CUI:CreateSocialNameString(guildie.class, guildie.name),
+				guildie.zone,
+				CUI:CreateSocialRealmString(guildie.faction, guildie.realm),
+				guildie.note,
+				guildie.rank
+			)
+			:SetScript("OnMouseDown", function(_, _, button)
+				ClickOnGuildie(button, guildie, guildIndex)
+			end)
 	end
 
 	-- finished
@@ -254,7 +257,9 @@ function CUI:DisableGuildlist()
 end
 
 function CUI:EnableGuildlist()
-	if not self.db.profile.socials.enableGuildlist then return end
+	if not self.db.profile.socials.enableGuildlist then
+		return
+	end
 
 	C_GuildInfo.GuildRoster()
 	self:RegisterEvent("GUILD_ROSTER_UPDATE", UpdateGuildiesRootText)
@@ -276,3 +281,4 @@ function CUI:EnableGuildlist()
 
 	CreateGuildlist()
 end
+

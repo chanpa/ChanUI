@@ -378,3 +378,4 @@ function CUI:EnableFriendlist()
 
 	CreateFriendlist()
 end
+

@@ -159,7 +159,7 @@ local function GetTweakOptions()
 			set = function(_, value)
 				CUI.db.profile.tweaks.enableChatOptions = value
 				-- todo enable ability to restore chat
-			end
+			end,
 		},
 		chat = {
 			type = "group",
