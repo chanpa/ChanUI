@@ -1,28 +1,16 @@
 local CUI = CUI
 
-function CUI:EnableSocialLists()
-	self.backdropFramePool = CreateFramePool("Frame", UIParent, "BackdropTemplate")
-	self:EnableFriendlist()
-	-- if self.db.profile.socials.enableGuildlist then
-	-- 	C_GuildInfo.GuildRoster()
-	-- 	self:RegisterEvent("GUILD_ROSTER_UPDATE", "UpdateGuild")
-	-- 	self:RegisterEvent("PLAYER_GUILD_UPDATE", "UpdateGuild")
-	-- 	self:CreatePopupDialog("CHANUI_SET_GUILD_NOTE", "Note", "Accept", "Cancel", GuildRosterSetPublicNote)
-	-- 	self:ShowGuild()
-	-- end
-
-end
-
-
 function CUI:CreateSocialOnlineString(prefix, number)
 	return prefix .. ": " .. self:ColorText("ff00ff00", number)
 end
 
-function CUI:CreateSocialStatusString(isAFK, isDND)
+function CUI:CreateSocialStatusString(isAFK, isDND, isMobile)
 	if isAFK then
 		return self:ColorText("ffff8040", "AFK")
 	elseif isDND then
 		return self:ColorText("ffff8040", "DND")
+	elseif isMobile then
+		return self:ColorText("ffff8040", "Mob")
 	end
 	return ""
 end

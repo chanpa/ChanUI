@@ -5,6 +5,7 @@ local QT = LibStub:GetLibrary("LibQTip-2.0")
 -- constants
 local POPUP_SET_NOTE_NAME = "CHANUI_SET_FRIEND_NOTE"
 local FRIENDLIST_TT_NAME = "ChanUIFriendListFrame"
+local ROOT_FRAME_NAME = "ChanUIFriendsRootFrame"
 local CLIENT_TRANSLATIONS = {
 	wow_retail = "The War Within",
 	wow_classic_mop = "Mists of Pandaria Classic",
@@ -57,6 +58,7 @@ local function ClickOnFriend(button, friend)
 		elseif button == "RightButton" then
 			CUI:Print("--- Friend entry ---")
 			DevTools_Dump(friend)
+			print(" ")
 			CUI:Print("--- GetFriendAccountInfo ---")
 			DevTools_Dump(C_BattleNet.GetFriendAccountInfo(friend.bnetIndex))
 		end
@@ -79,7 +81,6 @@ local function ShowFriendlist()
 		return
 	end
 
-	-- create list
 	local cols = 8
 	friendsList =
 		QT:AcquireTooltip(FRIENDLIST_TT_NAME, cols, "LEFT", "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER", "LEFT")
@@ -133,7 +134,7 @@ local function ShowFriendlist()
 				local row
 				if client:find("^wow") then
 					row = friendsList:AddRow(
-						CUI:CreateSocialStatusString(friend.isAFK or friend.isGameAFK, friend.isDND or friend.isGameBusy),
+						CUI:CreateSocialStatusString(friend.isAFK, friend.isDND),
 						friend.accountName,
 						CUI:CreateSocialLevelString(friend.characterLevel),
 						CUI:CreateSocialTimerunnerString(friend.timerunningSeasonID),
@@ -144,7 +145,7 @@ local function ShowFriendlist()
 					)
 				else
 					row = friendsList:AddRow(
-						CUI:CreateSocialStatusString(friend),
+						CUI:CreateSocialStatusString(friend.isAFK, friend.isDND),
 						friend.accountName,
 						"",
 						"",
@@ -170,7 +171,7 @@ local function ShowFriendlist()
 end
 
 local function CreateFriendsRoot()
-	friendsRoot = CUI.backdropFramePool:Acquire()
+	friendsRoot = CreateFrame("Frame", ROOT_FRAME_NAME, nil, "BackdropTemplate")
 	friendsRoot:SetBackdrop({
 		bgFile = "Interface/Buttons/WHITE8X8",
 		edgeFile = LSM:Fetch("border", CUI.db.profile.socials.friendlist.border.name),
@@ -193,7 +194,6 @@ local function CreateFriendsRoot()
 	friendsRoot:SetScript("OnEnter", function()
 		ShowFriendlist()
 	end)
-	friendsRoot = friendsRoot
 end
 
 local function CreateFriendsOnlineFontString()
@@ -239,15 +239,13 @@ local function ParseBnetInfo(bnetInfo, bnetIndex)
 		bnetIndex = bnetIndex,
 		bnetAccountID = bnetInfo.bnetAccountID,
 		accountName = bnetInfo.accountName,
-		isAFK = bnetInfo.isAFK,
-		isDND = bnetInfo.isDND,
+		isAFK = bnetInfo.isAFK or bnetInfo.gameAccountInfo.isGameAFK,
+		isDND = bnetInfo.isDND or bnetInfo.gameAccountInfo.isGameBusy,
 		isFavorite = bnetInfo.isFavorite,
 		battleTag = bnetInfo.battleTag,
 		message = bnetInfo.customMessage,
 		note = bnetInfo.note,
 		richPresence = bnetInfo.gameAccountInfo.richPresence,
-		isGameAFK = bnetInfo.gameAccountInfo.isGameAFK,
-		isGameBusy = bnetInfo.gameAccountInfo.isGameBusy,
 	}
 	local client = bnetInfo.gameAccountInfo.clientProgram
 	if client == "WoW" then
@@ -290,52 +288,6 @@ local function UpdateFriendsRootText()
 	CUI:SetFriendsText(CUI:CreateSocialOnlineString("Friends", friendsOnline))
 end
 
-function CUI:EnableFriendlist()
-	if not self.db.profile.socials.enableFriendlist then
-		return
-	end
-	self:RegisterEvent("FRIENDLIST_UPDATE", UpdateFriendsRootText)
-	self:RegisterEvent("BN_FRIEND_ACCOUNT_ONLINE", UpdateFriendsRootText)
-	self:RegisterEvent("BN_FRIEND_ACCOUNT_OFFLINE", UpdateFriendsRootText)
-	self:RegisterEvent("BN_FRIEND_INFO_CHANGED", CreateFriendsTable)
-	self:RegisterEvent("BN_INFO_CHANGED", CreateFriendsTable)
-	self:CreatePopupDialog(POPUP_SET_NOTE_NAME, "Note", "Accept", "Cancel", BNSetFriendNote)
-
-	local fontPath = LSM:Fetch("font", CUI.db.profile.socials.friendlist.font.name)
-	normalFont = CreateFont("ChanUIFriendsNormalFont")
-	normalFont:SetFont(fontPath, 12, "")
-	normalFont:SetTextColor(1, 1, 1)
-
-	headerFont = CreateFont("ChanUIFriendsHeaderFont")
-	headerFont:SetFont(fontPath, 12, "OUTLINE")
-	headerFont:SetTextColor(1, 0.8, 0)
-
-	headlineFont = CreateFont("ChanUIFriendsHeadlineFont")
-	headlineFont:SetFont(fontPath, 16, "THICKOUTLINE")
-	headlineFont:SetTextColor(1, 0.8, 0)
-	CreateFriendlist()
-end
-
-function CUI:DisableFriendlist()
-	if friendsRoot then
-		friendsRoot:Release()
-		friendsRoot = nil
-	end
-	if friendsFontString then
-		friendsFontString:Hide()
-		friendsFontString = nil
-	end
-	friendsOnline = 0
-	normalFont = nil
-	headerFont = nil
-	headlineFont = nil
-	self:UnregisterEvent("FRIENDLIST_UPDATE")
-	self:UnregisterEvent("BN_FRIEND_ACCOUNT_ONLINE")
-	self:UnregisterEvent("BN_FRIEND_ACCOUNT_OFFLINE")
-	self:UnregisterEvent("BN_FRIEND_INFO_CHANGED")
-	self:UnregisterEvent("BN_INFO_CHANGED")
-end
-
 function CUI:SetFriendsFont()
 	self:SetFont(
 		friendsFontString,
@@ -375,4 +327,53 @@ function CUI:SetFriendsRootPosition()
 		self.db.profile.socials.friendlist.positioning.relX,
 		self.db.profile.socials.friendlist.positioning.relY
 	)
+end
+
+function CUI:DisableFriendlist()
+	if friendsRoot then
+		friendsRoot:Release()
+		friendsRoot = nil
+	end
+	if friendsFontString then
+		friendsFontString:Hide()
+		friendsFontString = nil
+	end
+	friendsOnline = 0
+	friendsTable = nil
+	normalFont = nil
+	headerFont = nil
+	headlineFont = nil
+	self:UnregisterEvent("FRIENDLIST_UPDATE")
+	self:UnregisterEvent("BN_FRIEND_ACCOUNT_ONLINE")
+	self:UnregisterEvent("BN_FRIEND_ACCOUNT_OFFLINE")
+	self:UnregisterEvent("BN_FRIEND_INFO_CHANGED")
+	self:UnregisterEvent("BN_INFO_CHANGED")
+end
+
+function CUI:EnableFriendlist()
+	if not self.db.profile.socials.enableFriendlist then
+		return
+	end
+
+	self:RegisterEvent("FRIENDLIST_UPDATE", UpdateFriendsRootText)
+	self:RegisterEvent("BN_FRIEND_ACCOUNT_ONLINE", UpdateFriendsRootText)
+	self:RegisterEvent("BN_FRIEND_ACCOUNT_OFFLINE", UpdateFriendsRootText)
+	self:RegisterEvent("BN_FRIEND_INFO_CHANGED", CreateFriendsTable)
+	self:RegisterEvent("BN_INFO_CHANGED", CreateFriendsTable)
+	self:CreatePopupDialog(POPUP_SET_NOTE_NAME, "Note", "Accept", "Cancel", BNSetFriendNote)
+
+	local fontPath = LSM:Fetch("font", CUI.db.profile.socials.friendlist.font.name)
+	normalFont = CreateFont("ChanUIFriendsNormalFont")
+	normalFont:SetFont(fontPath, 12, "")
+	normalFont:SetTextColor(1, 1, 1)
+
+	headerFont = CreateFont("ChanUIFriendsHeaderFont")
+	headerFont:SetFont(fontPath, 12, "OUTLINE")
+	headerFont:SetTextColor(1, 0.8, 0)
+
+	headlineFont = CreateFont("ChanUIFriendsHeadlineFont")
+	headlineFont:SetFont(fontPath, 16, "THICKOUTLINE")
+	headlineFont:SetTextColor(1, 0.8, 0)
+
+	CreateFriendlist()
 end

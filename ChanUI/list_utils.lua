@@ -124,9 +124,9 @@ end
 ---@param headerFont FontObject
 ---@param padding integer
 function CUI:CreateHelpRow(tooltip, message, maxCols, headerFont, padding)
-	local row = tooltip:AddRow()
 	padding = padding or 0
-	row:GetCell(1)
+	tooltip:AddRow()
+        :GetCell(1)
 		:SetLeftPadding(padding)
 		:SetColSpan(maxCols)
 		:SetFontObject(headerFont)
