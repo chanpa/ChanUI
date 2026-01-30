@@ -38,7 +38,7 @@ local CLIENT_ORDER = {
 local friendsRoot, friendsFontString, friendsTable, friendsOnline, friendsList
 local normalFont, headerFont, headlineFont
 
-local function GetRealmName(client, gameAccountInfo)
+local function getRealmName(client, gameAccountInfo)
 	if client == "wow_retail" then
 		return gameAccountInfo.realmName
 	end
@@ -133,13 +133,13 @@ local function ShowFriendlist()
 				local row
 				if client:find("^wow") then
 					row = friendsList:AddRow(
-						CUI:CreateSocialStatusString(friend),
+						CUI:CreateSocialStatusString(friend.isAFK or friend.isGameAFK, friend.isDND or friend.isGameBusy),
 						friend.accountName,
-						CUI:CreateSocialLevelString(friend),
-						CUI:CreateSocialTimerunnerString(friend),
-						CUI:CreateSocialNameString(friend),
+						CUI:CreateSocialLevelString(friend.characterLevel),
+						CUI:CreateSocialTimerunnerString(friend.timerunningSeasonID),
+						CUI:CreateSocialNameString(friend.characterClass, friend.characterName),
 						friend.characterZone,
-						CUI:CreateSocialRealmString(friend),
+						CUI:CreateSocialRealmString(friend.characterFaction, friend.realmName),
 						friend.note
 					)
 				else
@@ -223,7 +223,7 @@ local function ParseWowFriend(friend, gameAccountInfo)
 		friend.client = "wow_unknown"
 	end
 
-	friend.realmName = GetRealmName(friend, gameAccountInfo)
+	friend.realmName = getRealmName(friend.client, gameAccountInfo)
 	friend.realmID = gameAccountInfo.realmID
 	friend.characterFaction = gameAccountInfo.factionName
 	friend.characterName = gameAccountInfo.characterName
