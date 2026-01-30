@@ -113,11 +113,12 @@ local function ShowFriendlist()
 
 			-- Game title
 			friendsList
-				:AddRow(CLIENT_TRANSLATIONS[client])
+				:AddRow()
 				:GetCell(1)
 				:SetColSpan(cols)
 				:SetFontObject(headlineFont)
 				:SetJustifyH("CENTER")
+				:SetText(CLIENT_TRANSLATIONS[client])
 			friendsList:AddSeparator()
 
 			-- Column headers
@@ -171,7 +172,7 @@ local function ShowFriendlist()
 end
 
 local function CreateFriendsRoot()
-	friendsRoot = CreateFrame("Frame", ROOT_FRAME_NAME, nil, "BackdropTemplate")
+	friendsRoot = CreateFrame("Frame", ROOT_FRAME_NAME, UIParent, "BackdropTemplate")
 	friendsRoot:SetBackdrop({
 		bgFile = "Interface/Buttons/WHITE8X8",
 		edgeFile = LSM:Fetch("border", CUI.db.profile.socials.friendlist.border.name),

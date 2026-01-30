@@ -114,7 +114,7 @@ local function ShowGuildlist()
 end
 
 local function CreateGuildiesRoot()
-	guildiesRoot = CreateFrame("Frame", ROOT_FRAME_NAME, nil, "BackdropTemplate")
+	guildiesRoot = CreateFrame("Frame", ROOT_FRAME_NAME, UIParent, "BackdropTemplate")
 	guildiesRoot:SetBackdrop({
 		bgFile = "Interface/Buttons/WHITE8X8",
 		edgeFile = LSM:Fetch("border", CUI.db.profile.socials.guildlist.border.name),
