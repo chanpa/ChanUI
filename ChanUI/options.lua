@@ -255,129 +255,51 @@ local function GetSocialOptions()
 					return CUI.db.profile.socials.friendlist.font.name
 				end, function(_, value)
 					CUI.db.profile.socials.friendlist.font.name = value
-					CUI:SetFont(
-						CUI.friendsFontString,
-						CUI.db.profile.socials.friendlist.font.name,
-						CUI.db.profile.socials.friendlist.font.size,
-						CUI.db.profile.socials.friendlist.font.outline
-					)
-					CUI:UpdateSocialText(
-						CUI.friendsFontString,
-						CUI.friendsFontString:GetText(),
-						CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
-					)
+					CUI:SetFriendsFont()
+					CUI:SetFriendsText()
 				end, function()
 					return CUI.db.profile.socials.friendlist.font.size
 				end, function(_, value)
 					CUI.db.profile.socials.friendlist.font.size = value
-					CUI:SetFont(
-						CUI.friendsFontString,
-						CUI.db.profile.socials.friendlist.font.name,
-						CUI.db.profile.socials.friendlist.font.size,
-						CUI.db.profile.socials.friendlist.font.outline
-					)
-					CUI:UpdateSocialText(
-						CUI.friendsFontString,
-						CUI.friendsFontString:GetText(),
-						CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
-					)
+					CUI:SetFriendsFont()
+					CUI:SetFriendsText()
 				end, function()
 					return CUI.db.profile.socials.friendlist.font.outline
 				end, function(_, value)
 					CUI.db.profile.socials.friendlist.font.outline = value
-					CUI:SetFont(
-						CUI.friendsFontString,
-						CUI.db.profile.socials.friendlist.font.name,
-						CUI.db.profile.socials.friendlist.font.size,
-						CUI.db.profile.socials.friendlist.font.outline
-					)
-					CUI:UpdateSocialText(
-						CUI.friendsFontString,
-						CUI.friendsFontString:GetText(),
-						CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
-					)
+					CUI:SetFriendsFont()
+					CUI:SetFriendsText()
 				end),
 				border = GetBorderSelector(function()
 					return CUI.db.profile.socials.friendlist.border.name
 				end, function(_, value)
 					CUI.db.profile.socials.friendlist.border.name = value
-					CUI:UpdateSocialFrameLook(
-						CUI.friendRoot,
-						CUI.db.profile.socials.friendlist.border.name,
-						CUI.db.profile.socials.friendlist.border.size,
-						CUI.db.profile.socials.friendlist.border.inset,
-						CUI.db.profile.socials.friendlist.border.color,
-						CUI.db.profile.socials.friendlist.backdrop.color
-					)
-					CUI:UpdateSocialText(
-						CUI.friendsFontString,
-						CUI.friendsFontString:GetText(),
-						CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
-					)
+					CUI:SetFriendsRootStyle()
+					CUI:SetFriendsText()
 				end, function()
 					return CUI.db.profile.socials.friendlist.border.size
 				end, function(_, value)
 					CUI.db.profile.socials.friendlist.border.size = value
-					CUI:UpdateSocialFrameLook(
-						CUI.friendRoot,
-						CUI.db.profile.socials.friendlist.border.name,
-						CUI.db.profile.socials.friendlist.border.size,
-						CUI.db.profile.socials.friendlist.border.inset,
-						CUI.db.profile.socials.friendlist.border.color,
-						CUI.db.profile.socials.friendlist.backdrop.color
-					)
-					CUI:UpdateSocialText(
-						CUI.friendsFontString,
-						CUI.friendsFontString:GetText(),
-						CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
-					)
+					CUI:SetFriendsRootStyle()
+					CUI:SetFriendsText()
 				end, function()
 					return CUI.db.profile.socials.friendlist.border.inset
 				end, function(_, value)
 					CUI.db.profile.socials.friendlist.border.inset = value
-					CUI:UpdateSocialFrameLook(
-						CUI.friendRoot,
-						CUI.db.profile.socials.friendlist.border.name,
-						CUI.db.profile.socials.friendlist.border.size,
-						CUI.db.profile.socials.friendlist.border.inset,
-						CUI.db.profile.socials.friendlist.border.color,
-						CUI.db.profile.socials.friendlist.backdrop.color
-					)
-					CUI:UpdateSocialText(
-						CUI.friendsFontString,
-						CUI.friendsFontString:GetText(),
-						CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
-					)
+					CUI:SetFriendsRootStyle()
+					CUI:SetFriendsText()
 				end, function()
 					return unpack(CUI.db.profile.socials.friendlist.border.color)
 				end, function(_, r, g, b, a)
 					CUI.db.profile.socials.friendlist.border.color = { r, g, b, a }
-					CUI:UpdateSocialFrameLook(
-						CUI.friendRoot,
-						CUI.db.profile.socials.friendlist.border.name,
-						CUI.db.profile.socials.friendlist.border.size,
-						CUI.db.profile.socials.friendlist.border.inset,
-						CUI.db.profile.socials.friendlist.border.color,
-						CUI.db.profile.socials.friendlist.backdrop.color
-					)
-					CUI:UpdateSocialText(
-						CUI.friendsFontString,
-						CUI.friendsFontString:GetText(),
-						CUI:CalculateSocialFramePadding(CUI.db.profile.socials.friendlist.border.inset)
-					)
+					CUI:SetFriendsRootStyle()
+					CUI:SetFriendsText()
 				end),
 				backdrop = GetTextureSelector(function()
 					return unpack(CUI.db.profile.socials.friendlist.backdrop.color)
 				end, function(_, r, g, b, a)
 					CUI.db.profile.socials.friendlist.backdrop.color = { r, g, b, a }
-					CUI:UpdateSocialFrameLook(
-						CUI.friendRoot,
-						CUI.db.profile.socials.friendlist.border.name,
-						CUI.db.profile.socials.friendlist.border.size,
-						CUI.db.profile.socials.friendlist.border.inset,
-						CUI.db.profile.socials.friendlist.border.color,
-						CUI.db.profile.socials.friendlist.backdrop.color
-					)
+					CUI:SetFriendsRootStyle()
 				end),
 				positioning = {
 					type = "group",
@@ -404,13 +326,7 @@ local function GetSocialOptions()
 							end,
 							set = function(_, value)
 								CUI.db.profile.socials.friendlist.positioning.anchor = value
-								CUI:UpdateSocialFramePosition(
-									CUI.friendsFontString,
-									CUI.db.profile.socials.friendlist.positioning.anchor,
-									CUI.db.profile.socials.friendlist.positioning.frameAnchor,
-									CUI.db.profile.socials.friendlist.positioning.relX,
-									CUI.db.profile.socials.friendlist.positioning.relY
-								)
+								CUI:SetFriendsRootPosition()
 							end,
 						},
 						frameAnchor = {
@@ -434,13 +350,7 @@ local function GetSocialOptions()
 							end,
 							set = function(_, value)
 								CUI.db.profile.socials.friendlist.positioning.frameAnchor = value
-								CUI:UpdateSocialFramePosition(
-									CUI.friendsFontString,
-									CUI.db.profile.socials.friendlist.positioning.anchor,
-									CUI.db.profile.socials.friendlist.positioning.frameAnchor,
-									CUI.db.profile.socials.friendlist.positioning.relX,
-									CUI.db.profile.socials.friendlist.positioning.relY
-								)
+								CUI:SetFriendsRootPosition()
 							end,
 						},
 						relX = {
@@ -457,13 +367,7 @@ local function GetSocialOptions()
 							end,
 							set = function(_, value)
 								CUI.db.profile.socials.friendlist.positioning.relX = value
-								CUI:UpdateSocialFramePosition(
-									CUI.friendsFontString,
-									CUI.db.profile.socials.friendlist.positioning.anchor,
-									CUI.db.profile.socials.friendlist.positioning.frameAnchor,
-									CUI.db.profile.socials.friendlist.positioning.relX,
-									CUI.db.profile.socials.friendlist.positioning.relY
-								)
+								CUI:SetFriendsRootPosition()
 							end,
 						},
 						relY = {
@@ -480,13 +384,7 @@ local function GetSocialOptions()
 							end,
 							set = function(_, value)
 								CUI.db.profile.socials.friendlist.positioning.relY = value
-								CUI:UpdateSocialFramePosition(
-									CUI.friendsFontString,
-									CUI.db.profile.socials.friendlist.positioning.anchor,
-									CUI.db.profile.socials.friendlist.positioning.frameAnchor,
-									CUI.db.profile.socials.friendlist.positioning.relX,
-									CUI.db.profile.socials.friendlist.positioning.relY
-								)
+								CUI:SetFriendsRootPosition()
 							end,
 						},
 					},

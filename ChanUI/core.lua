@@ -7,9 +7,7 @@ end
 
 function CUI:OnEnable()
 	self:EnableTweaks()
-
-	-- socials
-	self:ShowSocials()
+	self:EnableSocialLists()
 end
 
 ---@param fs FontString

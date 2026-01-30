@@ -1,87 +1,43 @@
 local CUI = CUI
 local LSM = LibStub("LibSharedMedia-3.0")
 
-function CUI:ShowSocials()
-	if self.db.profile.socials.enableFriendlist then
-		self:RegisterEvent("FRIENDLIST_UPDATE", "UpdateFriends")
-		self:RegisterEvent("BN_FRIEND_ACCOUNT_ONLINE", "UpdateFriends")
-		self:RegisterEvent("BN_FRIEND_ACCOUNT_OFFLINE", "UpdateFriends")
-		self:RegisterEvent("BN_FRIEND_INFO_CHANGED", "UpdateFriends")
-		self:RegisterEvent("BN_INFO_CHANGED", "UpdateFriends")
-		StaticPopupDialogs["CHANUI_SET_FRIEND_NOTE"] = {
-			text = "Note:",
-			button1 = "Accept",
-			button2 = "Cancel",
-			hasEditBox = true,
-			OnShow = function(s)
-				s.EditBox:SetText("")
-			end,
-			OnCancel = function() end,
-			OnAccept = function(s, bnetAccountID)
-				BNSetFriendNote(bnetAccountID, s.EditBox:GetText())
-			end,
-			EditBoxOnEnterPressed = function(s)
-				s:GetParent():GetButton1():Click()
-			end,
-			EditBoxOnEscapePressed = function(s)
-				s:GetParent():GetButton2():Click()
-			end,
-			timeout = 0,
-			whileDead = true,
-			preferredIndex = 3,
-		}
-		StaticPopupDialogs["CHANUI_SET_GUILD_NOTE"] = {
-			text = "Note:",
-			button1 = "Accept",
-			button2 = "Cancel",
-			hasEditBox = true,
-			OnShow = function(s)
-				s.EditBox:SetText("")
-			end,
-			OnCancel = function() end,
-			OnAccept = function(s, guildIndex)
-				GuildRosterSetPublicNote(guildIndex, s.EditBox:GetText())
-			end,
-			EditBoxOnEnterPressed = function(s)
-				s:GetParent():GetButton1():Click()
-			end,
-			EditBoxOnEscapePressed = function(s)
-				s:GetParent():GetButton2():Click()
-			end,
-			timeout = 0,
-			whileDead = true,
-			preferredIndex = 3,
-		}
-		self:ShowFriends()
-	end
+function CUI:EnableSocialLists()
+	self.backdropFramePool = CreateFramePool("Frame", UIParent, "BackdropTemplate")
+	self:EnableFriendlist()
+	-- if self.db.profile.socials.enableGuildlist then
+	-- 	C_GuildInfo.GuildRoster()
+	-- 	self:RegisterEvent("GUILD_ROSTER_UPDATE", "UpdateGuild")
+	-- 	self:RegisterEvent("PLAYER_GUILD_UPDATE", "UpdateGuild")
+	-- 	self:CreatePopupDialog("CHANUI_SET_GUILD_NOTE", "Note", "Accept", "Cancel", GuildRosterSetPublicNote)
+	-- 	self:ShowGuild()
+	-- end
 
-	if self.db.profile.socials.enableGuildlist then
-		self:RegisterEvent("GUILD_ROSTER_UPDATE", "UpdateGuild")
-		self:RegisterEvent("PLAYER_GUILD_UPDATE", "UpdateGuild")
-		C_GuildInfo.GuildRoster()
-		self:ShowGuild()
-	end
 end
 
-function CUI:CalculateSocialFramePadding(borderInset)
+function CUI:CalculateSocialListPadding(borderInset)
 	return 10 + (borderInset * 2)
 end
 
----@param fs FontString
-function CUI:UpdateSocialText(fs, message, padding)
-	local parent = fs:GetParent()
-
-	if message then
-		fs:SetText(message)
-	end
+---@param fs FontString The font string you want to update
+---@param text string The message to display in the font string
+---@param padding integer Amount of padding for the parent container
+function CUI:UpdateListRootText(fs, text, padding)
+	fs:SetText(text)
 	local w = fs:GetUnboundedStringWidth()
 	local h = fs:GetStringHeight()
-
+	local parent = fs:GetParent()
 	parent:SetSize(w + padding, h + padding)
 	fs:SetSize(parent:GetWidth(), parent:GetHeight())
 end
 
-function CUI:UpdateSocialFrameLook(f, borderName, size, inset, borderColor, backdropColor)
+---Update a frame to the shared look I want
+---@param f Frame The frame to update
+---@param borderName string The name of the border you want for this frame (not path)
+---@param borderSize integer Width of border
+---@param borderInset integer Adjust the border distance from edge of background
+---@param borderColor table RGBA table of the border color {r=0, g=0, b=0, a=0}
+---@param backdropColor table RGBA table of the backdrop color {r=0, g=0, b=0, a=0}
+function CUI:UpdateFrameLook(f, borderName, borderSize, borderInset, borderColor, backdropColor)
 	local backdropR, backdropG, backdropB, backdropA = unpack(backdropColor)
 	local borderR, borderG, borderB, borderA = unpack(borderColor)
 
@@ -92,13 +48,13 @@ function CUI:UpdateSocialFrameLook(f, borderName, size, inset, borderColor, back
 		bgFile = "Interface/Buttons/WHITE8X8",
 		edgeFile = LSM:Fetch("border", borderName),
 		tile = true,
-		edgeSize = size,
+		edgeSize = borderSize,
 		tileSize = 32,
 		insets = {
-			left = inset,
-			right = inset,
-			top = inset,
-			bottom = inset,
+			left = borderInset,
+			right = borderInset,
+			top = borderInset,
+			bottom = borderInset,
 		},
 	})
 	f:SetBackdropColor(backdropR, backdropG, backdropB, backdropA)
@@ -165,9 +121,7 @@ function CUI:CreateSocialRealmString(friend)
 end
 
 --- @param tooltip LibQTip.Tooltip
---- @param maxCols number
---- @param headerFont FontObject
-function CUI:StyleSlider(tooltip, maxCols, headerFont)
+function CUI:StyleSlider(tooltip)
 	local slider = tooltip.Slider
 	if not slider then
 		return
@@ -192,23 +146,21 @@ function CUI:StyleSlider(tooltip, maxCols, headerFont)
 	thumb:SetTexture("Interface/Buttons/WHITE8X8")
 	thumb:SetColorTexture(1, 1, 1, 0.8)
 	slider:SetThumbTexture(thumb)
-	local padding = 12 + slider:GetWidth() / 2
-	CUI:CreateHelpRow(tooltip:GetRow(3), "Left-Click to whisper", maxCols, headerFont, padding)
-	CUI:CreateHelpRow(tooltip:GetRow(4), "Ctrl-Left-Click to invite", maxCols, headerFont, padding)
-	CUI:CreateHelpRow(tooltip:GetRow(5), "Right-Click to set note", maxCols, headerFont, padding)
-	CUI:CreateHelpRow(tooltip:GetRow(6), "Ctrl-Right-Click to dump info", maxCols, headerFont, padding)
 	tooltip:UpdateLayout()
 end
 
----@param row LibQTip-2.0.Row
+---@param tooltip LibQTip.Tooltip
 ---@param message string
 ---@param maxCols integer
 ---@param headerFont FontObject
 ---@param padding integer
-function CUI:CreateHelpRow(row, message, maxCols, headerFont, padding)
-	local cell = row:GetCell(1)
-	if padding then
-		cell:SetLeftPadding(padding)
-	end
-	cell:SetColSpan(maxCols):SetFontObject(headerFont):SetJustifyH("CENTER"):SetText(message)
+function CUI:CreateHelpRow(tooltip, message, maxCols, headerFont, padding)
+	local row = tooltip:AddRow()
+	padding = padding or 0
+	row:GetCell(1)
+		:SetLeftPadding(padding)
+		:SetColSpan(maxCols)
+		:SetFontObject(headerFont)
+		:SetJustifyH("CENTER")
+		:SetText(message)
 end
