@@ -18,7 +18,7 @@ logger.addHandler(ch)
 BASE_URL = "https://{}.api.blizzard.com"
 REALM_ENDPOINT = "/data/wow/search/realm"
 REGIONS = ("eu", "us")
-NAMESPACES = ("dynamic-classic-{}", "dynamic-classic1x-{}")
+NAMESPACES = ("dynamic-classic-{}", "dynamic-classic1x-{}", "dynamic-classicann-{}")
 
 
 def _create_realm_file(realm_info):
@@ -27,9 +27,11 @@ def _create_realm_file(realm_info):
         region_string = f"    {region} = {{\n"
         realm_strings = []
         for realm in realms:
-            realm_names = ", ".join(f"{locale} = \"{name}\"" for locale, name in realm.get("names").items())
+            realm_names = ", ".join(
+                f'{locale} = "{name}"' for locale, name in realm.get("names").items()
+            )
             realm_strings.append(
-                f"        [{realm.get("id")}] = {{names = {{{realm_names}}}}},"
+                f"        [{realm.get('id')}] = {{names = {{{realm_names}}}}},"
             )
         end_string = "\n    },"
         region_strings.append(region_string + "\n".join(realm_strings) + end_string)
@@ -39,15 +41,15 @@ def _create_realm_file(realm_info):
             "local CUI = CUI\n"
             "\n"
             "local regions = {\n"
-            "    [1] = \"us\",\n"
-            "    [3] = \"eu\",\n"
+            '    [1] = "us",\n'
+            '    [3] = "eu",\n'
             "}\n"
             "local realms = {\n"
             f"{'\n'.join(region_strings)}\n"
             "}\n"
             "\n"
             "function CUI:GetRealmName(gameAccountInfo, locale)\n"
-            "    if locale == nil then locale = \"en_GB\" end\n"
+            '    if locale == nil then locale = "en_GB" end\n'
             "    local realmID = gameAccountInfo.realmID\n"
             "    local region = regions[gameAccountInfo.regionID]\n"
             "    local realmInfo = realms[region][realmID]\n"
@@ -55,11 +57,11 @@ def _create_realm_file(realm_info):
             "        return realmInfo.names[locale]\n"
             "    end\n"
             "\n"
-            "    self:Print(\"realmid: \"..realmID)\n"
-            "    self:Print(\"region: \".. region)\n"
-            "    self:Print(\"locale: \"..locale)\n"
+            '    self:Print("realmid: "..realmID)\n'
+            '    self:Print("region: ".. region)\n'
+            '    self:Print("locale: "..locale)\n'
             "    DevTools_Dump(realmInfo)\n"
-            "    return \"Unknown\"\n"
+            '    return "Unknown"\n'
             "end"
         )
 
