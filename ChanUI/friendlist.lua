@@ -195,6 +195,11 @@ local function CreateFriendsRoot()
 	friendsRoot:SetScript("OnEnter", function()
 		ShowFriendlist()
 	end)
+	friendsRoot:SetScript("OnMouseDown", function(_, button)
+		if button == "RightButton" then
+			Settings.OpenToCategory(CUI.categoryID)
+		end
+	end)
 end
 
 local function CreateFriendsOnlineFontString()

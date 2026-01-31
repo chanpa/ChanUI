@@ -140,6 +140,11 @@ local function CreateGuildiesRoot()
 	guildiesRoot:SetScript("OnEnter", function()
 		ShowGuildlist()
 	end)
+	guildiesRoot:SetScript("OnMouseDown", function(_, button)
+		if button == "RightButton" then
+			Settings.OpenToCategory(CUI.categoryID)
+		end
+	end)
 end
 
 function CreateGuildiesOnlineFontString()
