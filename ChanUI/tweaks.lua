@@ -47,6 +47,10 @@ local function changeChatTabSize(chatTab)
 end
 
 function CUI:UpdateChat()
+	if not self.db.profile.tweaks.enableChatOptions then
+		return
+	end
+
 	for i = 1, NUM_CHAT_WINDOWS do
 		local chatFrame = _G["ChatFrame" .. i]
 		local chatTab = _G["ChatFrame" .. i .. "Tab"]
@@ -88,4 +92,10 @@ function CUI:EnableTweaks()
 	self:HookScript(ExpansionLandingPageMinimapButton, "OnShow", "HideExpansionSummary")
 	self:RegisterEvent("HOUSE_EDITOR_AVAILABILITY_CHANGED", "MoveHousingControlsFrame")
 	--self:UpdateChat()
+end
+
+function CUI:UpdateTweaks()
+	self:HideExpansionSummary()
+	self:MoveHousingControlsFrame()
+	self:UpdateChat()
 end

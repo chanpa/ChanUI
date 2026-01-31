@@ -238,6 +238,13 @@ function CUI:SetGuildiesRootPosition()
 	)
 end
 
+function CUI:UpdateGuildlist()
+	self:SetGuildiesFont()
+	self:SetGuildiesText()
+	self:SetGuildiesRootStyle()
+	self:SetGuildiesRootPosition()
+end
+
 function CUI:DisableGuildlist()
 	if guildiesRoot then
 		guildiesRoot:Release()

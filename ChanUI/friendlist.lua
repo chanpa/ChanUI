@@ -330,6 +330,13 @@ function CUI:SetFriendsRootPosition()
 	)
 end
 
+function CUI:UpdateFriendlist()
+	self:SetFriendsFont()
+	self:SetFriendsText()
+	self:SetFriendsRootStyle()
+	self:SetFriendsRootPosition()
+end
+
 function CUI:DisableFriendlist()
 	if friendsRoot then
 		friendsRoot:Release()

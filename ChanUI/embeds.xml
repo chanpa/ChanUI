@@ -11,5 +11,5 @@
   <Include file="Libs\AceConfig-3.0\AceConfig-3.0.xml"/>
   <Include file="Libs\AceHook-3.0\AceHook-3.0.xml"/>
   <Include file="Libs\LibQTip-2.0\LibQTip-2.0.xml"/>
-  <Include file="Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua"/>
+  <Include file="Libs\LibSharedMedia-3.0\lib.xml"/>
 </Ui>

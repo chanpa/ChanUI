@@ -647,20 +647,29 @@ local options = {
 }
 
 function CUI:InitializeAce()
-	self.db = LibStub("AceDB-3.0"):New("ChanUIDB", defaultOptions)
+	self.db = LibStub("AceDB-3.0"):New("ChanUIDB", defaultOptions, true)
 
 	-- config
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("ChanUI", options)
-	_, self.categoryID = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("ChanUI", "ChanUI")
+	_, self.categoryID = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("ChanUI", "Chan UI")
 	self:RegisterChatCommand("cui", "SlashCommand")
 	self:RegisterChatCommand("chanui", "SlashCommand")
 
 	-- profiles
-	local profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
-	LibStub("AceConfig-3.0"):RegisterOptionsTable("ChanUI_Profiles", profiles)
-	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("ChanUI_Profiles", "Profiles", "ChanUI")
+	local profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db, true)
+	LibStub("AceConfig-3.0"):RegisterOptionsTable("ChanUIProfiles", profiles)
+	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("ChanUIProfiles", "Profiles", "Chan UI")
 
+	self.db.RegisterCallback(self, "OnProfileChanged", "ProfileChanged")
+	self.db.RegisterCallback(self, "OnProfileCopied", "ProfileChanged")
+	self.db.RegisterCallback(self, "OnProfileReset", "ProfileChanged")
 	self:RegisterEvent("PLAYER_LOGIN")
+end
+
+function CUI:ProfileChanged()
+	self:UpdateTweaks()
+	self:UpdateFriendlist()
+	self:UpdateGuildlist()
 end
 
 function CUI:SlashCommand(msg)
