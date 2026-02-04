@@ -293,4 +293,3 @@ function CUI:EnableGuildlist()
 
 	CreateGuildlist()
 end
-
