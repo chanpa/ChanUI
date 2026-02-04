@@ -142,6 +142,7 @@ local function CreateGuildiesRoot()
 	end)
 	guildiesRoot:SetScript("OnMouseDown", function(_, button)
 		if button == "RightButton" then
+			guildiesList:Hide()
 			Settings.OpenToCategory(CUI.categoryID)
 		end
 	end)

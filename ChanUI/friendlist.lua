@@ -117,7 +117,7 @@ local function ShowFriendlist()
 				:GetCell(1)
 				:SetColSpan(cols)
 				:SetFontObject(headlineFont)
-				:SetJustifyH("CENTER")
+				:SetJustifyH("LEFT")
 				:SetText(CLIENT_TRANSLATIONS[client])
 			friendsList:AddSeparator()
 
@@ -197,6 +197,7 @@ local function CreateFriendsRoot()
 	end)
 	friendsRoot:SetScript("OnMouseDown", function(_, button)
 		if button == "RightButton" then
+			friendsList:Hide()
 			Settings.OpenToCategory(CUI.categoryID)
 		end
 	end)
@@ -377,11 +378,11 @@ function CUI:EnableFriendlist()
 
 	local fontPath = LSM:Fetch("font", CUI.db.profile.socials.friendlist.font.name)
 	normalFont = CreateFont("ChanUIFriendsNormalFont")
-	normalFont:SetFont(fontPath, 12, "")
+	normalFont:SetFont(fontPath, 12, "THICKOUTLINE")
 	normalFont:SetTextColor(1, 1, 1)
 
 	headerFont = CreateFont("ChanUIFriendsHeaderFont")
-	headerFont:SetFont(fontPath, 12, "OUTLINE")
+	headerFont:SetFont(fontPath, 12, "THICKOUTLINE")
 	headerFont:SetTextColor(1, 0.8, 0)
 
 	headlineFont = CreateFont("ChanUIFriendsHeadlineFont")
@@ -390,4 +391,3 @@ function CUI:EnableFriendlist()
 
 	CreateFriendlist()
 end
-
