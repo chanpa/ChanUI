@@ -43,9 +43,9 @@ end
 function CUI:CreateSocialRealmString(otherFaction, otherRealmName)
 	local color = "ffffffff"
 	if otherFaction == "Horde" then
-		color = "ffff0000"
+		color = "FFFF3C3C"
 	elseif otherFaction == "Alliance" then
-		color = "ff0000ff"
+		color = "FF3D3DFF"
 	end
 	return self:ColorText(color, otherRealmName)
 end
