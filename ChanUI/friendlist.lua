@@ -37,7 +37,6 @@ local CLIENT_ORDER = {
 
 -- locals we will use
 local friendsRoot, friendsFontString, friendsTable, friendsOnline, friendsList
-local normalFont, headerFont, headlineFont
 
 local function getRealmName(client, gameAccountInfo)
 	if client == "wow_retail" then
@@ -88,22 +87,22 @@ local function ShowFriendlist()
 
 	CUI:UpdateFrameLook(
 		friendsList,
-		CUI.db.profile.socials.friendlist.border.name,
-		CUI.db.profile.socials.friendlist.border.size,
-		CUI.db.profile.socials.friendlist.border.inset,
-		CUI.db.profile.socials.friendlist.border.color,
-		CUI.db.profile.socials.friendlist.backdrop.color
+		CUI.db.profile.socials.friendlist.list.border.name,
+		CUI.db.profile.socials.friendlist.list.border.size,
+		CUI.db.profile.socials.friendlist.list.border.inset,
+		CUI.db.profile.socials.friendlist.list.border.color,
+		CUI.db.profile.socials.friendlist.list.backdrop.color
 	)
 
-	friendsList:SetDefaultHeadingFont(headerFont)
-	friendsList:SetDefaultFont(normalFont)
+	friendsList:SetDefaultHeadingFont(CUI.headerFriendsFont)
+	friendsList:SetDefaultFont(CUI.normalFriendsFont)
 	friendsList:AddRow(" ")
 	friendsList:AddRow(" ")
 
-	CUI:CreateHelpRow(friendsList, "Left-Click to whisper", cols, headerFont)
-	CUI:CreateHelpRow(friendsList, "Ctrl-Left-Click to invite", cols, headerFont)
-	CUI:CreateHelpRow(friendsList, "Right-Click to set note", cols, headerFont)
-	CUI:CreateHelpRow(friendsList, "Ctrl-Right-Click to dump info", cols, headerFont)
+	CUI:CreateHelpRow(friendsList, "Left-Click to whisper", cols, CUI.headerFriendsFont)
+	CUI:CreateHelpRow(friendsList, "Ctrl-Left-Click to invite", cols, CUI.headerFriendsFont)
+	CUI:CreateHelpRow(friendsList, "Right-Click to set note", cols, CUI.headerFriendsFont)
+	CUI:CreateHelpRow(friendsList, "Ctrl-Right-Click to dump info", cols, CUI.headerFriendsFont)
 
 	for _, client in pairs(CLIENT_ORDER) do
 		local friends = friendsTable[client]
@@ -116,7 +115,7 @@ local function ShowFriendlist()
 				:AddRow()
 				:GetCell(1)
 				:SetColSpan(cols)
-				:SetFontObject(headlineFont)
+				:SetFontObject(CUI.headlineFriendsFont)
 				:SetJustifyH("LEFT")
 				:SetText(CLIENT_TRANSLATIONS[client])
 			friendsList:AddSeparator()
@@ -166,7 +165,7 @@ local function ShowFriendlist()
 	local percOfScreenAllowed = 0.5
 	friendsList:SetMaxHeight(GetScreenHeight() * percOfScreenAllowed)
 	friendsList:UpdateLayout()
-	CUI:StyleSlider(friendsList, cols, headerFont)
+	CUI:StyleSlider(friendsList, cols, CUI.headerFriendsFont)
 
 	friendsList:Show()
 end
@@ -175,20 +174,20 @@ local function CreateFriendsRoot()
 	friendsRoot = CreateFrame("Frame", ROOT_FRAME_NAME, UIParent, "BackdropTemplate")
 	friendsRoot:SetBackdrop({
 		bgFile = "Interface/Buttons/WHITE8X8",
-		edgeFile = LSM:Fetch("border", CUI.db.profile.socials.friendlist.border.name),
+		edgeFile = LSM:Fetch("border", CUI.db.profile.socials.friendlist.header.border.name),
 		tile = true,
-		edgeSize = CUI.db.profile.socials.friendlist.border.size,
+		edgeSize = CUI.db.profile.socials.friendlist.header.border.size,
 		tileSize = 32,
 		insets = {
-			left = CUI.db.profile.socials.friendlist.border.inset,
-			right = CUI.db.profile.socials.friendlist.border.inset,
-			top = CUI.db.profile.socials.friendlist.border.inset,
-			bottom = CUI.db.profile.socials.friendlist.border.inset,
+			left = CUI.db.profile.socials.friendlist.header.border.inset,
+			right = CUI.db.profile.socials.friendlist.header.border.inset,
+			top = CUI.db.profile.socials.friendlist.header.border.inset,
+			bottom = CUI.db.profile.socials.friendlist.header.border.inset,
 		},
 	})
-	local r, g, b, a = unpack(CUI.db.profile.socials.friendlist.backdrop.color)
+	local r, g, b, a = unpack(CUI.db.profile.socials.friendlist.header.backdrop.color)
 	friendsRoot:SetBackdropColor(r, g, b, a)
-	r, g, b, a = unpack(CUI.db.profile.socials.friendlist.border.color)
+	r, g, b, a = unpack(CUI.db.profile.socials.friendlist.header.border.color)
 	friendsRoot:SetBackdropBorderColor(r, g, b, a)
 	friendsRoot:SetClampedToScreen(false)
 	friendsRoot:EnableMouse(true)
@@ -298,9 +297,9 @@ end
 function CUI:SetFriendsFont()
 	self:SetFont(
 		friendsFontString,
-		self.db.profile.socials.friendlist.font.name,
-		self.db.profile.socials.friendlist.font.size,
-		self.db.profile.socials.friendlist.font.outline
+		self.db.profile.socials.friendlist.header.font.name,
+		self.db.profile.socials.friendlist.header.font.size,
+		self.db.profile.socials.friendlist.header.font.outline
 	)
 end
 
@@ -311,28 +310,28 @@ function CUI:SetFriendsText(message)
 	self:UpdateListRootText(
 		friendsFontString,
 		message,
-		self:CalculateSocialListPadding(self.db.profile.socials.friendlist.border.inset)
+		self:CalculateSocialListPadding(self.db.profile.socials.friendlist.header.border.inset)
 	)
 end
 
 function CUI:SetFriendsRootStyle()
 	self:UpdateFrameLook(
 		friendsRoot,
-		self.db.profile.socials.friendlist.border.name,
-		self.db.profile.socials.friendlist.border.size,
-		self.db.profile.socials.friendlist.border.inset,
-		self.db.profile.socials.friendlist.border.color,
-		self.db.profile.socials.friendlist.backdrop.color
+		self.db.profile.socials.friendlist.header.border.name,
+		self.db.profile.socials.friendlist.header.border.size,
+		self.db.profile.socials.friendlist.header.border.inset,
+		self.db.profile.socials.friendlist.header.border.color,
+		self.db.profile.socials.friendlist.header.backdrop.color
 	)
 end
 
 function CUI:SetFriendsRootPosition()
 	self:UpdateSocialFramePosition(
 		friendsFontString,
-		self.db.profile.socials.friendlist.positioning.anchor,
-		self.db.profile.socials.friendlist.positioning.frameAnchor,
-		self.db.profile.socials.friendlist.positioning.relX,
-		self.db.profile.socials.friendlist.positioning.relY
+		self.db.profile.socials.friendlist.header.positioning.anchor,
+		self.db.profile.socials.friendlist.header.positioning.frameAnchor,
+		self.db.profile.socials.friendlist.header.positioning.relX,
+		self.db.profile.socials.friendlist.header.positioning.relY
 	)
 end
 
@@ -354,14 +353,29 @@ function CUI:DisableFriendlist()
 	end
 	friendsOnline = 0
 	friendsTable = nil
-	normalFont = nil
-	headerFont = nil
-	headlineFont = nil
+	CUI.normalFriendsFont = nil
+	CUI.headerFriendsFont = nil
+	CUI.headlineFriendsFont = nil
 	self:UnregisterEvent("FRIENDLIST_UPDATE")
 	self:UnregisterEvent("BN_FRIEND_ACCOUNT_ONLINE")
 	self:UnregisterEvent("BN_FRIEND_ACCOUNT_OFFLINE")
 	self:UnregisterEvent("BN_FRIEND_INFO_CHANGED")
 	self:UnregisterEvent("BN_INFO_CHANGED")
+end
+
+function CUI:SetFriendlistFont()
+	local fontPath = LSM:Fetch("font", CUI.db.profile.socials.friendlist.list.font.name)
+	CUI.normalFriendsFont = CreateFont("ChanUIFriendsNormalFont")
+	CUI.normalFriendsFont:SetFont(fontPath, 12, CUI.db.profile.socials.friendlist.list.font.outline)
+	CUI.normalFriendsFont:SetTextColor(1, 1, 1)
+
+	CUI.headerFriendsFont = CreateFont("ChanUIFriendsHeaderFont")
+	CUI.headerFriendsFont:SetFont(fontPath, 12, CUI.db.profile.socials.friendlist.list.font.outline)
+	CUI.headerFriendsFont:SetTextColor(1, 0.8, 0)
+
+	CUI.headlineFriendsFont = CreateFont("ChanUIFriendsHeadlineFont")
+	CUI.headlineFriendsFont:SetFont(fontPath, 16, CUI.db.profile.socials.friendlist.list.font.outline)
+	CUI.headlineFriendsFont:SetTextColor(1, 0.8, 0)
 end
 
 function CUI:EnableFriendlist()
@@ -375,19 +389,7 @@ function CUI:EnableFriendlist()
 	self:RegisterEvent("BN_FRIEND_INFO_CHANGED", CreateFriendsTable)
 	self:RegisterEvent("BN_INFO_CHANGED", CreateFriendsTable)
 	self:CreatePopupDialog(POPUP_SET_NOTE_NAME, "Note", "Accept", "Cancel", BNSetFriendNote)
-
-	local fontPath = LSM:Fetch("font", CUI.db.profile.socials.friendlist.font.name)
-	normalFont = CreateFont("ChanUIFriendsNormalFont")
-	normalFont:SetFont(fontPath, 12, "THICKOUTLINE")
-	normalFont:SetTextColor(1, 1, 1)
-
-	headerFont = CreateFont("ChanUIFriendsHeaderFont")
-	headerFont:SetFont(fontPath, 12, "THICKOUTLINE")
-	headerFont:SetTextColor(1, 0.8, 0)
-
-	headlineFont = CreateFont("ChanUIFriendsHeadlineFont")
-	headlineFont:SetFont(fontPath, 16, "THICKOUTLINE")
-	headlineFont:SetTextColor(1, 0.8, 0)
+	self:SetFriendlistFont()
 
 	CreateFriendlist()
 end

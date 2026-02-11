@@ -17,46 +17,55 @@ local function GetRangeSlider(name, getFunc, setFunc)
 end
 
 local function GetFontSelector(nameGetFunc, nameSetFunc, sizeGetFunc, sizeSetFunc, outlineGetFunc, outlineSetFunc)
-	return {
+	local settings = {
 		type = "group",
 		name = "Font Settings",
-		args = {
-			name = {
-				type = "select",
-				name = "Font",
-				dialogControl = "LSM30_Font",
-				desc = "The font to use.",
-				values = LSM:HashTable("font"),
-				get = nameGetFunc,
-				set = nameSetFunc,
-			},
-			size = {
-				type = "range",
-				name = "Font Size",
-				desc = "Set the font size",
-				min = 6,
-				max = 100,
-				step = 1,
-				get = sizeGetFunc,
-				set = sizeSetFunc,
-			},
-			outline = {
-				type = "select",
-				name = "Outline",
-				style = "dropdown",
-				desc = "Outline mode of the text",
-				values = {
-					[""] = "None",
-					["OUTLINE"] = "Outline",
-					["THICKOUTLINE"] = "Thick Outline",
-					["MONOCHROME,OUTLINE"] = "Monochrome Outline",
-					["MONOCHROME,THICKOUTLINE"] = "Monochrome Thick Outline",
-				},
-				get = outlineGetFunc,
-				set = outlineSetFunc,
-			},
-		},
+		args = {}
 	}
+
+	if nameGetFunc then
+		settings.args.name = {
+			type = "select",
+			name = "Font",
+			dialogControl = "LSM30_Font",
+			desc = "The font to use.",
+			values = LSM:HashTable("font"),
+			get = nameGetFunc,
+			set = nameSetFunc,
+		}
+	end
+
+	if sizeGetFunc then
+		settings.args.size = {
+			type = "range",
+			name = "Font Size",
+			desc = "Set the font size",
+			min = 6,
+			max = 100,
+			step = 1,
+			get = sizeGetFunc,
+			set = sizeSetFunc,
+		}
+	end
+
+	if outlineGetFunc then
+		settings.args.outline = {
+			type = "select",
+			name = "Outline",
+			style = "dropdown",
+			desc = "Outline mode of the text",
+			values = {
+				[""] = "None",
+				["OUTLINE"] = "Outline",
+				["THICKOUTLINE"] = "Thick Outline",
+				["MONOCHROME,OUTLINE"] = "Monochrome Outline",
+				["MONOCHROME,THICKOUTLINE"] = "Monochrome Thick Outline",
+			},
+			get = outlineGetFunc,
+			set = outlineSetFunc,
+		}
+	end
+	return settings
 end
 
 local function GetBorderSelector(
@@ -231,6 +240,406 @@ local function GetTweakOptions()
 	}
 end
 
+local function GetGuildlistOptions(tbl_name)
+	return {
+		header = {
+			type = "group",
+			name = "Header settings",
+			args = {
+				font = GetFontSelector(function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.font.name
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.font.name = value
+				CUI:SetGuildiesFont()
+				CUI:SetGuildiesText()
+			end, function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.font.size
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.font.size = value
+				CUI:SetGuildiesFont()
+				CUI:SetGuildiesText()
+			end, function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.font.outline
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.font.outline = value
+				CUI:SetGuildiesFont()
+				CUI:SetGuildiesText()
+			end),
+			border = GetBorderSelector(function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.border.name
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.border.name = value
+				CUI:SetGuildiesRootStyle()
+				CUI:SetGuildiesText()
+			end, function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.border.size
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.border.size = value
+				CUI:SetGuildiesRootStyle()
+				CUI:SetGuildiesText()
+			end, function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.border.inset
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.border.inset = value
+				CUI:SetGuildiesRootStyle()
+				CUI:SetGuildiesText()
+			end, function()
+				return unpack(CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.border.color)
+			end, function(_, r, g, b, a)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.border.color = { r, g, b, a }
+				CUI:SetGuildiesRootStyle()
+				CUI:SetGuildiesText()
+			end),
+			backdrop = GetTextureSelector(function()
+				return unpack(CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.backdrop.color)
+			end, function(_, r, g, b, a)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.backdrop.color = { r, g, b, a }
+				CUI:SetGuildiesRootStyle()
+			end),
+			positioning = {
+				type = "group",
+				name = "Positioning",
+				args = {
+					anchor = {
+						type = "select",
+						name = "Anchor point",
+						desc = "Where to anchor the list",
+						width = "full",
+						values = {
+							["TOP"] = "TOP",
+							["RIGHT"] = "RIGHT",
+							["BOTTOM"] = "BOTTOM",
+							["LEFT"] = "LEFT",
+							["TOPRIGHT"] = "TOPRIGHT",
+							["TOPLEFT"] = "TOPLEFT",
+							["BOTTOMLEFT"] = "BOTTOMLEFT",
+							["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+							["CENTER"] = "CENTER",
+						},
+						get = function()
+							return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.positioning.anchor
+						end,
+						set = function(_, value)
+							CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.positioning.anchor = value
+							CUI:SetGuildiesRootPosition()
+						end,
+					},
+					frameAnchor = {
+						type = "select",
+						name = "Frame anchor",
+						desc = "Which part of the Friendlist to anchor to the anchor above",
+						width = "full",
+						values = {
+							["TOP"] = "TOP",
+							["RIGHT"] = "RIGHT",
+							["BOTTOM"] = "BOTTOM",
+							["LEFT"] = "LEFT",
+							["TOPRIGHT"] = "TOPRIGHT",
+							["TOPLEFT"] = "TOPLEFT",
+							["BOTTOMLEFT"] = "BOTTOMLEFT",
+							["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+							["CENTER"] = "CENTER",
+						},
+						get = function()
+							return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.positioning.frameAnchor
+						end,
+						set = function(_, value)
+							CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.positioning.frameAnchor = value
+							CUI:SetGuildiesRootPosition()
+						end,
+					},
+					relX = {
+						type = "range",
+						name = "Relative X position",
+						width = "full",
+						softMin = -1500,
+						min = -3000,
+						max = 3000,
+						softMax = 1500,
+						step = 1,
+						get = function()
+							return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.positioning.relX
+						end,
+						set = function(_, value)
+							CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.positioning.relX = value
+							CUI:SetGuildiesRootPosition()
+						end,
+					},
+					relY = {
+						type = "range",
+						name = "Relative Y position",
+						width = "full",
+						softMin = -1500,
+						min = -3000,
+						max = 3000,
+						softMax = 1500,
+						step = 1,
+						get = function()
+							return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.positioning.relY
+						end,
+						set = function(_, value)
+							CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.positioning.relY = value
+							CUI:SetGuildiesRootPosition()
+						end,
+					},
+				},
+			},
+		},
+	},
+	list = {
+		type = "group",
+		name = "List settings",
+		args = {
+			font = GetFontSelector(function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.font.name
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.font.name = value
+				CUI:SetGuildlistFont()
+			end,
+			nil,
+			nil,
+			function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.font.outline
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.font.outline = value
+				CUI:SetGuildlistFont()
+			end),
+			border = GetBorderSelector(function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.border.name
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.border.name = value
+				CUI:SetGuildiesRootStyle()
+				CUI:SetGuildiesText()
+			end, function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.border.size
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.border.size = value
+				CUI:SetGuildiesRootStyle()
+				CUI:SetGuildiesText()
+			end, function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.border.inset
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.border.inset = value
+				CUI:SetGuildiesRootStyle()
+				CUI:SetGuildiesText()
+			end, function()
+				return unpack(CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.border.color)
+			end, function(_, r, g, b, a)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.border.color = { r, g, b, a }
+				CUI:SetGuildiesRootStyle()
+				CUI:SetGuildiesText()
+			end),
+			backdrop = GetTextureSelector(function()
+				return unpack(CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.backdrop.color)
+			end, function(_, r, g, b, a)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.backdrop.color = { r, g, b, a }
+				CUI:SetGuildiesRootStyle()
+			end),
+		}
+	}
+}
+end
+
+local function GetFriendlistOptions(tbl_name)
+	return {
+		header = {
+			type = "group",
+			name = "Header settings",
+			args = {
+				font = GetFontSelector(function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.font.name
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.font.name = value
+				CUI:SetFriendsFont()
+				CUI:SetFriendsText()
+			end, function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.font.size
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.font.size = value
+				CUI:SetFriendsFont()
+				CUI:SetFriendsText()
+			end, function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.font.outline
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.font.outline = value
+				CUI:SetFriendsFont()
+				CUI:SetFriendsText()
+			end),
+			border = GetBorderSelector(function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.border.name
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.border.name = value
+				CUI:SetFriendsRootStyle()
+				CUI:SetFriendsText()
+			end, function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.border.size
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.border.size = value
+				CUI:SetFriendsRootStyle()
+				CUI:SetFriendsText()
+			end, function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.border.inset
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.border.inset = value
+				CUI:SetFriendsRootStyle()
+				CUI:SetFriendsText()
+			end, function()
+				return unpack(CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.border.color)
+			end, function(_, r, g, b, a)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.border.color = { r, g, b, a }
+				CUI:SetFriendsRootStyle()
+				CUI:SetFriendsText()
+			end),
+			backdrop = GetTextureSelector(function()
+				return unpack(CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.backdrop.color)
+			end, function(_, r, g, b, a)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.backdrop.color = { r, g, b, a }
+				CUI:SetFriendsRootStyle()
+			end),
+			positioning = {
+				type = "group",
+				name = "Positioning",
+				args = {
+					anchor = {
+						type = "select",
+						name = "Anchor point",
+						desc = "Where to anchor the list",
+						width = "full",
+						values = {
+							["TOP"] = "TOP",
+							["RIGHT"] = "RIGHT",
+							["BOTTOM"] = "BOTTOM",
+							["LEFT"] = "LEFT",
+							["TOPRIGHT"] = "TOPRIGHT",
+							["TOPLEFT"] = "TOPLEFT",
+							["BOTTOMLEFT"] = "BOTTOMLEFT",
+							["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+							["CENTER"] = "CENTER",
+						},
+						get = function()
+							return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.positioning.anchor
+						end,
+						set = function(_, value)
+							CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.positioning.anchor = value
+							CUI:SetFriendsRootPosition()
+						end,
+					},
+					frameAnchor = {
+						type = "select",
+						name = "Frame anchor",
+						desc = "Which part of the Friendlist to anchor to the anchor above",
+						width = "full",
+						values = {
+							["TOP"] = "TOP",
+							["RIGHT"] = "RIGHT",
+							["BOTTOM"] = "BOTTOM",
+							["LEFT"] = "LEFT",
+							["TOPRIGHT"] = "TOPRIGHT",
+							["TOPLEFT"] = "TOPLEFT",
+							["BOTTOMLEFT"] = "BOTTOMLEFT",
+							["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+							["CENTER"] = "CENTER",
+						},
+						get = function()
+							return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.positioning.frameAnchor
+						end,
+						set = function(_, value)
+							CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.positioning.frameAnchor = value
+							CUI:SetFriendsRootPosition()
+						end,
+					},
+					relX = {
+						type = "range",
+						name = "Relative X position",
+						width = "full",
+						softMin = -1500,
+						min = -3000,
+						max = 3000,
+						softMax = 1500,
+						step = 1,
+						get = function()
+							return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.positioning.relX
+						end,
+						set = function(_, value)
+							CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.positioning.relX = value
+							CUI:SetFriendsRootPosition()
+						end,
+					},
+					relY = {
+						type = "range",
+						name = "Relative Y position",
+						width = "full",
+						softMin = -1500,
+						min = -3000,
+						max = 3000,
+						softMax = 1500,
+						step = 1,
+						get = function()
+							return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.positioning.relY
+						end,
+						set = function(_, value)
+							CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).header.positioning.relY = value
+							CUI:SetFriendsRootPosition()
+						end,
+					},
+				},
+			},
+		},
+	},
+	list = {
+		type = "group",
+		name = "List settings",
+		args = {
+			font = GetFontSelector(function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.font.name
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.font.name = value
+				CUI:SetFriendlistFont()
+			end,
+			nil,
+			nil,
+			function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.font.outline
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.font.outline = value
+				CUI:SetFriendlistFont()
+			end),
+			border = GetBorderSelector(function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.border.name
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.border.name = value
+				CUI:SetFriendsRootStyle()
+				CUI:SetFriendsText()
+			end, function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.border.size
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.border.size = value
+				CUI:SetFriendsRootStyle()
+				CUI:SetFriendsText()
+			end, function()
+				return CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.border.inset
+			end, function(_, value)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.border.inset = value
+				CUI:SetFriendsRootStyle()
+				CUI:SetFriendsText()
+			end, function()
+				return unpack(CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.border.color)
+			end, function(_, r, g, b, a)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.border.color = { r, g, b, a }
+				CUI:SetFriendsRootStyle()
+				CUI:SetFriendsText()
+			end),
+			backdrop = GetTextureSelector(function()
+				return unpack(CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.backdrop.color)
+			end, function(_, r, g, b, a)
+				CUI:GetNestedValue(CUI.db.profile.socials, tbl_name).list.backdrop.color = { r, g, b, a }
+				CUI:SetFriendsRootStyle()
+			end),
+		}
+	}
+}
+end
+
 local function GetSocialOptions()
 	return {
 		enableFriendlist = {
@@ -265,146 +674,7 @@ local function GetSocialOptions()
 			disabled = function()
 				return not CUI.db.profile.socials.enableFriendlist
 			end,
-			args = {
-				font = GetFontSelector(function()
-					return CUI.db.profile.socials.friendlist.font.name
-				end, function(_, value)
-					CUI.db.profile.socials.friendlist.font.name = value
-					CUI:SetFriendsFont()
-					CUI:SetFriendsText()
-				end, function()
-					return CUI.db.profile.socials.friendlist.font.size
-				end, function(_, value)
-					CUI.db.profile.socials.friendlist.font.size = value
-					CUI:SetFriendsFont()
-					CUI:SetFriendsText()
-				end, function()
-					return CUI.db.profile.socials.friendlist.font.outline
-				end, function(_, value)
-					CUI.db.profile.socials.friendlist.font.outline = value
-					CUI:SetFriendsFont()
-					CUI:SetFriendsText()
-				end),
-				border = GetBorderSelector(function()
-					return CUI.db.profile.socials.friendlist.border.name
-				end, function(_, value)
-					CUI.db.profile.socials.friendlist.border.name = value
-					CUI:SetFriendsRootStyle()
-					CUI:SetFriendsText()
-				end, function()
-					return CUI.db.profile.socials.friendlist.border.size
-				end, function(_, value)
-					CUI.db.profile.socials.friendlist.border.size = value
-					CUI:SetFriendsRootStyle()
-					CUI:SetFriendsText()
-				end, function()
-					return CUI.db.profile.socials.friendlist.border.inset
-				end, function(_, value)
-					CUI.db.profile.socials.friendlist.border.inset = value
-					CUI:SetFriendsRootStyle()
-					CUI:SetFriendsText()
-				end, function()
-					return unpack(CUI.db.profile.socials.friendlist.border.color)
-				end, function(_, r, g, b, a)
-					CUI.db.profile.socials.friendlist.border.color = { r, g, b, a }
-					CUI:SetFriendsRootStyle()
-					CUI:SetFriendsText()
-				end),
-				backdrop = GetTextureSelector(function()
-					return unpack(CUI.db.profile.socials.friendlist.backdrop.color)
-				end, function(_, r, g, b, a)
-					CUI.db.profile.socials.friendlist.backdrop.color = { r, g, b, a }
-					CUI:SetFriendsRootStyle()
-				end),
-				positioning = {
-					type = "group",
-					name = "Positioning",
-					args = {
-						anchor = {
-							type = "select",
-							name = "Anchor point",
-							desc = "Where to anchor the list",
-							width = "full",
-							values = {
-								["TOP"] = "TOP",
-								["RIGHT"] = "RIGHT",
-								["BOTTOM"] = "BOTTOM",
-								["LEFT"] = "LEFT",
-								["TOPRIGHT"] = "TOPRIGHT",
-								["TOPLEFT"] = "TOPLEFT",
-								["BOTTOMLEFT"] = "BOTTOMLEFT",
-								["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-								["CENTER"] = "CENTER",
-							},
-							get = function()
-								return CUI.db.profile.socials.friendlist.positioning.anchor
-							end,
-							set = function(_, value)
-								CUI.db.profile.socials.friendlist.positioning.anchor = value
-								CUI:SetFriendsRootPosition()
-							end,
-						},
-						frameAnchor = {
-							type = "select",
-							name = "Frame anchor",
-							desc = "Which part of the Friendlist to anchor to the anchor above",
-							width = "full",
-							values = {
-								["TOP"] = "TOP",
-								["RIGHT"] = "RIGHT",
-								["BOTTOM"] = "BOTTOM",
-								["LEFT"] = "LEFT",
-								["TOPRIGHT"] = "TOPRIGHT",
-								["TOPLEFT"] = "TOPLEFT",
-								["BOTTOMLEFT"] = "BOTTOMLEFT",
-								["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-								["CENTER"] = "CENTER",
-							},
-							get = function()
-								return CUI.db.profile.socials.friendlist.positioning.frameAnchor
-							end,
-							set = function(_, value)
-								CUI.db.profile.socials.friendlist.positioning.frameAnchor = value
-								CUI:SetFriendsRootPosition()
-							end,
-						},
-						relX = {
-							type = "range",
-							name = "Relative X position",
-							width = "full",
-							softMin = -1500,
-							min = -3000,
-							max = 3000,
-							softMax = 1500,
-							step = 1,
-							get = function()
-								return CUI.db.profile.socials.friendlist.positioning.relX
-							end,
-							set = function(_, value)
-								CUI.db.profile.socials.friendlist.positioning.relX = value
-								CUI:SetFriendsRootPosition()
-							end,
-						},
-						relY = {
-							type = "range",
-							name = "Relative Y position",
-							width = "full",
-							softMin = -1500,
-							min = -3000,
-							max = 3000,
-							softMax = 1500,
-							step = 1,
-							get = function()
-								return CUI.db.profile.socials.friendlist.positioning.relY
-							end,
-							set = function(_, value)
-								CUI.db.profile.socials.friendlist.positioning.relY = value
-								CUI:SetFriendsRootPosition()
-							end,
-						},
-					},
-				},
-			},
+			args = GetFriendlistOptions("friendlist"),
 		},
 		guildlist = {
 			type = "group",
@@ -413,146 +683,7 @@ local function GetSocialOptions()
 			disabled = function()
 				return not CUI.db.profile.socials.enableGuildlist
 			end,
-			args = {
-				font = GetFontSelector(function()
-					return CUI.db.profile.socials.guildlist.font.name
-				end, function(_, value)
-					CUI.db.profile.socials.guildlist.font.name = value
-					CUI:SetGuildiesFont()
-					CUI:SetGuildiesText()
-				end, function()
-					return CUI.db.profile.socials.guildlist.font.size
-				end, function(_, value)
-					CUI.db.profile.socials.guildlist.font.size = value
-					CUI:SetGuildiesFont()
-					CUI:SetGuildiesText()
-				end, function()
-					return CUI.db.profile.socials.guildlist.font.outline
-				end, function(_, value)
-					CUI.db.profile.socials.guildlist.font.outline = value
-					CUI:SetGuildiesFont()
-					CUI:SetGuildiesText()
-				end),
-				border = GetBorderSelector(function()
-					return CUI.db.profile.socials.guildlist.border.name
-				end, function(_, value)
-					CUI.db.profile.socials.guildlist.border.name = value
-					CUI:SetGuildiesRootStyle()
-					CUI:SetGuildiesText()
-				end, function()
-					return CUI.db.profile.socials.guildlist.border.size
-				end, function(_, value)
-					CUI.db.profile.socials.guildlist.border.size = value
-					CUI:SetGuildiesRootStyle()
-					CUI:SetGuildiesText()
-				end, function()
-					return CUI.db.profile.socials.guildlist.border.inset
-				end, function(_, value)
-					CUI.db.profile.socials.guildlist.border.inset = value
-					CUI:SetGuildiesRootStyle()
-					CUI:SetGuildiesText()
-				end, function()
-					return unpack(CUI.db.profile.socials.guildlist.border.color)
-				end, function(_, r, g, b, a)
-					CUI.db.profile.socials.guildlist.border.color = { r, g, b, a }
-					CUI:SetGuildiesRootStyle()
-					CUI:SetGuildiesText()
-				end),
-				backdrop = GetTextureSelector(function()
-					return unpack(CUI.db.profile.socials.guildlist.backdrop.color)
-				end, function(_, r, g, b, a)
-					CUI.db.profile.socials.guildlist.backdrop.color = { r, g, b, a }
-					CUI:SetGuildiesRootStyle()
-				end),
-				positioning = {
-					type = "group",
-					name = "Positioning",
-					args = {
-						anchor = {
-							type = "select",
-							name = "Anchor point",
-							desc = "Where to anchor the list",
-							width = "full",
-							values = {
-								["TOP"] = "TOP",
-								["RIGHT"] = "RIGHT",
-								["BOTTOM"] = "BOTTOM",
-								["LEFT"] = "LEFT",
-								["TOPRIGHT"] = "TOPRIGHT",
-								["TOPLEFT"] = "TOPLEFT",
-								["BOTTOMLEFT"] = "BOTTOMLEFT",
-								["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-								["CENTER"] = "CENTER",
-							},
-							get = function()
-								return CUI.db.profile.socials.guildlist.positioning.anchor
-							end,
-							set = function(_, value)
-								CUI.db.profile.socials.guildlist.positioning.anchor = value
-								CUI:SetGuildiesRootPosition()
-							end,
-						},
-						frameAnchor = {
-							type = "select",
-							name = "Frame anchor",
-							desc = "Which part of the Friendlist to anchor to the anchor above",
-							width = "full",
-							values = {
-								["TOP"] = "TOP",
-								["RIGHT"] = "RIGHT",
-								["BOTTOM"] = "BOTTOM",
-								["LEFT"] = "LEFT",
-								["TOPRIGHT"] = "TOPRIGHT",
-								["TOPLEFT"] = "TOPLEFT",
-								["BOTTOMLEFT"] = "BOTTOMLEFT",
-								["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-								["CENTER"] = "CENTER",
-							},
-							get = function()
-								return CUI.db.profile.socials.guildlist.positioning.frameAnchor
-							end,
-							set = function(_, value)
-								CUI.db.profile.socials.guildlist.positioning.frameAnchor = value
-								CUI:SetGuildiesRootPosition()
-							end,
-						},
-						relX = {
-							type = "range",
-							name = "Relative X position",
-							width = "full",
-							softMin = -1500,
-							min = -3000,
-							max = 3000,
-							softMax = 1500,
-							step = 1,
-							get = function()
-								return CUI.db.profile.socials.guildlist.positioning.relX
-							end,
-							set = function(_, value)
-								CUI.db.profile.socials.guildlist.positioning.relX = value
-								CUI:SetGuildiesRootPosition()
-							end,
-						},
-						relY = {
-							type = "range",
-							name = "Relative Y position",
-							width = "full",
-							softMin = -1500,
-							min = -3000,
-							max = 3000,
-							softMax = 1500,
-							step = 1,
-							get = function()
-								return CUI.db.profile.socials.guildlist.positioning.relY
-							end,
-							set = function(_, value)
-								CUI.db.profile.socials.guildlist.positioning.relY = value
-								CUI:SetGuildiesRootPosition()
-							end,
-						},
-					},
-				},
-			},
+			args = GetGuildlistOptions("guildlist")
 		},
 	}
 end
@@ -580,48 +711,84 @@ local defaultOptions = {
 			enableFriendlist = true,
 			enableGuildlist = true,
 			friendlist = {
-				positioning = {
-					anchor = "TOP",
-					frameAnchor = "TOP",
-					relX = 0,
-					relY = 0,
+				header = {
+					positioning = {
+						anchor = "TOP",
+						frameAnchor = "TOP",
+						relX = 0,
+						relY = 0,
+					},
+					font = {
+						name = "Arial Narrow",
+						size = 16,
+						outline = "THICKOUTLINE",
+					},
+					border = {
+						name = "",
+						size = 0,
+						inset = 0,
+						color = { 0, 0, 0, 1 },
+					},
+					backdrop = {
+						color = { 0, 0, 0, 1 },
+					},
 				},
-				font = {
-					name = "Arial Narrow",
-					size = 16,
-					outline = "THICKOUTLINE",
-				},
-				border = {
-					name = "",
-					size = 0,
-					inset = 0,
-					color = { 0, 0, 0, 1 },
-				},
-				backdrop = {
-					color = { 0, 0, 0, 1 },
-				},
+				list = {
+					font = {
+						name = "Arial Narrow",
+						size = 16,
+						outline = "THICKOUTLINE",
+					},
+					border = {
+						name = "",
+						size = 0,
+						inset = 0,
+						color = { 0, 0, 0, 1 },
+					},
+					backdrop = {
+						color = { 0, 0, 0, 1 },
+					},
+				}
 			},
 			guildlist = {
-				positioning = {
-					anchor = "TOP",
-					frameAnchor = "TOP",
-					relX = 0,
-					relY = 0,
+				header = {
+					positioning = {
+						anchor = "TOP",
+						frameAnchor = "TOP",
+						relX = 0,
+						relY = 0,
+					},
+					font = {
+						name = "Arial Narrow",
+						size = 16,
+						outline = "THICKOUTLINE",
+					},
+					border = {
+						name = "",
+						size = 0,
+						inset = 0,
+						color = { 0, 0, 0, 1 },
+					},
+					backdrop = {
+						color = { 0, 0, 0, 1 },
+					},
 				},
-				font = {
-					name = "Arial Narrow",
-					size = 16,
-					outline = "THICKOUTLINE",
-				},
-				border = {
-					name = "",
-					size = 0,
-					inset = 0,
-					color = { 0, 0, 0, 1 },
-				},
-				backdrop = {
-					color = { 0, 0, 0, 1 },
-				},
+				list = {
+					font = {
+						name = "Arial Narrow",
+						size = 16,
+						outline = "THICKOUTLINE",
+					},
+					border = {
+						name = "",
+						size = 0,
+						inset = 0,
+						color = { 0, 0, 0, 1 },
+					},
+					backdrop = {
+						color = { 0, 0, 0, 1 },
+					},
+				}
 			},
 		},
 	},

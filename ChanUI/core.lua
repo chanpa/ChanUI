@@ -49,3 +49,16 @@ function CUI:RGBPercToHex(r, g, b)
 	b = b <= 1 and b >= 0 and b or 0
 	return string.format("%02x%02x%02x", r * 255, g * 255, b * 255)
 end
+
+
+---Get the value from the path
+---@param tbl table
+---@param path string
+function CUI:GetNestedValue(tbl, path)
+	for key in path:gmatch("[^.]+") do
+		tbl = tbl[key]
+		if not tbl then return nil end
+	end
+
+	return tbl
+end

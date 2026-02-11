@@ -9,7 +9,6 @@ local ROOT_FRAME_NAME = "ChanUIGuildiesRootFrame"
 
 -- locals we will use
 local guildiesRoot, guildiesFontString, guildiesOnline, guildiesTable, guildiesList
-local normalFont, headerFont, headlineFont
 
 local function GetFaction(guid)
 	if not guid then
@@ -67,22 +66,22 @@ local function ShowGuildlist()
 
 	CUI:UpdateFrameLook(
 		guildiesList,
-		CUI.db.profile.socials.guildlist.border.name,
-		CUI.db.profile.socials.guildlist.border.size,
-		CUI.db.profile.socials.guildlist.border.inset,
-		CUI.db.profile.socials.guildlist.border.color,
-		CUI.db.profile.socials.guildlist.backdrop.color
+		CUI.db.profile.socials.guildlist.list.border.name,
+		CUI.db.profile.socials.guildlist.list.border.size,
+		CUI.db.profile.socials.guildlist.list.border.inset,
+		CUI.db.profile.socials.guildlist.list.border.color,
+		CUI.db.profile.socials.guildlist.list.backdrop.color
 	)
 
-	guildiesList:SetDefaultHeadingFont(headerFont)
-	guildiesList:SetDefaultFont(normalFont)
+	guildiesList:SetDefaultHeadingFont(CUI.headerGuildiesFont)
+	guildiesList:SetDefaultFont(CUI.normalGuildiesFont)
 	guildiesList:AddRow(" ")
 	guildiesList:AddRow(" ")
 
-	CUI:CreateHelpRow(guildiesList, "Left-Click to whisper", cols, headerFont)
-	CUI:CreateHelpRow(guildiesList, "Ctrl-Left-Click to invite", cols, headerFont)
-	CUI:CreateHelpRow(guildiesList, "Right-Click to set note", cols, headerFont)
-	CUI:CreateHelpRow(guildiesList, "Ctrl-Right-Click to dump info", cols, headerFont)
+	CUI:CreateHelpRow(guildiesList, "Left-Click to whisper", cols, CUI.headerGuildiesFont)
+	CUI:CreateHelpRow(guildiesList, "Ctrl-Left-Click to invite", cols, CUI.headerGuildiesFont)
+	CUI:CreateHelpRow(guildiesList, "Right-Click to set note", cols, CUI.headerGuildiesFont)
+	CUI:CreateHelpRow(guildiesList, "Ctrl-Right-Click to dump info", cols, CUI.headerGuildiesFont)
 
 	guildiesList:AddRow(" ")
 	guildiesList:AddRow(" ")
@@ -111,7 +110,7 @@ local function ShowGuildlist()
 	local percOfScreenAllowed = 0.5
 	guildiesList:SetMaxHeight(GetScreenHeight() * percOfScreenAllowed)
 	guildiesList:UpdateLayout()
-	CUI:StyleSlider(guildiesList, cols, headerFont)
+	CUI:StyleSlider(guildiesList, cols, CUI.headerGuildiesFont)
 
 	guildiesList:Show()
 end
@@ -120,20 +119,20 @@ local function CreateGuildiesRoot()
 	guildiesRoot = CreateFrame("Frame", ROOT_FRAME_NAME, UIParent, "BackdropTemplate")
 	guildiesRoot:SetBackdrop({
 		bgFile = "Interface/Buttons/WHITE8X8",
-		edgeFile = LSM:Fetch("border", CUI.db.profile.socials.guildlist.border.name),
+		edgeFile = LSM:Fetch("border", CUI.db.profile.socials.guildlist.header.border.name),
 		tile = true,
-		edgeSize = CUI.db.profile.socials.guildlist.border.size,
+		edgeSize = CUI.db.profile.socials.guildlist.header.border.size,
 		tileSize = 32,
 		insets = {
-			left = CUI.db.profile.socials.guildlist.border.inset,
-			right = CUI.db.profile.socials.guildlist.border.inset,
-			top = CUI.db.profile.socials.guildlist.border.inset,
-			bottom = CUI.db.profile.socials.guildlist.border.inset,
+			left = CUI.db.profile.socials.guildlist.header.border.inset,
+			right = CUI.db.profile.socials.guildlist.header.border.inset,
+			top = CUI.db.profile.socials.guildlist.header.border.inset,
+			bottom = CUI.db.profile.socials.guildlist.header.border.inset,
 		},
 	})
-	local r, g, b, a = unpack(CUI.db.profile.socials.guildlist.backdrop.color)
+	local r, g, b, a = unpack(CUI.db.profile.socials.guildlist.header.backdrop.color)
 	guildiesRoot:SetBackdropColor(r, g, b, a)
-	r, g, b, a = unpack(CUI.db.profile.socials.guildlist.border.color)
+	r, g, b, a = unpack(CUI.db.profile.socials.guildlist.header.border.color)
 	guildiesRoot:SetBackdropBorderColor(r, g, b, a)
 	guildiesRoot:SetClampedToScreen(false)
 	guildiesRoot:EnableMouse(true)
@@ -206,9 +205,9 @@ end
 function CUI:SetGuildiesFont()
 	self:SetFont(
 		guildiesFontString,
-		self.db.profile.socials.guildlist.font.name,
-		self.db.profile.socials.guildlist.font.size,
-		self.db.profile.socials.guildlist.font.outline
+		self.db.profile.socials.guildlist.header.font.name,
+		self.db.profile.socials.guildlist.header.font.size,
+		self.db.profile.socials.guildlist.header.font.outline
 	)
 end
 
@@ -219,28 +218,28 @@ function CUI:SetGuildiesText(message)
 	self:UpdateListRootText(
 		guildiesFontString,
 		message,
-		self:CalculateSocialListPadding(self.db.profile.socials.guildlist.border.inset)
+		self:CalculateSocialListPadding(self.db.profile.socials.guildlist.header.border.inset)
 	)
 end
 
 function CUI:SetGuildiesRootStyle()
 	self:UpdateFrameLook(
 		guildiesRoot,
-		self.db.profile.socials.guildlist.border.name,
-		self.db.profile.socials.guildlist.border.size,
-		self.db.profile.socials.guildlist.border.inset,
-		self.db.profile.socials.guildlist.border.color,
-		self.db.profile.socials.guildlist.backdrop.color
+		self.db.profile.socials.guildlist.header.border.name,
+		self.db.profile.socials.guildlist.header.border.size,
+		self.db.profile.socials.guildlist.header.border.inset,
+		self.db.profile.socials.guildlist.header.border.color,
+		self.db.profile.socials.guildlist.header.backdrop.color
 	)
 end
 
 function CUI:SetGuildiesRootPosition()
 	self:UpdateSocialFramePosition(
 		guildiesFontString,
-		self.db.profile.socials.guildlist.positioning.anchor,
-		self.db.profile.socials.guildlist.positioning.frameAnchor,
-		self.db.profile.socials.guildlist.positioning.relX,
-		self.db.profile.socials.guildlist.positioning.relY
+		self.db.profile.socials.guildlist.header.positioning.anchor,
+		self.db.profile.socials.guildlist.header.positioning.frameAnchor,
+		self.db.profile.socials.guildlist.header.positioning.relX,
+		self.db.profile.socials.guildlist.header.positioning.relY
 	)
 end
 
@@ -262,11 +261,26 @@ function CUI:DisableGuildlist()
 	end
 	guildiesOnline = 0
 	guildiesTable = nil
-	normalFont = nil
-	headerFont = nil
-	headlineFont = nil
+	CUI.normalGuildiesFont = nil
+	CUI.headerGuildiesFont = nil
+	CUI.headlineGuildiesFont = nil
 	self:UnregisterEvent("GUILD_ROSTER_UPDATE")
 	self:UnregisterEvent("PLAYER_GUILD_UPDATE")
+end
+
+function CUI:SetGuildlistFont()
+	local fontPath = LSM:Fetch("font", CUI.db.profile.socials.guildlist.list.font.name)
+	CUI.normalGuildiesFont = CreateFont("ChanUIGuildiesNormalFont")
+	CUI.normalGuildiesFont:SetFont(fontPath, 12, CUI.db.profile.socials.guildlist.list.font.outline)
+	CUI.normalGuildiesFont:SetTextColor(1, 1, 1)
+
+	CUI.headerGuildiesFont = CreateFont("ChanUIGuildiesHeaderFont")
+	CUI.headerGuildiesFont:SetFont(fontPath, 12, CUI.db.profile.socials.guildlist.list.font.outline)
+	CUI.headerGuildiesFont:SetTextColor(1, 0.8, 0)
+
+	CUI.headlineGuildiesFont = CreateFont("ChanUIGuildiesHeadlineFont")
+	CUI.headlineGuildiesFont:SetFont(fontPath, 16, CUI.db.profile.socials.guildlist.list.font.outline)
+	CUI.headlineGuildiesFont:SetTextColor(1, 0.8, 0)
 end
 
 function CUI:EnableGuildlist()
@@ -278,19 +292,7 @@ function CUI:EnableGuildlist()
 	self:RegisterEvent("GUILD_ROSTER_UPDATE", UpdateGuildiesRootText)
 	self:RegisterEvent("PLAYER_GUILD_UPDATE", UpdateGuildiesRootText)
 	self:CreatePopupDialog(POPUP_SET_NOTE_NAME, "Note", "Accept", "Cancel", GuildRosterSetPublicNote)
-
-	local fontPath = LSM:Fetch("font", CUI.db.profile.socials.guildlist.font.name)
-	normalFont = CreateFont("ChanUIGuildiesNormalFont")
-	normalFont:SetFont(fontPath, 12, "")
-	normalFont:SetTextColor(1, 1, 1)
-
-	headerFont = CreateFont("ChanUIFGuildiesHeaderFont")
-	headerFont:SetFont(fontPath, 12, "OUTLINE")
-	headerFont:SetTextColor(1, 0.8, 0)
-
-	headlineFont = CreateFont("ChanUIGuildiesHeadlineFont")
-	headlineFont:SetFont(fontPath, 16, "THICKOUTLINE")
-	headlineFont:SetTextColor(1, 0.8, 0)
+	self:SetGuildlistFont()
 
 	CreateGuildlist()
 end
