@@ -153,9 +153,8 @@ function CreateGuildiesOnlineFontString()
 	end
 
 	guildiesFontString = guildiesRoot:CreateFontString(nil, "OVERLAY")
-	CUI:SetGuildiesRootPosition()
 	CUI:SetGuildiesFont()
-	CUI:SetGuildiesText("Guild")
+	CUI:SetGuildiesRootPosition()
 end
 
 local function CreateGuildiesTable()
@@ -188,18 +187,18 @@ local function CreateGuildiesTable()
 	end
 end
 
+local function UpdateGuildiesRootText()
+	CreateGuildiesTable()
+	CUI:SetGuildiesText(CUI:CreateSocialOnlineString("Guild", guildiesOnline))
+end
+
 local function CreateGuildlist()
 	CreateGuildiesTable()
 	CreateGuildiesRoot()
 	CreateGuildiesOnlineFontString()
+	UpdateGuildiesRootText()
 	guildiesRoot:Show()
 	guildiesFontString:Show()
-	CUI:SetGuildiesText(CUI:CreateSocialOnlineString("Guild", guildiesOnline))
-end
-
-local function UpdateGuildiesRootText()
-	CreateGuildiesTable()
-	CUI:SetGuildiesText(CUI:CreateSocialOnlineString("Guild", guildiesOnline))
 end
 
 function CUI:SetGuildiesFont()
@@ -207,7 +206,8 @@ function CUI:SetGuildiesFont()
 		guildiesFontString,
 		self.db.profile.socials.guildlist.header.font.name,
 		self.db.profile.socials.guildlist.header.font.size,
-		self.db.profile.socials.guildlist.header.font.outline
+		self.db.profile.socials.guildlist.header.font.outline,
+		"Guildie"
 	)
 end
 

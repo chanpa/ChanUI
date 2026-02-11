@@ -32,8 +32,14 @@ function CUI:OnEnable()
 end
 
 ---@param fs FontString
-function CUI:SetFont(fs, fontName, fontSize, fontOutline)
-	fs:SetFont(LSM:Fetch("font", fontName) or "Arial Narrow", fontSize, fontOutline)
+function CUI:SetFont(fs, fontName, fontSize, fontOutline, context)
+	local font = LSM:Fetch("font", fontName)
+	if font then
+		local objectName = "ChanUI-Font-".. context
+		local fontObject = _G[objectName] or CreateFont(objectName)
+		fontObject:SetFont(font, fontSize, fontOutline)
+		fs:SetFontObject(fontObject)
+	end
 end
 
 function CUI:ColorText(hex, message)

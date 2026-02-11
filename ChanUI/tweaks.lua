@@ -34,7 +34,8 @@ local function setChatFont(frame)
 		frame,
 		CUI.db.profile.tweaks.chat.font.name,
 		CUI.db.profile.tweaks.chat.font.size,
-		CUI.db.profile.tweaks.chat.font.outline
+		CUI.db.profile.tweaks.chat.font.outline,
+		"Chat"
 	)
 end
 

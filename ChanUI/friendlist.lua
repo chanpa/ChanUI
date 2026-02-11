@@ -208,9 +208,8 @@ local function CreateFriendsOnlineFontString()
 	end
 
 	friendsFontString = friendsRoot:CreateFontString(nil, "OVERLAY")
-	CUI:SetFriendsRootPosition()
 	CUI:SetFriendsFont()
-	CUI:SetFriendsText("Friends")
+	CUI:SetFriendsRootPosition()
 end
 
 ---@param gameAccountInfo BNetGameAccountInfo
@@ -280,18 +279,18 @@ local function CreateFriendsTable()
 	end
 end
 
+local function UpdateFriendsRootText()
+	CreateFriendsTable()
+	CUI:SetFriendsText(CUI:CreateSocialOnlineString("Friends", friendsOnline))
+end
+
 local function CreateFriendlist()
 	CreateFriendsTable()
 	CreateFriendsRoot()
 	CreateFriendsOnlineFontString()
+	UpdateFriendsRootText()
 	friendsRoot:Show()
 	friendsFontString:Show()
-	CUI:SetFriendsText(CUI:CreateSocialOnlineString("Friends", friendsOnline))
-end
-
-local function UpdateFriendsRootText()
-	CreateFriendsTable()
-	CUI:SetFriendsText(CUI:CreateSocialOnlineString("Friends", friendsOnline))
 end
 
 function CUI:SetFriendsFont()
@@ -299,7 +298,8 @@ function CUI:SetFriendsFont()
 		friendsFontString,
 		self.db.profile.socials.friendlist.header.font.name,
 		self.db.profile.socials.friendlist.header.font.size,
-		self.db.profile.socials.friendlist.header.font.outline
+		self.db.profile.socials.friendlist.header.font.outline,
+		"Friend"
 	)
 end
 
