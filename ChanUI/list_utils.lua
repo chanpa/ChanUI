@@ -54,7 +54,7 @@ end
 ---@param borderInset integer Adjust the border distance from edge of background
 ---@param borderColor table RGBA table of the border color {r=0, g=0, b=0, a=0}
 ---@param backdropColor table RGBA table of the backdrop color {r=0, g=0, b=0, a=0}
-function CUI:UpdateFrameLook(f, borderName, borderSize, borderInset, borderColor, backdropColor)
+function CUI:UpdateFrameLook(f, borderName, borderSize, borderInset, borderColor, backdropColor, backdropTexture)
 	local backdropR, backdropG, backdropB, backdropA = unpack(backdropColor)
 	local borderR, borderG, borderB, borderA = unpack(borderColor)
 
@@ -62,9 +62,9 @@ function CUI:UpdateFrameLook(f, borderName, borderSize, borderInset, borderColor
 		Mixin(f, BackdropTemplateMixin)
 	end
 	f:SetBackdrop({
-		bgFile = "Interface/Buttons/WHITE8X8",
+		bgFile = LSM:Fetch("background", backdropTexture),
 		edgeFile = LSM:Fetch("border", borderName),
-		tile = true,
+		tile = false,
 		edgeSize = borderSize,
 		tileSize = 32,
 		insets = {

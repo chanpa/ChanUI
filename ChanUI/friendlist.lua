@@ -91,7 +91,8 @@ local function ShowFriendlist()
 		CUI.db.profile.socials.friendlist.list.border.size,
 		CUI.db.profile.socials.friendlist.list.border.inset,
 		CUI.db.profile.socials.friendlist.list.border.color,
-		CUI.db.profile.socials.friendlist.list.backdrop.color
+		CUI.db.profile.socials.friendlist.list.backdrop.color,
+		CUI.db.profile.socials.friendlist.list.backdrop.texture
 	)
 
 	friendsList:SetDefaultHeadingFont(CUI.headerFriendsFont)
@@ -173,9 +174,9 @@ end
 local function CreateFriendsRoot()
 	friendsRoot = CreateFrame("Frame", ROOT_FRAME_NAME, UIParent, "BackdropTemplate")
 	friendsRoot:SetBackdrop({
-		bgFile = "Interface/Buttons/WHITE8X8",
+		bgFile = LSM:Fetch("background", CUI.db.profile.socials.friendlist.header.backdrop.texture),
 		edgeFile = LSM:Fetch("border", CUI.db.profile.socials.friendlist.header.border.name),
-		tile = true,
+		tile = false,
 		edgeSize = CUI.db.profile.socials.friendlist.header.border.size,
 		tileSize = 32,
 		insets = {
@@ -315,13 +316,14 @@ function CUI:SetFriendsText(message)
 end
 
 function CUI:SetFriendsRootStyle()
-	self:UpdateFrameLook(
+	CUI:UpdateFrameLook(
 		friendsRoot,
-		self.db.profile.socials.friendlist.header.border.name,
-		self.db.profile.socials.friendlist.header.border.size,
-		self.db.profile.socials.friendlist.header.border.inset,
-		self.db.profile.socials.friendlist.header.border.color,
-		self.db.profile.socials.friendlist.header.backdrop.color
+		CUI.db.profile.socials.friendlist.header.border.name,
+		CUI.db.profile.socials.friendlist.header.border.size,
+		CUI.db.profile.socials.friendlist.header.border.inset,
+		CUI.db.profile.socials.friendlist.header.border.color,
+		CUI.db.profile.socials.friendlist.header.backdrop.color,
+		CUI.db.profile.socials.friendlist.header.backdrop.texture
 	)
 end
 

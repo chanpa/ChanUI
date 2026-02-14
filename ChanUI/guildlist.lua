@@ -70,7 +70,8 @@ local function ShowGuildlist()
 		CUI.db.profile.socials.guildlist.list.border.size,
 		CUI.db.profile.socials.guildlist.list.border.inset,
 		CUI.db.profile.socials.guildlist.list.border.color,
-		CUI.db.profile.socials.guildlist.list.backdrop.color
+		CUI.db.profile.socials.guildlist.list.backdrop.color,
+		CUI.db.profile.socials.guildlist.list.backdrop.texture
 	)
 
 	guildiesList:SetDefaultHeadingFont(CUI.headerGuildiesFont)
@@ -118,9 +119,9 @@ end
 local function CreateGuildiesRoot()
 	guildiesRoot = CreateFrame("Frame", ROOT_FRAME_NAME, UIParent, "BackdropTemplate")
 	guildiesRoot:SetBackdrop({
-		bgFile = "Interface/Buttons/WHITE8X8",
+		bgFile = LSM:Fetch("background", CUI.db.profile.socials.guildlist.header.backdrop.texture),
 		edgeFile = LSM:Fetch("border", CUI.db.profile.socials.guildlist.header.border.name),
-		tile = true,
+		tile = false,
 		edgeSize = CUI.db.profile.socials.guildlist.header.border.size,
 		tileSize = 32,
 		insets = {
@@ -223,13 +224,14 @@ function CUI:SetGuildiesText(message)
 end
 
 function CUI:SetGuildiesRootStyle()
-	self:UpdateFrameLook(
+	CUI:UpdateFrameLook(
 		guildiesRoot,
-		self.db.profile.socials.guildlist.header.border.name,
-		self.db.profile.socials.guildlist.header.border.size,
-		self.db.profile.socials.guildlist.header.border.inset,
-		self.db.profile.socials.guildlist.header.border.color,
-		self.db.profile.socials.guildlist.header.backdrop.color
+		CUI.db.profile.socials.guildlist.header.border.name,
+		CUI.db.profile.socials.guildlist.header.border.size,
+		CUI.db.profile.socials.guildlist.header.border.inset,
+		CUI.db.profile.socials.guildlist.header.border.color,
+		CUI.db.profile.socials.guildlist.header.backdrop.color,
+		CUI.db.profile.socials.guildlist.header.backdrop.texture
 	)
 end
 

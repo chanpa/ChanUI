@@ -149,25 +149,45 @@ local function GetBorderSelector(updaters)
 	return settings
 end
 
-local function GetTextureSelector(colorGetFunc, colorSetFunc)
+local function GetTextureSelector(dbentry, updater)
 	return {
 		type = "group",
 		name = "Backdrop Settings",
 		args = {
+			texture = {
+				type = "select",
+				name = "Backdrop texture",
+				width = "full",
+				order = 1,
+				values = LSM:HashTable("background"),
+				dialogControl = "LSM30_Background",
+				get = function()
+					return dbentry.texture
+				end,
+				set = function(_, value)
+					dbentry.texture = value
+					updater()
+				end
+			},
 			color = {
 				type = "color",
 				name = "Backdrop color",
 				width = "full",
 				hasAlpha = true,
-				get = colorGetFunc,
-				set = colorSetFunc,
+				order = 2,
+				get = function()
+					return unpack(dbentry.color)
+				end,
+				set = function(_, r, g, b, a)
+					dbentry.color = { r, g, b, a }
+					updater()
+				end,
 			},
 		},
 	}
 end
 
 local function GetTweakOptions()
-	print("tweak")
 	return {
 		hideExpansionSummaryButton = {
 			type = "toggle",
@@ -312,12 +332,7 @@ local function GetGuildlistOptions(dbentry)
 						end,
 					},
 				}),
-				backdrop = GetTextureSelector(function()
-					return unpack(dbentry.header.backdrop.color)
-				end, function(_, r, g, b, a)
-					dbentry.header.backdrop.color = { r, g, b, a }
-					CUI:SetGuildiesRootStyle()
-				end),
+				backdrop = GetTextureSelector(dbentry.header.backdrop, CUI.SetGuildiesRootStyle),
 				positioning = {
 					type = "group",
 					name = "Positioning",
@@ -455,12 +470,7 @@ local function GetGuildlistOptions(dbentry)
 						end,
 					},
 				}),
-				backdrop = GetTextureSelector(function()
-					return unpack(dbentry.list.backdrop.color)
-				end, function(_, r, g, b, a)
-					dbentry.list.backdrop.color = { r, g, b, a }
-					CUI:SetGuildiesRootStyle()
-				end),
+				backdrop = GetTextureSelector(dbentry.list.backdrop, CUI.SetGuildiesRootStyle),
 			},
 		},
 	}
@@ -518,12 +528,7 @@ local function GetFriendlistOptions(dbentry)
 						end,
 					},
 				}),
-				backdrop = GetTextureSelector(function()
-					return unpack(dbentry.header.backdrop.color)
-				end, function(_, r, g, b, a)
-					dbentry.header.backdrop.color = { r, g, b, a }
-					CUI:SetFriendsRootStyle()
-				end),
+				backdrop = GetTextureSelector(dbentry.header.backdrop, CUI.SetFriendsRootStyle),
 				positioning = {
 					type = "group",
 					name = "Positioning",
@@ -661,12 +666,7 @@ local function GetFriendlistOptions(dbentry)
 						end,
 					},
 				}),
-				backdrop = GetTextureSelector(function()
-					return unpack(dbentry.list.backdrop.color)
-				end, function(_, r, g, b, a)
-					dbentry.list.backdrop.color = { r, g, b, a }
-					CUI:SetFriendsRootStyle()
-				end),
+				backdrop = GetTextureSelector(dbentry.list.backdrop, CUI.SetFriendsRootStyle),
 			},
 		},
 	}
@@ -763,6 +763,7 @@ local defaultOptions = {
 					},
 					backdrop = {
 						color = { 0, 0, 0, 1 },
+						texture = "Interface/Buttons/WHITE8X8",
 					},
 				},
 				list = {
@@ -779,6 +780,7 @@ local defaultOptions = {
 					},
 					backdrop = {
 						color = { 0, 0, 0, 1 },
+						texture = "Interface/Buttons/WHITE8X8",
 					},
 				},
 			},
@@ -803,6 +805,7 @@ local defaultOptions = {
 					},
 					backdrop = {
 						color = { 0, 0, 0, 1 },
+						texture = "Interface/Buttons/WHITE8X8",
 					},
 				},
 				list = {
@@ -819,6 +822,7 @@ local defaultOptions = {
 					},
 					backdrop = {
 						color = { 0, 0, 0, 1 },
+						texture = "Interface/Buttons/WHITE8X8",
 					},
 				},
 			},
