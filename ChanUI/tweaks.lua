@@ -112,4 +112,3 @@ function CUI:UpdateTweaks()
 	self:MoveTopCenterFrame()
 	self:UpdateChat()
 end
-

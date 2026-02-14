@@ -1,7 +1,7 @@
 local CUI = CUI
 local LSM = LibStub("LibSharedMedia-3.0")
 
-local function GetFontSelector(dbentry, updater)
+local function GetFontWidget(dbentry, updater)
 	local settings = {
 		type = "group",
 		name = "Font Settings",
@@ -71,7 +71,7 @@ local function GetFontSelector(dbentry, updater)
 	return settings
 end
 
-local function GetBorderSelector(dbentry, updater)
+local function GetBorderWidget(dbentry, updater)
 	local settings = {
 		type = "group",
 		name = "Border",
@@ -146,7 +146,7 @@ local function GetBorderSelector(dbentry, updater)
 	return settings
 end
 
-local function GetTextureSelector(dbentry, updater)
+local function GetTextureWidget(dbentry, updater)
 	return {
 		type = "group",
 		name = "Backdrop Settings",
@@ -316,7 +316,7 @@ local function GetTweakOptions()
 				return not CUI.db.profile.tweaks.enableChatOptions
 			end,
 			args = {
-				font = GetFontSelector(CUI.db.profile.tweaks.chat.font, CUI.UpdateChat),
+				font = GetFontWidget(CUI.db.profile.tweaks.chat.font, CUI.UpdateChat),
 			},
 		},
 		housingControlsFrame = GetPositionWidget(
@@ -333,18 +333,15 @@ local function GetGuildlistOptions()
 			type = "group",
 			name = "Header settings",
 			args = {
-				font = GetFontSelector(CUI.db.profile.socials.guildlist.header.font, function()
+				font = GetFontWidget(CUI.db.profile.socials.guildlist.header.font, function()
 					CUI:SetGuildiesFont()
 					CUI:SetGuildiesText()
 				end),
-				border = GetBorderSelector(CUI.db.profile.socials.guildlist.header.border, function()
+				border = GetBorderWidget(CUI.db.profile.socials.guildlist.header.border, function()
 					CUI:SetGuildiesRootStyle()
 					CUI:SetGuildiesText()
 				end),
-				backdrop = GetTextureSelector(
-					CUI.db.profile.socials.guildlist.header.backdrop,
-					CUI.SetGuildiesRootStyle
-				),
+				backdrop = GetTextureWidget(CUI.db.profile.socials.guildlist.header.backdrop, CUI.SetGuildiesRootStyle),
 				positioning = GetPositionWidget(
 					CUI.db.profile.socials.guildlist.header.positioning,
 					CUI.SetGuildiesRootPosition
@@ -355,12 +352,12 @@ local function GetGuildlistOptions()
 			type = "group",
 			name = "List settings",
 			args = {
-				font = GetFontSelector(CUI.db.profile.socials.guildlist.list.font, CUI.SetGuildlistFont),
-				border = GetBorderSelector(CUI.db.profile.socials.guildlist.list.border, function()
+				font = GetFontWidget(CUI.db.profile.socials.guildlist.list.font, CUI.SetGuildlistFont),
+				border = GetBorderWidget(CUI.db.profile.socials.guildlist.list.border, function()
 					CUI:SetGuildiesRootStyle()
 					CUI:SetGuildiesText()
 				end),
-				backdrop = GetTextureSelector(CUI.db.profile.socials.guildlist.list.backdrop, CUI.SetGuildiesRootStyle),
+				backdrop = GetTextureWidget(CUI.db.profile.socials.guildlist.list.backdrop, CUI.SetGuildiesRootStyle),
 			},
 		},
 	}
@@ -372,18 +369,15 @@ local function GetFriendlistOptions()
 			type = "group",
 			name = "Header settings",
 			args = {
-				font = GetFontSelector(CUI.db.profile.socials.friendlist.header.font, function()
+				font = GetFontWidget(CUI.db.profile.socials.friendlist.header.font, function()
 					CUI:SetFriendsFont()
 					CUI:SetFriendsText()
 				end),
-				border = GetBorderSelector(CUI.db.profile.socials.friendlist.header.border, function()
+				border = GetBorderWidget(CUI.db.profile.socials.friendlist.header.border, function()
 					CUI:SetFriendsRootStyle()
 					CUI:SetFriendsText()
 				end),
-				backdrop = GetTextureSelector(
-					CUI.db.profile.socials.friendlist.header.backdrop,
-					CUI.SetFriendsRootStyle
-				),
+				backdrop = GetTextureWidget(CUI.db.profile.socials.friendlist.header.backdrop, CUI.SetFriendsRootStyle),
 				positioning = GetPositionWidget(
 					CUI.db.profile.socials.friendlist.header.positioning,
 					CUI.SetFriendsRootPosition
@@ -394,12 +388,12 @@ local function GetFriendlistOptions()
 			type = "group",
 			name = "List settings",
 			args = {
-				font = GetFontSelector(CUI.db.profile.socials.friendlist.list.font, CUI.SetFriendlistFont),
-				border = GetBorderSelector(CUI.db.profile.socials.friendlist.header.border, function()
+				font = GetFontWidget(CUI.db.profile.socials.friendlist.list.font, CUI.SetFriendlistFont),
+				border = GetBorderWidget(CUI.db.profile.socials.friendlist.header.border, function()
 					CUI:SetFriendsRootStyle()
 					CUI:SetFriendsText()
 				end),
-				backdrop = GetTextureSelector(CUI.db.profile.socials.friendlist.list.backdrop, CUI.SetFriendsRootStyle),
+				backdrop = GetTextureWidget(CUI.db.profile.socials.friendlist.list.backdrop, CUI.SetFriendsRootStyle),
 			},
 		},
 	}
@@ -577,7 +571,7 @@ function CUI:InitializeAce()
 				type = "group",
 				name = "Tweaks",
 				childGroups = "tab",
-				args = GetTweakOptions(CUI.db.profile.tweaks),
+				args = GetTweakOptions(),
 			},
 			socials = {
 				type = "group",

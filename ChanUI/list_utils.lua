@@ -134,4 +134,3 @@ function CUI:CreateHelpRow(tooltip, message, maxCols, headerFont, padding)
 		:SetJustifyH("CENTER")
 		:SetText(message)
 end
-
