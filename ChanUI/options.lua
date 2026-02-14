@@ -1,21 +1,6 @@
 local CUI = CUI
 local LSM = LibStub("LibSharedMedia-3.0")
 
-local function GetRangeSlider(options)
-	return {
-		type = "range",
-		name = options.name,
-		width = options.width or "full",
-		min = options.min or -3000,
-		softMin = options.softMin or -1500,
-		softMax = options.softMax or 1500,
-		max = options.max or 3000,
-		step = options.step or 1,
-		get = options.get,
-		set = options.set,
-	}
-end
-
 local function GetFontSelector(dbentry, updater)
 	local settings = {
 		type = "group",
@@ -86,65 +71,77 @@ local function GetFontSelector(dbentry, updater)
 	return settings
 end
 
-local function GetBorderSelector(updaters)
+local function GetBorderSelector(dbentry, updater)
 	local settings = {
 		type = "group",
 		name = "Border",
 		args = {},
 	}
 
-	if updaters.name then
-		settings.args.name = {
-			type = "select",
-			name = "Frame borders",
-			width = "full",
-			dialogControl = "LSM30_Border",
-			values = LSM:HashTable("border"),
-			order = 1,
-			get = updaters.name.get,
-			set = updaters.name.set,
-		}
-	end
+	settings.args.name = {
+		type = "select",
+		name = "Frame borders",
+		width = "full",
+		dialogControl = "LSM30_Border",
+		values = LSM:HashTable("border"),
+		order = 1,
+		get = function()
+			return dbentry.name
+		end,
+		set = function(_, value)
+			dbentry.name = value
+			updater()
+		end,
+	}
 
-	if updaters.size then
-		settings.args.size = {
-			type = "range",
-			name = "Border size",
-			width = "full",
-			min = 0,
-			max = 30,
-			step = 1,
-			order = 2,
-			get = updaters.size.get,
-			set = updaters.size.set,
-		}
-	end
+	settings.args.size = {
+		type = "range",
+		name = "Border size",
+		width = "full",
+		min = 0,
+		max = 30,
+		step = 1,
+		order = 2,
+		get = function()
+			return dbentry.size
+		end,
+		set = function(_, value)
+			dbentry.size = value
+			updater()
+		end,
+	}
 
-	if updaters.inset then
-		settings.args.inset = {
-			type = "range",
-			name = "Border inset",
-			width = "full",
-			min = 0,
-			max = 30,
-			step = 1,
-			order = 3,
-			get = updaters.inset.get,
-			set = updaters.inset.set,
-		}
-	end
+	settings.args.inset = {
+		type = "range",
+		name = "Border inset",
+		width = "full",
+		min = 0,
+		max = 30,
+		step = 1,
+		order = 3,
+		get = function()
+			return dbentry.inset
+		end,
+		set = function(_, value)
+			dbentry.inset = value
+			updater()
+		end,
+	}
 
-	if updaters.color then
-		settings.args.color = {
-			type = "color",
-			name = "Border color",
-			width = "full",
-			hasAlpha = true,
-			order = 4,
-			get = updaters.color.get,
-			set = updaters.color.set,
-		}
-	end
+	settings.args.color = {
+		type = "color",
+		name = "Border color",
+		width = "full",
+		hasAlpha = true,
+		order = 4,
+		get = function()
+			return unpack(dbentry.color)
+		end,
+		set = function(_, r, g, b, a)
+			dbentry.color = { r, g, b, a }
+			updater()
+		end,
+	}
 
 	return settings
 end
@@ -167,7 +164,7 @@ local function GetTextureSelector(dbentry, updater)
 				set = function(_, value)
 					dbentry.texture = value
 					updater()
-				end
+				end,
 			},
 			color = {
 				type = "color",
@@ -180,6 +177,101 @@ local function GetTextureSelector(dbentry, updater)
 				end,
 				set = function(_, r, g, b, a)
 					dbentry.color = { r, g, b, a }
+					updater()
+				end,
+			},
+		},
+	}
+end
+
+local function GetPositionWidget(dbentry, updater, name)
+	return {
+		type = "group",
+		name = name or "Positioning",
+		args = {
+			anchor = {
+				type = "select",
+				name = "Anchor TO",
+				desc = "Where on the screen to anchor the frame",
+				width = "full",
+				order = 1,
+				values = {
+					["TOP"] = "TOP",
+					["RIGHT"] = "RIGHT",
+					["BOTTOM"] = "BOTTOM",
+					["LEFT"] = "LEFT",
+					["TOPRIGHT"] = "TOPRIGHT",
+					["TOPLEFT"] = "TOPLEFT",
+					["BOTTOMLEFT"] = "BOTTOMLEFT",
+					["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+					["CENTER"] = "CENTER",
+				},
+				get = function()
+					return dbentry.anchor
+				end,
+				set = function(_, value)
+					dbentry.anchor = value
+					updater()
+				end,
+			},
+			frameAnchor = {
+				type = "select",
+				name = "Anchor FROM",
+				desc = "Which part of the frame to attach to the screen anchor",
+				width = "full",
+				order = 2,
+				values = {
+					["TOP"] = "TOP",
+					["RIGHT"] = "RIGHT",
+					["BOTTOM"] = "BOTTOM",
+					["LEFT"] = "LEFT",
+					["TOPRIGHT"] = "TOPRIGHT",
+					["TOPLEFT"] = "TOPLEFT",
+					["BOTTOMLEFT"] = "BOTTOMLEFT",
+					["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+					["CENTER"] = "CENTER",
+				},
+				get = function()
+					return dbentry.frameAnchor
+				end,
+				set = function(_, value)
+					dbentry.frameAnchor = value
+					updater()
+				end,
+			},
+			relX = {
+				type = "range",
+				name = "Relative X position",
+				width = "full",
+				order = 3,
+				softMin = -1500,
+				min = -3000,
+				max = 3000,
+				softMax = 1500,
+				step = 1,
+				get = function()
+					return dbentry.relX
+				end,
+				set = function(_, value)
+					dbentry.relX = value
+					updater()
+				end,
+			},
+			relY = {
+				type = "range",
+				name = "Relative Y position",
+				width = "full",
+				order = 4,
+				softMin = -1500,
+				min = -3000,
+				max = 3000,
+				softMax = 1500,
+				step = 1,
+				get = function()
+					return dbentry.relY
+				end,
+				set = function(_, value)
+					dbentry.relY = value
 					updater()
 				end,
 			},
@@ -227,446 +319,87 @@ local function GetTweakOptions()
 				font = GetFontSelector(CUI.db.profile.tweaks.chat.font, CUI.UpdateChat),
 			},
 		},
-		housingControlsFrame = {
-			type = "group",
-			name = "Housing controls",
-			args = {
-				anchor = {
-					type = "select",
-					name = "Anchor point",
-					desc = "Where to anchor the list",
-					width = "full",
-					values = {
-						["TOP"] = "TOP",
-						["RIGHT"] = "RIGHT",
-						["BOTTOM"] = "BOTTOM",
-						["LEFT"] = "LEFT",
-						["TOPRIGHT"] = "TOPRIGHT",
-						["TOPLEFT"] = "TOPLEFT",
-						["BOTTOMLEFT"] = "BOTTOMLEFT",
-						["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-						["CENTER"] = "CENTER",
-					},
-					get = function()
-						return CUI.db.profile.tweaks.housingControlsFrame.anchor
-					end,
-					set = function(_, value)
-						CUI.db.profile.tweaks.housingControlsFrame.anchor = value
-						CUI:MoveHousingControlsFrame()
-					end,
-				},
-				relX = GetRangeSlider({
-					name = "Relative X position",
-					get = function()
-						return CUI.db.profile.tweaks.housingControlsFrame.relX
-					end,
-					set = function(_, value)
-						CUI.db.profile.tweaks.housingControlsFrame.relX = value
-						CUI:MoveHousingControlsFrame()
-					end,
-				}),
-				relY = GetRangeSlider({
-					name = "Relative Y position",
-					get = function()
-						return CUI.db.profile.tweaks.housingControlsFrame.relY
-					end,
-					set = function(_, value)
-						CUI.db.profile.tweaks.housingControlsFrame.relY = value
-						CUI:MoveHousingControlsFrame()
-					end,
-				}),
-			},
-		},
+		housingControlsFrame = GetPositionWidget(
+			CUI.db.profile.tweaks.housingControlsFrame,
+			CUI.MoveHousingControlsFrame,
+			"Housing controls"
+		),
 	}
 end
 
-local function GetGuildlistOptions(dbentry)
+local function GetGuildlistOptions()
 	return {
 		header = {
 			type = "group",
 			name = "Header settings",
 			args = {
-				font = GetFontSelector(dbentry.header.font, function()
+				font = GetFontSelector(CUI.db.profile.socials.guildlist.header.font, function()
 					CUI:SetGuildiesFont()
 					CUI:SetGuildiesText()
 				end),
-				border = GetBorderSelector({
-					name = {
-						get = function()
-							return dbentry.header.border.name
-						end,
-						set = function(_, value)
-							dbentry.header.border.name = value
-							CUI:SetGuildiesRootStyle()
-							CUI:SetGuildiesText()
-						end,
-					},
-					size = {
-						get = function()
-							return dbentry.header.border.size
-						end,
-						set = function(_, value)
-							dbentry.header.border.size = value
-							CUI:SetGuildiesRootStyle()
-							CUI:SetGuildiesText()
-						end,
-					},
-					inset = {
-						get = function()
-							return dbentry.header.border.inset
-						end,
-						set = function(_, value)
-							dbentry.header.border.inset = value
-							CUI:SetGuildiesRootStyle()
-							CUI:SetGuildiesText()
-						end,
-					},
-					color = {
-						get = function()
-							return unpack(dbentry.header.border.color)
-						end,
-						set = function(_, r, g, b, a)
-							dbentry.header.border.color = { r, g, b, a }
-							CUI:SetGuildiesRootStyle()
-							CUI:SetGuildiesText()
-						end,
-					},
-				}),
-				backdrop = GetTextureSelector(dbentry.header.backdrop, CUI.SetGuildiesRootStyle),
-				positioning = {
-					type = "group",
-					name = "Positioning",
-					args = {
-						anchor = {
-							type = "select",
-							name = "Anchor point",
-							desc = "Where to anchor the list",
-							width = "full",
-							values = {
-								["TOP"] = "TOP",
-								["RIGHT"] = "RIGHT",
-								["BOTTOM"] = "BOTTOM",
-								["LEFT"] = "LEFT",
-								["TOPRIGHT"] = "TOPRIGHT",
-								["TOPLEFT"] = "TOPLEFT",
-								["BOTTOMLEFT"] = "BOTTOMLEFT",
-								["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-								["CENTER"] = "CENTER",
-							},
-							get = function()
-								return dbentry.header.positioning.anchor
-							end,
-							set = function(_, value)
-								dbentry.header.positioning.anchor = value
-								CUI:SetGuildiesRootPosition()
-							end,
-						},
-						frameAnchor = {
-							type = "select",
-							name = "Frame anchor",
-							desc = "Which part of the Friendlist to anchor to the anchor above",
-							width = "full",
-							values = {
-								["TOP"] = "TOP",
-								["RIGHT"] = "RIGHT",
-								["BOTTOM"] = "BOTTOM",
-								["LEFT"] = "LEFT",
-								["TOPRIGHT"] = "TOPRIGHT",
-								["TOPLEFT"] = "TOPLEFT",
-								["BOTTOMLEFT"] = "BOTTOMLEFT",
-								["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-								["CENTER"] = "CENTER",
-							},
-							get = function()
-								return dbentry.header.positioning.frameAnchor
-							end,
-							set = function(_, value)
-								dbentry.header.positioning.frameAnchor = value
-								CUI:SetGuildiesRootPosition()
-							end,
-						},
-						relX = {
-							type = "range",
-							name = "Relative X position",
-							width = "full",
-							softMin = -1500,
-							min = -3000,
-							max = 3000,
-							softMax = 1500,
-							step = 1,
-							get = function()
-								return dbentry.header.positioning.relX
-							end,
-							set = function(_, value)
-								dbentry.header.positioning.relX = value
-								CUI:SetGuildiesRootPosition()
-							end,
-						},
-						relY = {
-							type = "range",
-							name = "Relative Y position",
-							width = "full",
-							softMin = -1500,
-							min = -3000,
-							max = 3000,
-							softMax = 1500,
-							step = 1,
-							get = function()
-								return dbentry.header.positioning.relY
-							end,
-							set = function(_, value)
-								dbentry.header.positioning.relY = value
-								CUI:SetGuildiesRootPosition()
-							end,
-						},
-					},
-				},
+				border = GetBorderSelector(CUI.db.profile.socials.guildlist.header.border, function()
+					CUI:SetGuildiesRootStyle()
+					CUI:SetGuildiesText()
+				end),
+				backdrop = GetTextureSelector(
+					CUI.db.profile.socials.guildlist.header.backdrop,
+					CUI.SetGuildiesRootStyle
+				),
+				positioning = GetPositionWidget(
+					CUI.db.profile.socials.guildlist.header.positioning,
+					CUI.SetGuildiesRootPosition
+				),
 			},
 		},
 		list = {
 			type = "group",
 			name = "List settings",
 			args = {
-				font = GetFontSelector(dbentry.list.font, CUI.SetGuildlistFont),
-				border = GetBorderSelector({
-					name = {
-						get = function()
-							return dbentry.list.border.name
-						end,
-						set = function(_, value)
-							dbentry.list.border.name = value
-							CUI:SetGuildiesRootStyle()
-							CUI:SetGuildiesText()
-						end,
-					},
-					size = {
-						get = function()
-							return dbentry.list.border.size
-						end,
-						set = function(_, value)
-							dbentry.list.border.size = value
-							CUI:SetGuildiesRootStyle()
-							CUI:SetGuildiesText()
-						end,
-					},
-					inset = {
-						get = function()
-							return dbentry.list.border.inset
-						end,
-						set = function(_, value)
-							dbentry.list.border.inset = value
-							CUI:SetGuildiesRootStyle()
-							CUI:SetGuildiesText()
-						end,
-					},
-					color = {
-						get = function()
-							return unpack(dbentry.list.border.color)
-						end,
-						set = function(_, r, g, b, a)
-							dbentry.list.border.color = { r, g, b, a }
-							CUI:SetGuildiesRootStyle()
-							CUI:SetGuildiesText()
-						end,
-					},
-				}),
-				backdrop = GetTextureSelector(dbentry.list.backdrop, CUI.SetGuildiesRootStyle),
+				font = GetFontSelector(CUI.db.profile.socials.guildlist.list.font, CUI.SetGuildlistFont),
+				border = GetBorderSelector(CUI.db.profile.socials.guildlist.list.border, function()
+					CUI:SetGuildiesRootStyle()
+					CUI:SetGuildiesText()
+				end),
+				backdrop = GetTextureSelector(CUI.db.profile.socials.guildlist.list.backdrop, CUI.SetGuildiesRootStyle),
 			},
 		},
 	}
 end
 
-local function GetFriendlistOptions(dbentry)
+local function GetFriendlistOptions()
 	return {
 		header = {
 			type = "group",
 			name = "Header settings",
 			args = {
-				font = GetFontSelector(dbentry.header.font, function()
+				font = GetFontSelector(CUI.db.profile.socials.friendlist.header.font, function()
 					CUI:SetFriendsFont()
 					CUI:SetFriendsText()
 				end),
-				border = GetBorderSelector({
-					name = {
-						get = function()
-							return dbentry.header.border.name
-						end,
-						set = function(_, value)
-							dbentry.header.border.name = value
-							CUI:SetFriendsRootStyle()
-							CUI:SetFriendsText()
-						end,
-					},
-					size = {
-						get = function()
-							return dbentry.header.border.size
-						end,
-						set = function(_, value)
-							dbentry.header.border.size = value
-							CUI:SetFriendsRootStyle()
-							CUI:SetFriendsText()
-						end,
-					},
-					inset = {
-						get = function()
-							return dbentry.header.border.inset
-						end,
-						set = function(_, value)
-							dbentry.header.border.inset = value
-							CUI:SetFriendsRootStyle()
-							CUI:SetFriendsText()
-						end,
-					},
-					color = {
-						get = function()
-							return unpack(dbentry.header.border.color)
-						end,
-						set = function(_, r, g, b, a)
-							dbentry.header.border.color = { r, g, b, a }
-							CUI:SetFriendsRootStyle()
-							CUI:SetFriendsText()
-						end,
-					},
-				}),
-				backdrop = GetTextureSelector(dbentry.header.backdrop, CUI.SetFriendsRootStyle),
-				positioning = {
-					type = "group",
-					name = "Positioning",
-					args = {
-						anchor = {
-							type = "select",
-							name = "Anchor point",
-							desc = "Where to anchor the list",
-							width = "full",
-							values = {
-								["TOP"] = "TOP",
-								["RIGHT"] = "RIGHT",
-								["BOTTOM"] = "BOTTOM",
-								["LEFT"] = "LEFT",
-								["TOPRIGHT"] = "TOPRIGHT",
-								["TOPLEFT"] = "TOPLEFT",
-								["BOTTOMLEFT"] = "BOTTOMLEFT",
-								["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-								["CENTER"] = "CENTER",
-							},
-							get = function()
-								return dbentry.header.positioning.anchor
-							end,
-							set = function(_, value)
-								dbentry.header.positioning.anchor = value
-								CUI:SetFriendsRootPosition()
-							end,
-						},
-						frameAnchor = {
-							type = "select",
-							name = "Frame anchor",
-							desc = "Which part of the Friendlist to anchor to the anchor above",
-							width = "full",
-							values = {
-								["TOP"] = "TOP",
-								["RIGHT"] = "RIGHT",
-								["BOTTOM"] = "BOTTOM",
-								["LEFT"] = "LEFT",
-								["TOPRIGHT"] = "TOPRIGHT",
-								["TOPLEFT"] = "TOPLEFT",
-								["BOTTOMLEFT"] = "BOTTOMLEFT",
-								["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-								["CENTER"] = "CENTER",
-							},
-							get = function()
-								return dbentry.header.positioning.frameAnchor
-							end,
-							set = function(_, value)
-								dbentry.header.positioning.frameAnchor = value
-								CUI:SetFriendsRootPosition()
-							end,
-						},
-						relX = {
-							type = "range",
-							name = "Relative X position",
-							width = "full",
-							softMin = -1500,
-							min = -3000,
-							max = 3000,
-							softMax = 1500,
-							step = 1,
-							get = function()
-								return dbentry.header.positioning.relX
-							end,
-							set = function(_, value)
-								dbentry.header.positioning.relX = value
-								CUI:SetFriendsRootPosition()
-							end,
-						},
-						relY = {
-							type = "range",
-							name = "Relative Y position",
-							width = "full",
-							softMin = -1500,
-							min = -3000,
-							max = 3000,
-							softMax = 1500,
-							step = 1,
-							get = function()
-								return dbentry.header.positioning.relY
-							end,
-							set = function(_, value)
-								dbentry.header.positioning.relY = value
-								CUI:SetFriendsRootPosition()
-							end,
-						},
-					},
-				},
+				border = GetBorderSelector(CUI.db.profile.socials.friendlist.header.border, function()
+					CUI:SetFriendsRootStyle()
+					CUI:SetFriendsText()
+				end),
+				backdrop = GetTextureSelector(
+					CUI.db.profile.socials.friendlist.header.backdrop,
+					CUI.SetFriendsRootStyle
+				),
+				positioning = GetPositionWidget(
+					CUI.db.profile.socials.friendlist.header.positioning,
+					CUI.SetFriendsRootPosition
+				),
 			},
 		},
 		list = {
 			type = "group",
 			name = "List settings",
 			args = {
-				font = GetFontSelector(dbentry.list.font, CUI.SetFriendlistFont),
-				border = GetBorderSelector({
-					name = {
-						get = function()
-							return dbentry.list.border.name
-						end,
-						set = function(_, value)
-							dbentry.list.border.name = value
-							CUI:SetFriendsRootStyle()
-							CUI:SetFriendsText()
-						end,
-					},
-					size = {
-						get = function()
-							return dbentry.list.border.size
-						end,
-						set = function(_, value)
-							dbentry.list.border.size = value
-							CUI:SetFriendsRootStyle()
-							CUI:SetFriendsText()
-						end,
-					},
-					inset = {
-						get = function()
-							return dbentry.list.border.inset
-						end,
-						set = function(_, value)
-							dbentry.list.border.inset = value
-							CUI:SetFriendsRootStyle()
-							CUI:SetFriendsText()
-						end,
-					},
-					color = {
-						get = function()
-							return unpack(dbentry.list.border.color)
-						end,
-						set = function(_, r, g, b, a)
-							dbentry.list.border.color = { r, g, b, a }
-							CUI:SetFriendsRootStyle()
-							CUI:SetFriendsText()
-						end,
-					},
-				}),
-				backdrop = GetTextureSelector(dbentry.list.backdrop, CUI.SetFriendsRootStyle),
+				font = GetFontSelector(CUI.db.profile.socials.friendlist.list.font, CUI.SetFriendlistFont),
+				border = GetBorderSelector(CUI.db.profile.socials.friendlist.header.border, function()
+					CUI:SetFriendsRootStyle()
+					CUI:SetFriendsText()
+				end),
+				backdrop = GetTextureSelector(CUI.db.profile.socials.friendlist.list.backdrop, CUI.SetFriendsRootStyle),
 			},
 		},
 	}
@@ -706,7 +439,7 @@ local function GetSocialOptions()
 			disabled = function()
 				return not CUI.db.profile.socials.enableFriendlist
 			end,
-			args = GetFriendlistOptions(CUI.db.profile.socials.friendlist),
+			args = GetFriendlistOptions(),
 		},
 		guildlist = {
 			type = "group",
@@ -715,7 +448,7 @@ local function GetSocialOptions()
 			disabled = function()
 				return not CUI.db.profile.socials.enableGuildlist
 			end,
-			args = GetGuildlistOptions(CUI.db.profile.socials.guildlist),
+			args = GetGuildlistOptions(),
 		},
 	}
 end
@@ -726,6 +459,7 @@ local defaultOptions = {
 			hideExpansionSummaryButton = false,
 			enableChatOptions = false,
 			housingControlsFrame = {
+				frameAnchor = "TOP",
 				anchor = "TOP",
 				relX = 0,
 				relY = -30,
@@ -843,7 +577,7 @@ function CUI:InitializeAce()
 				type = "group",
 				name = "Tweaks",
 				childGroups = "tab",
-				args = GetTweakOptions(),
+				args = GetTweakOptions(CUI.db.profile.tweaks),
 			},
 			socials = {
 				type = "group",

@@ -328,12 +328,12 @@ function CUI:SetFriendsRootStyle()
 end
 
 function CUI:SetFriendsRootPosition()
-	self:UpdateSocialFramePosition(
+	CUI:UpdateSocialFramePosition(
 		friendsFontString,
-		self.db.profile.socials.friendlist.header.positioning.anchor,
-		self.db.profile.socials.friendlist.header.positioning.frameAnchor,
-		self.db.profile.socials.friendlist.header.positioning.relX,
-		self.db.profile.socials.friendlist.header.positioning.relY
+		CUI.db.profile.socials.friendlist.header.positioning.anchor,
+		CUI.db.profile.socials.friendlist.header.positioning.frameAnchor,
+		CUI.db.profile.socials.friendlist.header.positioning.relX,
+		CUI.db.profile.socials.friendlist.header.positioning.relY
 	)
 end
 

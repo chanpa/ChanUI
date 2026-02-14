@@ -21,7 +21,7 @@ function CUI:MoveTopCenterFrame()
 end
 
 function CUI:HideExpansionSummary()
-	if self.db.profile.tweaks.hideExpansionSummaryButton and ExpansionLandingPageMinimapButton then
+	if CUI.db.profile.tweaks.hideExpansionSummaryButton and ExpansionLandingPageMinimapButton then
 		ExpansionLandingPageMinimapButton:Hide()
 	end
 end
@@ -31,11 +31,12 @@ function CUI:MoveHousingControlsFrame()
 		return
 	end
 
-	local anchor = self.db.profile.tweaks.housingControlsFrame.anchor
-	local relX = self.db.profile.tweaks.housingControlsFrame.relX
-	local relY = self.db.profile.tweaks.housingControlsFrame.relY
+	local frameAnchor = CUI.db.profile.tweaks.housingControlsFrame.frameAnchor
+	local anchor = CUI.db.profile.tweaks.housingControlsFrame.anchor
+	local relX = CUI.db.profile.tweaks.housingControlsFrame.relX
+	local relY = CUI.db.profile.tweaks.housingControlsFrame.relY
 	HousingControlsFrame:ClearAllPoints()
-	HousingControlsFrame:SetPoint(anchor, UIParent, anchor, relX, relY)
+	HousingControlsFrame:SetPoint(frameAnchor, UIParent, anchor, relX, relY)
 end
 
 local function setChatFont(frame)
@@ -57,7 +58,7 @@ local function changeChatTabSize(chatTab)
 end
 
 function CUI:UpdateChat()
-	if not self.db.profile.tweaks.enableChatOptions then
+	if not CUI.db.profile.tweaks.enableChatOptions then
 		return
 	end
 

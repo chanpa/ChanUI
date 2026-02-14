@@ -236,12 +236,12 @@ function CUI:SetGuildiesRootStyle()
 end
 
 function CUI:SetGuildiesRootPosition()
-	self:UpdateSocialFramePosition(
+	CUI:UpdateSocialFramePosition(
 		guildiesFontString,
-		self.db.profile.socials.guildlist.header.positioning.anchor,
-		self.db.profile.socials.guildlist.header.positioning.frameAnchor,
-		self.db.profile.socials.guildlist.header.positioning.relX,
-		self.db.profile.socials.guildlist.header.positioning.relY
+		CUI.db.profile.socials.guildlist.header.positioning.anchor,
+		CUI.db.profile.socials.guildlist.header.positioning.frameAnchor,
+		CUI.db.profile.socials.guildlist.header.positioning.relX,
+		CUI.db.profile.socials.guildlist.header.positioning.relY
 	)
 end
 
