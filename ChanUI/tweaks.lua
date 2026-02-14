@@ -11,6 +11,15 @@ local CHAT_TAB_TEXTURES = {
 	"HighlightMiddle",
 }
 
+function CUI:MoveTopCenterFrame()
+	if not UIWidgetTopCenterContainerFrame then
+		return
+	end
+
+	UIWidgetTopCenterContainerFrame:ClearAllPoints()
+	UIWidgetTopCenterContainerFrame:SetPoint("TOP", UIParent, "TOP", 0, -55)
+end
+
 function CUI:HideExpansionSummary()
 	if self.db.profile.tweaks.hideExpansionSummaryButton and ExpansionLandingPageMinimapButton then
 		ExpansionLandingPageMinimapButton:Hide()
@@ -92,11 +101,14 @@ end
 function CUI:EnableTweaks()
 	self:HookScript(ExpansionLandingPageMinimapButton, "OnShow", "HideExpansionSummary")
 	self:RegisterEvent("HOUSE_EDITOR_AVAILABILITY_CHANGED", "MoveHousingControlsFrame")
+	self:MoveTopCenterFrame()
 	--self:UpdateChat()
 end
 
 function CUI:UpdateTweaks()
 	self:HideExpansionSummary()
 	self:MoveHousingControlsFrame()
+	self:MoveTopCenterFrame()
 	self:UpdateChat()
 end
+

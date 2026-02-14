@@ -365,16 +365,19 @@ end
 
 function CUI:SetFriendlistFont()
 	local fontPath = LSM:Fetch("font", CUI.db.profile.socials.friendlist.list.font.name)
+	local fontSize = CUI.db.profile.socials.friendlist.list.font.size
+	local fontOutline = CUI.db.profile.socials.friendlist.list.font.outline
+
 	CUI.normalFriendsFont = CreateFont("ChanUIFriendsNormalFont")
-	CUI.normalFriendsFont:SetFont(fontPath, 12, CUI.db.profile.socials.friendlist.list.font.outline)
+	CUI.normalFriendsFont:SetFont(fontPath, fontSize, fontOutline)
 	CUI.normalFriendsFont:SetTextColor(1, 1, 1)
 
 	CUI.headerFriendsFont = CreateFont("ChanUIFriendsHeaderFont")
-	CUI.headerFriendsFont:SetFont(fontPath, 12, CUI.db.profile.socials.friendlist.list.font.outline)
+	CUI.headerFriendsFont:SetFont(fontPath, fontSize, fontOutline)
 	CUI.headerFriendsFont:SetTextColor(1, 0.8, 0)
 
 	CUI.headlineFriendsFont = CreateFont("ChanUIFriendsHeadlineFont")
-	CUI.headlineFriendsFont:SetFont(fontPath, 16, CUI.db.profile.socials.friendlist.list.font.outline)
+	CUI.headlineFriendsFont:SetFont(fontPath, fontSize + 4, fontOutline)
 	CUI.headlineFriendsFont:SetTextColor(1, 0.8, 0)
 end
 

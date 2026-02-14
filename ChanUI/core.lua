@@ -21,7 +21,7 @@ local function registerMedia()
 end
 
 function CUI:OnInitialize()
-	CUI:InitializeAce()
+	self:InitializeAce()
 	registerMedia()
 end
 
@@ -35,7 +35,7 @@ end
 function CUI:SetFont(fs, fontName, fontSize, fontOutline, context)
 	local font = LSM:Fetch("font", fontName)
 	if font then
-		local objectName = "ChanUI-Font-".. context
+		local objectName = "ChanUI-Font-" .. context
 		local fontObject = _G[objectName] or CreateFont(objectName)
 		fontObject:SetFont(font, fontSize, fontOutline)
 		fs:SetFontObject(fontObject)
@@ -54,17 +54,4 @@ function CUI:RGBPercToHex(r, g, b)
 	g = g <= 1 and g >= 0 and g or 0
 	b = b <= 1 and b >= 0 and b or 0
 	return string.format("%02x%02x%02x", r * 255, g * 255, b * 255)
-end
-
-
----Get the value from the path
----@param tbl table
----@param path string
-function CUI:GetNestedValue(tbl, path)
-	for key in path:gmatch("[^.]+") do
-		tbl = tbl[key]
-		if not tbl then return nil end
-	end
-
-	return tbl
 end

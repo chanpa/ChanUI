@@ -270,16 +270,19 @@ end
 
 function CUI:SetGuildlistFont()
 	local fontPath = LSM:Fetch("font", CUI.db.profile.socials.guildlist.list.font.name)
+	local fontSize = CUI.db.profile.socials.guildlist.list.font.size
+	local fontOutline = CUI.db.profile.socials.guildlist.list.font.outline
+
 	CUI.normalGuildiesFont = CreateFont("ChanUIGuildiesNormalFont")
-	CUI.normalGuildiesFont:SetFont(fontPath, 12, CUI.db.profile.socials.guildlist.list.font.outline)
+	CUI.normalGuildiesFont:SetFont(fontPath, fontSize, fontOutline)
 	CUI.normalGuildiesFont:SetTextColor(1, 1, 1)
 
 	CUI.headerGuildiesFont = CreateFont("ChanUIGuildiesHeaderFont")
-	CUI.headerGuildiesFont:SetFont(fontPath, 12, CUI.db.profile.socials.guildlist.list.font.outline)
+	CUI.headerGuildiesFont:SetFont(fontPath, fontSize, fontOutline)
 	CUI.headerGuildiesFont:SetTextColor(1, 0.8, 0)
 
 	CUI.headlineGuildiesFont = CreateFont("ChanUIGuildiesHeadlineFont")
-	CUI.headlineGuildiesFont:SetFont(fontPath, 16, CUI.db.profile.socials.guildlist.list.font.outline)
+	CUI.headlineGuildiesFont:SetFont(fontPath, fontSize + 4, fontOutline)
 	CUI.headlineGuildiesFont:SetTextColor(1, 0.8, 0)
 end
 
