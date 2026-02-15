@@ -306,7 +306,7 @@ local function GetTweakOptions()
 			CUI.db.profile.tweaks.topCenterWidget,
 			CUI.MoveTopCenterWidget,
 			"Top Center Widget"
-		)
+		),
 	}
 end
 
