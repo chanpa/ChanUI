@@ -1,14 +1,14 @@
 local CUI = CUI
 
 function CUI:MoveTopCenterWidget()
-	if not UIWidgetTopCenterContainerFrame then
+	if not UIWidgetTopCenterContainerFrame or not CUI.db.profile.tweaks.topCenterWidget.enable then
 		return
 	end
 
-	local frameAnchor = CUI.db.profile.tweaks.topCenterWidget.frameAnchor
-	local anchor = CUI.db.profile.tweaks.topCenterWidget.anchor
-	local relX = CUI.db.profile.tweaks.topCenterWidget.relX
-	local relY = CUI.db.profile.tweaks.topCenterWidget.relY
+	local frameAnchor = CUI.db.profile.tweaks.topCenterWidget.positioning.frameAnchor
+	local anchor = CUI.db.profile.tweaks.topCenterWidget.positioning.anchor
+	local relX = CUI.db.profile.tweaks.topCenterWidget.positioning.relX
+	local relY = CUI.db.profile.tweaks.topCenterWidget.positioning.relY
 	UIWidgetTopCenterContainerFrame:ClearAllPoints()
 	UIWidgetTopCenterContainerFrame:SetPoint(frameAnchor, UIParent, anchor, relX, relY)
 end
@@ -20,14 +20,14 @@ function CUI:HideExpansionSummary()
 end
 
 function CUI:MoveHousingControlsFrame()
-	if not HousingControlsFrame then
+	if not HousingControlsFrame or not CUI.db.profile.tweaks.housingControlsFrame.enable then
 		return
 	end
 
-	local frameAnchor = CUI.db.profile.tweaks.housingControlsFrame.frameAnchor
-	local anchor = CUI.db.profile.tweaks.housingControlsFrame.anchor
-	local relX = CUI.db.profile.tweaks.housingControlsFrame.relX
-	local relY = CUI.db.profile.tweaks.housingControlsFrame.relY
+	local frameAnchor = CUI.db.profile.tweaks.housingControlsFrame.positioning.frameAnchor
+	local anchor = CUI.db.profile.tweaks.housingControlsFrame.positioning.anchor
+	local relX = CUI.db.profile.tweaks.housingControlsFrame.positioning.relX
+	local relY = CUI.db.profile.tweaks.housingControlsFrame.positioning.relY
 	HousingControlsFrame:ClearAllPoints()
 	HousingControlsFrame:SetPoint(frameAnchor, UIParent, anchor, relX, relY)
 end

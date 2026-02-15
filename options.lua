@@ -280,7 +280,7 @@ local function GetPositionWidget(dbentry, updater, name)
 end
 
 local function GetTweakOptions()
-	return {
+	local options = {
 		hideExpansionSummaryButton = {
 			type = "toggle",
 			name = "Hide Expansion Summary",
@@ -297,17 +297,78 @@ local function GetTweakOptions()
 				end
 			end,
 		},
-		housingControlsFrame = GetPositionWidget(
-			CUI.db.profile.tweaks.housingControlsFrame,
-			CUI.MoveHousingControlsFrame,
-			"Housing controls"
-		),
-		topCenterWidget = GetPositionWidget(
-			CUI.db.profile.tweaks.topCenterWidget,
-			CUI.MoveTopCenterWidget,
-			"Top Center Widget"
-		),
+		housingControlsFrame = {
+			type = "group",
+			name = "Housing Control Frame",
+			args = {
+				enable = {
+					type = "toggle",
+					name = "Move Housing Control Frame",
+					desc = "Enable respositioning of the Housing Control Frame",
+					get = function()
+						return CUI.db.profile.tweaks.housingControlsFrame.enable
+					end,
+					set = function(_, value)
+						if value then
+							CUI.db.profile.tweaks.housingControlsFrame.enable = value
+							CUI:MoveHousingControlsFrame()
+						else
+							CUI.db.profile.tweaks.housingControlsFrame.positioning.frameAnchor = "TOP"
+							CUI.db.profile.tweaks.housingControlsFrame.positioning.anchor = "TOP"
+							CUI.db.profile.tweaks.housingControlsFrame.positioning.relX = 0
+							CUI.db.profile.tweaks.housingControlsFrame.positioning.relY = -30
+							CUI:MoveHousingControlsFrame()
+							CUI.db.profile.tweaks.housingControlsFrame.enable = value
+						end
+					end,
+				},
+				positioning = GetPositionWidget(
+					CUI.db.profile.tweaks.housingControlsFrame.positioning,
+					CUI.MoveHousingControlsFrame
+				),
+			},
+		},
+		topCenterWidget = {
+			type = "group",
+			name = "Top Center Widget",
+			args = {
+				enable = {
+					type = "toggle",
+					name = "Move Top Center Widget",
+					desc = "Enable respositioning of the Top Center Widget",
+					get = function()
+						return CUI.db.profile.tweaks.topCenterWidget.enable
+					end,
+					set = function(_, value)
+						if value then
+							CUI.db.profile.tweaks.topCenterWidget.enable = value
+							CUI:MoveTopCenterWidget()
+						else
+							CUI.db.profile.tweaks.topCenterWidget.positioning.frameAnchor = "TOP"
+							CUI.db.profile.tweaks.topCenterWidget.positioning.anchor = "TOP"
+							CUI.db.profile.tweaks.topCenterWidget.positioning.relX = 0
+							CUI.db.profile.tweaks.topCenterWidget.positioning.relY = -30
+							CUI:MoveTopCenterWidget()
+							CUI.db.profile.tweaks.topCenterWidget.enable = value
+						end
+					end,
+				},
+				positioning = GetPositionWidget(
+					CUI.db.profile.tweaks.topCenterWidget.positioning,
+					CUI.MoveTopCenterWidget
+				),
+			},
+		},
 	}
+
+	options.housingControlsFrame.args.positioning.disabled = function()
+		return not CUI.db.profile.tweaks.housingControlsFrame.enable
+	end
+	options.topCenterWidget.args.positioning.disabled = function()
+		return not CUI.db.profile.tweaks.topCenterWidget.enable
+	end
+
+	return options
 end
 
 local function GetGuildlistOptions()
@@ -435,16 +496,22 @@ local defaultOptions = {
 		tweaks = {
 			hideExpansionSummaryButton = false,
 			housingControlsFrame = {
-				frameAnchor = "TOP",
-				anchor = "TOP",
-				relX = 0,
-				relY = -30,
+				enable = false,
+				positioning = {
+					frameAnchor = "TOP",
+					anchor = "TOP",
+					relX = 0,
+					relY = -30,
+				},
 			},
 			topCenterWidget = {
-				frameAnchor = "TOP",
-				anchor = "TOP",
-				relX = 0,
-				relY = -30,
+				enable = false,
+				positioning = {
+					frameAnchor = "TOP",
+					anchor = "TOP",
+					relX = 0,
+					relY = -30,
+				},
 			},
 		},
 		socials = {
