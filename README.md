@@ -5,10 +5,10 @@ My addon to fix various things that have annoyed me.
 ## Friendlist & Guildlist
 A highly customizable friendlist and guildlist where you can invite, whisper and set notes with a click of the mouse.\
 Uses SharedMedia to find fonts/textures/borders etc.\
-<img src="images/friendlist_clean.png" width="500" />
-<img src="images/guildlist_clean.png" width="500" />
-<img src="images/friendlist_parchment.png" width="500" />
-<img src="images/guildlist_parchment.png" width="500" />
+<img src="images/friendlist_clean.png" width="500" />\
+<img src="images/guildlist_clean.png" width="500" />\
+<img src="images/friendlist_parchment.png" width="500" />\
+<img src="images/guildlist_parchment.png" width="500" />\
 
 ## Random tweaks
 ### Move housing controls
