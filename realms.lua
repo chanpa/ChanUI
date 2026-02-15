@@ -3425,4 +3425,3 @@ function CUI:GetRealmName(gameAccountInfo, locale)
 	DevTools_Dump(realmInfo)
 	return "Unknown"
 end
-
