@@ -1,8 +1,9 @@
 ## Interface: 120000, 120001
-## Version: 1.0.1
+## Version: @project-version@
 ## Title: ChanUI
 ## Author: Chanpa
 ## X-Curse-Project-ID: 1462656
+## X-Wago-ID: RNLkgDGo
 ## SavedVariables: ChanUIDB
 
 embeds.xml
