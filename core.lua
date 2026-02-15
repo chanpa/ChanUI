@@ -1,28 +1,8 @@
 CUI = LibStub("AceAddon-3.0"):NewAddon("ChanUI", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0")
 local LSM = LibStub("LibSharedMedia-3.0")
 
-local function registerMedia()
-	LSM:Register("background", "Outer Highlight", [[Interface\Addons\ChanUI\Media\background\outer_highlight.tga]])
-	LSM:Register("border", "Round", [[Interface\Addons\ChanUI\Media\border\round.tga]])
-	LSM:Register("border", "Outer Shadow", [[Interface\Addons\ChanUI\Media\border\outer_shadow.tga]])
-
-	LSM:Register("font", "Expressway", [[Interface\Addons\ChanUI\Media\font\Expressway.ttf]])
-
-	LSM:Register("statusbar", "MaUIv3", [[Interface\Addons\ChanUI\Media\statusbar\MaUIv3.tga]])
-	LSM:Register("statusbar", "MaUIv3Left", [[Interface\Addons\ChanUI\Media\statusbar\MaUIv3Left.tga]])
-	LSM:Register("statusbar", "MaUIv3Right", [[Interface\Addons\ChanUI\Media\statusbar\MaUIv3Right.tga]])
-	LSM:Register("statusbar", "Melli 6px", [[Interface\Addons\ChanUI\Media\statusbar\Melli6px.tga]])
-	LSM:Register("statusbar", "Smallbar", [[Interface\Addons\ChanUI\Media\statusbar\o13.tga]])
-	LSM:Register("statusbar", "Smallbar Left", [[Interface\Addons\ChanUI\Media\statusbar\r14.tga]])
-	LSM:Register("statusbar", "Smallbar Right", [[Interface\Addons\ChanUI\Media\statusbar\r28.tga]])
-	LSM:Register("statusbar", "ToxiUI-clean", [[Interface\Addons\ChanUI\Media\statusbar\ToxiUI-clean.tga]])
-	LSM:Register("statusbar", "ToxiUI-dark", [[Interface\Addons\ChanUI\Media\statusbar\ToxiUI-dark.tga]])
-	LSM:Register("statusbar", "ToxiUI-half", [[Interface\Addons\ChanUI\Media\statusbar\ToxiUI-half.tga]])
-end
-
 function CUI:OnInitialize()
 	self:InitializeAce()
-	registerMedia()
 end
 
 function CUI:OnEnable()
