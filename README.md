@@ -1,5 +1,5 @@
 # Chan UI
-My addon to fix what I want
+My addon to fix various things that have annoyed me.
 
 
 ## Friendlist & Guildlist
