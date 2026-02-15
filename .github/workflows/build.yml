@@ -7,7 +7,7 @@ name: Package and release
 on:
   push:
     tags:
-      - 'release'
+      - '*'
 
 jobs:
   release:
