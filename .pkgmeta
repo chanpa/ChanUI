@@ -15,7 +15,7 @@ externals:
   Libs/LibSharedMedia-3.0:            https://repos.curseforge.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
   Libs/LibStub:                       https://repos.curseforge.com/wow/libstub/trunk
   Libs/LibQTip-2.0:
-    url: https://repos.curseforge.com/wow/libqtip-2-0
+    url: https://github.com/Torhal/LibQTip-2.0.git
 
 ignore:
   - scripts
