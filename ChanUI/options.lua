@@ -297,33 +297,16 @@ local function GetTweakOptions()
 				end
 			end,
 		},
-		enableChatOptions = {
-			type = "toggle",
-			name = "Enable chat options",
-			desc = "Hide chat backgrounds and choose font",
-			get = function()
-				return CUI.db.profile.tweaks.enableChatOptions
-			end,
-			set = function(_, value)
-				CUI.db.profile.tweaks.enableChatOptions = value
-				-- todo enable ability to restore chat
-			end,
-		},
-		chat = {
-			type = "group",
-			name = "Chat",
-			disabled = function()
-				return not CUI.db.profile.tweaks.enableChatOptions
-			end,
-			args = {
-				font = GetFontWidget(CUI.db.profile.tweaks.chat.font, CUI.UpdateChat),
-			},
-		},
 		housingControlsFrame = GetPositionWidget(
 			CUI.db.profile.tweaks.housingControlsFrame,
 			CUI.MoveHousingControlsFrame,
 			"Housing controls"
 		),
+		topCenterWidget = GetPositionWidget(
+			CUI.db.profile.tweaks.topCenterWidget,
+			CUI.MoveTopCenterWidget,
+			"Top Center Widget"
+		)
 	}
 end
 
@@ -389,7 +372,7 @@ local function GetFriendlistOptions()
 			name = "List settings",
 			args = {
 				font = GetFontWidget(CUI.db.profile.socials.friendlist.list.font, CUI.SetFriendlistFont),
-				border = GetBorderWidget(CUI.db.profile.socials.friendlist.header.border, function()
+				border = GetBorderWidget(CUI.db.profile.socials.friendlist.list.border, function()
 					CUI:SetFriendsRootStyle()
 					CUI:SetFriendsText()
 				end),
@@ -451,20 +434,17 @@ local defaultOptions = {
 	profile = {
 		tweaks = {
 			hideExpansionSummaryButton = false,
-			enableChatOptions = false,
 			housingControlsFrame = {
 				frameAnchor = "TOP",
 				anchor = "TOP",
 				relX = 0,
 				relY = -30,
 			},
-			chat = {
-				enable = false,
-				font = {
-					name = "Arial Narrow",
-					size = 14,
-					outline = "OUTLINE",
-				},
+			topCenterWidget = {
+				frameAnchor = "TOP",
+				anchor = "TOP",
+				relX = 0,
+				relY = -30,
 			},
 		},
 		socials = {
@@ -474,13 +454,13 @@ local defaultOptions = {
 				header = {
 					positioning = {
 						anchor = "TOP",
-						frameAnchor = "TOP",
+						frameAnchor = "TOPRIGHT",
 						relX = 0,
 						relY = 0,
 					},
 					font = {
 						name = "Arial Narrow",
-						size = 16,
+						size = 24,
 						outline = "THICKOUTLINE",
 					},
 					border = {
@@ -491,13 +471,13 @@ local defaultOptions = {
 					},
 					backdrop = {
 						color = { 0, 0, 0, 1 },
-						texture = "Interface/Buttons/WHITE8X8",
+						texture = "Solid",
 					},
 				},
 				list = {
 					font = {
 						name = "Arial Narrow",
-						size = 16,
+						size = 12,
 						outline = "THICKOUTLINE",
 					},
 					border = {
@@ -508,7 +488,7 @@ local defaultOptions = {
 					},
 					backdrop = {
 						color = { 0, 0, 0, 1 },
-						texture = "Interface/Buttons/WHITE8X8",
+						texture = "Solid",
 					},
 				},
 			},
@@ -516,13 +496,13 @@ local defaultOptions = {
 				header = {
 					positioning = {
 						anchor = "TOP",
-						frameAnchor = "TOP",
+						frameAnchor = "TOPLEFT",
 						relX = 0,
 						relY = 0,
 					},
 					font = {
 						name = "Arial Narrow",
-						size = 16,
+						size = 24,
 						outline = "THICKOUTLINE",
 					},
 					border = {
@@ -533,13 +513,13 @@ local defaultOptions = {
 					},
 					backdrop = {
 						color = { 0, 0, 0, 1 },
-						texture = "Interface/Buttons/WHITE8X8",
+						texture = "Solid",
 					},
 				},
 				list = {
 					font = {
 						name = "Arial Narrow",
-						size = 16,
+						size = 12,
 						outline = "THICKOUTLINE",
 					},
 					border = {
@@ -550,7 +530,7 @@ local defaultOptions = {
 					},
 					backdrop = {
 						color = { 0, 0, 0, 1 },
-						texture = "Interface/Buttons/WHITE8X8",
+						texture = "Solid",
 					},
 				},
 			},
