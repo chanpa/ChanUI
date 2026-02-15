@@ -4,6 +4,7 @@
 ## Author: Chanpa
 ## X-Curse-Project-ID: 1462656
 ## X-Wago-ID: RNLkgDGo
+## X-WoWI-ID: 27053
 ## SavedVariables: ChanUIDB
 
 embeds.xml
