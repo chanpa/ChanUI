@@ -3419,9 +3419,9 @@ function CUI:GetRealmName(gameAccountInfo, locale)
 		return realmInfo.names[locale]
 	end
 
-	self:Print("realmid: " .. realmID)
-	self:Print("region: " .. region)
-	self:Print("locale: " .. locale)
-	DevTools_Dump(realmInfo)
+	--self:Print("realmid: " .. realmID)
+	--self:Print("region: " .. region)
+	--self:Print("locale: " .. locale)
+	--DevTools_Dump(realmInfo)
 	return "Unknown"
 end

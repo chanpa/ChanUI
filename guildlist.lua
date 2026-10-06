@@ -3,7 +3,7 @@ local LSM = LibStub("LibSharedMedia-3.0")
 local QT = LibStub("LibQTip-2.0")
 
 -- constants
-local POPUP_SET_NOTE_NAME = "CHANUI_SET_GUILD_NOTE"
+--local POPUP_SET_NOTE_NAME = "CHANUI_SET_GUILD_NOTE"
 local GUILDLIST_TT_NAME = "ChanUIGuildlistFrame"
 local ROOT_FRAME_NAME = "ChanUIGuildiesRootFrame"
 
@@ -25,6 +25,43 @@ local function GetFaction(guid)
 	return faction.name
 end
 
+local function ParseGuildMemberName(fullName)
+	local separator = strfind(fullName, "-", 1, true)
+	if not separator then
+		return fullName, nil
+	end
+
+	local characterName = fullName:sub(1, separator - 1)
+	local realmName = fullName:sub(separator + 1)
+	local realmParts = {}
+	for part in (realmName .. "-"):gmatch("(.-)-") do
+		table.insert(realmParts, part)
+	end
+
+	for patternLength = 1, math.floor(#realmParts / 2) do
+		if #realmParts % patternLength == 0 then
+			local isRepeated = true
+			for i = patternLength + 1, #realmParts do
+				if realmParts[i] ~= realmParts[((i - 1) % patternLength) + 1] then
+					isRepeated = false
+					break
+				end
+			end
+
+			if isRepeated then
+				local uniqueRealmParts = {}
+				for i = 1, patternLength do
+					table.insert(uniqueRealmParts, realmParts[i])
+				end
+				realmName = table.concat(uniqueRealmParts, "-")
+				break
+			end
+		end
+	end
+
+	return characterName, realmName
+end
+
 local function ClickOnGuildie(button, guildie, guildIndex)
 	if IsControlKeyDown() then
 		if button == "LeftButton" then
@@ -43,12 +80,12 @@ local function ClickOnGuildie(button, guildie, guildIndex)
 		if button == "LeftButton" then
 			guildie.realm = gsub(guildie.realm, " ", "")
 			ChatFrame_SendTell(guildie.name .. "-" .. guildie.realm)
-		elseif button == "RightButton" then
-			local dialog = StaticPopup_Show("CHANUI_SET_GUILD_NOTE")
-			if dialog then
-				guildiesList:Hide()
-				dialog.data = guildIndex
-			end
+		--elseif button == "RightButton" then
+		--	local dialog = StaticPopup_Show(POPUP_SET_NOTE_NAME)
+		--	if dialog then
+		--		guildiesList:Hide()
+		--		dialog.data = guildie.guid
+		--	end
 		end
 	end
 end
@@ -81,7 +118,7 @@ local function ShowGuildlist()
 
 	CUI:CreateHelpRow(guildiesList, "Left-Click to whisper", cols, CUI.headerGuildiesFont)
 	CUI:CreateHelpRow(guildiesList, "Ctrl-Left-Click to invite", cols, CUI.headerGuildiesFont)
-	CUI:CreateHelpRow(guildiesList, "Right-Click to set note", cols, CUI.headerGuildiesFont)
+	--CUI:CreateHelpRow(guildiesList, "Right-Click to set note", cols, CUI.headerGuildiesFont)
 	CUI:CreateHelpRow(guildiesList, "Ctrl-Right-Click to dump info", cols, CUI.headerGuildiesFont)
 
 	guildiesList:AddRow(" ")
@@ -111,7 +148,7 @@ local function ShowGuildlist()
 	local percOfScreenAllowed = 0.5
 	guildiesList:SetMaxHeight(GetScreenHeight() * percOfScreenAllowed)
 	guildiesList:UpdateLayout()
-	CUI:StyleSlider(guildiesList, cols, CUI.headerGuildiesFont)
+	CUI:StyleSlider(guildiesList)
 
 	guildiesList:Show()
 end
@@ -165,13 +202,12 @@ local function CreateGuildiesTable()
 		local name, rank, rankIndex, level, _, zone, note, officerNote, connected, memberstatus, className, _, _, isMobile, _, _, guid =
 			GetGuildRosterInfo(i)
 		if name and (connected or isMobile) then
-			local realm
-			name, realm = strmatch(name, "(.+)-(.+)")
+			local characterName, realm = ParseGuildMemberName(name)
 			guildiesTable[i] = {
 				isAFK = memberstatus == 1,
 				isDND = memberstatus == 2,
 				isMobile = isMobile,
-				name = name,
+				name = characterName,
 				realm = realm,
 				rank = rank,
 				level = level,
@@ -182,6 +218,7 @@ local function CreateGuildiesTable()
 				class = className,
 				rankIndex = rankIndex,
 				faction = GetFaction(guid),
+				guid = guid
 			}
 			guildiesOnline = guildiesOnline + 1
 		end
@@ -296,7 +333,8 @@ function CUI:EnableGuildlist()
 	C_GuildInfo.GuildRoster()
 	self:RegisterEvent("GUILD_ROSTER_UPDATE", UpdateGuildiesRootText)
 	self:RegisterEvent("PLAYER_GUILD_UPDATE", UpdateGuildiesRootText)
-	self:CreatePopupDialog(POPUP_SET_NOTE_NAME, "Note", "Accept", "Cancel", GuildRosterSetPublicNote)
+	-- disabled by blizz, thx
+	--self:CreatePopupDialog(POPUP_SET_NOTE_NAME, "Note", "Accept", "Cancel")
 	self:SetGuildlistFont()
 
 	CreateGuildlist()

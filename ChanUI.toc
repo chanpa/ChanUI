@@ -9,10 +9,10 @@
 
 embeds.xml
 core.lua
-options.lua
-tweaks.lua
+list_utils.lua
 social_strings.lua
+realms.lua
+tweaks.lua
+options.lua
 friendlist.lua
 guildlist.lua
-realms.lua
-list_utils.lua
