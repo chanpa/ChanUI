@@ -3,10 +3,7 @@ import logging
 import re
 from collections import defaultdict
 from datetime import timedelta, datetime
-from functools import partial
-from itertools import chain
 
-import aiometer
 import httpx
 
 logger = logging.getLogger(__name__)

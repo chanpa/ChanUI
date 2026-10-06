@@ -39,6 +39,10 @@ function CUI:PLAYER_LOGIN()
 			C_PerksActivities.RemoveTrackedPerksActivity(id)
 		end
 	end
+
+	for i = 1, 200000 do
+		C_QuestLog.RemoveQuestWatch(i)
+	end
 end
 
 function CUI:EnableTweaks()

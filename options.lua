@@ -1,6 +1,18 @@
 local CUI = CUI
 local LSM = LibStub("LibSharedMedia-3.0")
 
+local POSITION_ANCHORS = {
+	["TOP"] = "TOP",
+	["RIGHT"] = "RIGHT",
+	["BOTTOM"] = "BOTTOM",
+	["LEFT"] = "LEFT",
+	["TOPRIGHT"] = "TOPRIGHT",
+	["TOPLEFT"] = "TOPLEFT",
+	["BOTTOMLEFT"] = "BOTTOMLEFT",
+	["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+	["CENTER"] = "CENTER",
+}
+
 local function GetFontWidget(dbentry, updater)
 	local settings = {
 		type = "group",
@@ -195,17 +207,7 @@ local function GetPositionWidget(dbentry, updater, name)
 				desc = "Where on the screen to anchor the frame",
 				width = "full",
 				order = 1,
-				values = {
-					["TOP"] = "TOP",
-					["RIGHT"] = "RIGHT",
-					["BOTTOM"] = "BOTTOM",
-					["LEFT"] = "LEFT",
-					["TOPRIGHT"] = "TOPRIGHT",
-					["TOPLEFT"] = "TOPLEFT",
-					["BOTTOMLEFT"] = "BOTTOMLEFT",
-					["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-					["CENTER"] = "CENTER",
-				},
+				values = POSITION_ANCHORS,
 				get = function()
 					return dbentry.anchor
 				end,
@@ -220,17 +222,7 @@ local function GetPositionWidget(dbentry, updater, name)
 				desc = "Which part of the frame to attach to the screen anchor",
 				width = "full",
 				order = 2,
-				values = {
-					["TOP"] = "TOP",
-					["RIGHT"] = "RIGHT",
-					["BOTTOM"] = "BOTTOM",
-					["LEFT"] = "LEFT",
-					["TOPRIGHT"] = "TOPRIGHT",
-					["TOPLEFT"] = "TOPLEFT",
-					["BOTTOMLEFT"] = "BOTTOMLEFT",
-					["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-					["CENTER"] = "CENTER",
-				},
+				values = POSITION_ANCHORS,
 				get = function()
 					return dbentry.frameAnchor
 				end,
@@ -491,27 +483,50 @@ local function GetSocialOptions()
 	}
 end
 
+local function DefaultPosition(frameAnchor, relY)
+	return {
+		anchor = "TOP",
+		frameAnchor = frameAnchor,
+		relX = 0,
+		relY = relY,
+	}
+end
+
+local function DefaultFont(size)
+	return {
+		name = "Arial Narrow",
+		size = size,
+		outline = "THICKOUTLINE",
+	}
+end
+
+local function DefaultBorder()
+	return {
+		name = "",
+		size = 0,
+		inset = 0,
+		color = { 0, 0, 0, 1 },
+	}
+end
+
+local function DefaultBackdrop()
+	return {
+		color = { 0, 0, 0, 1 },
+		texture = "Solid",
+	}
+end
+
 local defaultOptions = {
 	profile = {
 		tweaks = {
 			hideExpansionSummaryButton = false,
 			housingControlsFrame = {
 				enable = false,
-				positioning = {
-					frameAnchor = "TOP",
-					anchor = "TOP",
-					relX = 0,
-					relY = -30,
-				},
+				positioning = DefaultPosition("TOP", -30),
 			},
 			topCenterWidget = {
 				enable = false,
-				positioning = {
-					frameAnchor = "TOP",
-					anchor = "TOP",
-					relX = 0,
-					relY = -30,
-				},
+				positioning = DefaultPosition("TOP", -30),
 			},
 		},
 		socials = {
@@ -519,86 +534,28 @@ local defaultOptions = {
 			enableGuildlist = true,
 			friendlist = {
 				header = {
-					positioning = {
-						anchor = "TOP",
-						frameAnchor = "TOPRIGHT",
-						relX = 0,
-						relY = 0,
-					},
-					font = {
-						name = "Arial Narrow",
-						size = 24,
-						outline = "THICKOUTLINE",
-					},
-					border = {
-						name = "",
-						size = 0,
-						inset = 0,
-						color = { 0, 0, 0, 1 },
-					},
-					backdrop = {
-						color = { 0, 0, 0, 1 },
-						texture = "Solid",
-					},
+					positioning = DefaultPosition("TOPRIGHT", 0),
+					font = DefaultFont(24),
+					border = DefaultBorder(),
+					backdrop = DefaultBackdrop(),
 				},
 				list = {
-					font = {
-						name = "Arial Narrow",
-						size = 12,
-						outline = "THICKOUTLINE",
-					},
-					border = {
-						name = "",
-						size = 0,
-						inset = 0,
-						color = { 0, 0, 0, 1 },
-					},
-					backdrop = {
-						color = { 0, 0, 0, 1 },
-						texture = "Solid",
-					},
+					font = DefaultFont(12),
+					border = DefaultBorder(),
+					backdrop = DefaultBackdrop(),
 				},
 			},
 			guildlist = {
 				header = {
-					positioning = {
-						anchor = "TOP",
-						frameAnchor = "TOPLEFT",
-						relX = 0,
-						relY = 0,
-					},
-					font = {
-						name = "Arial Narrow",
-						size = 24,
-						outline = "THICKOUTLINE",
-					},
-					border = {
-						name = "",
-						size = 0,
-						inset = 0,
-						color = { 0, 0, 0, 1 },
-					},
-					backdrop = {
-						color = { 0, 0, 0, 1 },
-						texture = "Solid",
-					},
+					positioning = DefaultPosition("TOPLEFT", 0),
+					font = DefaultFont(24),
+					border = DefaultBorder(),
+					backdrop = DefaultBackdrop(),
 				},
 				list = {
-					font = {
-						name = "Arial Narrow",
-						size = 12,
-						outline = "THICKOUTLINE",
-					},
-					border = {
-						name = "",
-						size = 0,
-						inset = 0,
-						color = { 0, 0, 0, 1 },
-					},
-					backdrop = {
-						color = { 0, 0, 0, 1 },
-						texture = "Solid",
-					},
+					font = DefaultFont(12),
+					border = DefaultBorder(),
+					backdrop = DefaultBackdrop(),
 				},
 			},
 		},

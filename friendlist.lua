@@ -35,10 +35,9 @@ local CLIENT_ORDER = {
 	"BSAp",
 }
 
--- locals we will use
 local friendsRoot, friendsFontString, friendsTable, friendsOnline, friendsList
 
-local function getRealmName(client, gameAccountInfo)
+local function GetRealmName(client, gameAccountInfo)
 	if client == "wow_retail" then
 		return gameAccountInfo.realmName
 	end
@@ -166,7 +165,7 @@ local function ShowFriendlist()
 	local percOfScreenAllowed = 0.5
 	friendsList:SetMaxHeight(GetScreenHeight() * percOfScreenAllowed)
 	friendsList:UpdateLayout()
-	CUI:StyleSlider(friendsList, cols, CUI.headerFriendsFont)
+	CUI:StyleSlider(friendsList)
 
 	friendsList:Show()
 end
@@ -229,7 +228,7 @@ local function ParseWowFriend(friend, gameAccountInfo)
 		friend.client = "wow_unknown"
 	end
 
-	friend.realmName = getRealmName(friend.client, gameAccountInfo)
+	friend.realmName = GetRealmName(friend.client, gameAccountInfo)
 	friend.realmID = gameAccountInfo.realmID
 	friend.characterFaction = gameAccountInfo.factionName
 	friend.characterName = gameAccountInfo.characterName
